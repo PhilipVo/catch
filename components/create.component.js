@@ -24,7 +24,7 @@ export default class CreateComponent extends Component {
     return (
       this.state.path ?
         <PreviewComponent path={this.state.path} /> :
-        <CameraComponent path={this.state.path} />
+        <CameraComponent navigator={this.props.navigator} path={this.state.path} />
     );
   }
 }

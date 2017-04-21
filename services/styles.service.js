@@ -1,4 +1,7 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import {
+  Dimensions,
+  StyleSheet
+} from 'react-native';
 
 const styles = StyleSheet.create({
   camera: {
@@ -7,9 +10,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width
   },
   cameraView: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
     flex: 1,
-    justifyContent: 'flex-end'
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   },
   cameraWhiteCircle: {
     borderColor: "white",
@@ -32,7 +36,17 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     textShadowColor: 'gray',
     textShadowOffset: { width: 1, height: 1 }
-  }
+  },
+  footer: {
+    borderTopColor: 'gray',
+    borderTopWidth: 0.5,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  hidden: {
+    display: 'none'
+  },
 });
 
 export default styles;

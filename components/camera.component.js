@@ -6,6 +6,9 @@ import {
   View
 } from 'react-native';
 import Camera from 'react-native-camera';
+import { Icon } from 'react-native-elements';
+
+import TabBarComponent from './tab-bar.component'
 
 import http from '../services/http.service';
 import styles from '../services/styles.service';
@@ -39,12 +42,9 @@ export default class CameraComponent extends Component {
         mirrorImage={this.state.mirror}
         ref={cam => this.camera = cam}
         type={this.state.type} >
-        <View style={styles.cameraView}>
-          <TouchableHighlight underlayColor='transparent' onPress={this.capture}>
-            <View style={styles.cameraWhiteCircle} />
-          </TouchableHighlight>
-        </View>
-      </Camera >
+        <View style={{ flex: 11 }} />
+        <TabBarComponent capture={this.capture} navigator={this.props.navigator} tab={'create'} />
+      </Camera>
     );
   }
 }
