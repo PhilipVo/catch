@@ -4,8 +4,13 @@ import {
 } from 'react-native';
 
 const styles = StyleSheet.create({
+  activeFeed: {
+    borderBottomColor: 'red',
+    borderBottomWidth: 1,
+    flex: 1
+  },
   avatarView: {
-    alignItems: 'center',
+    alignItems: 'flex-end',
     flex: 1,
     justifyContent: 'center'
   },
@@ -46,8 +51,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingLeft: 5,
-    textShadowColor: 'gray',
+    textShadowColor: 'black',
     textShadowOffset: { width: 1, height: 1 }
+  },
+  feedTab: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 1
   },
   header: {
     fontSize: 16,
@@ -73,9 +83,22 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10
   },
+  profileNavigator: {
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
+    borderTopColor: 'gray',
+    borderTopWidth: 0.5,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
   tag: {
     fontSize: 12,
     textAlign: 'center'
+  },
+  userCounts: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   },
   username: {
     fontSize: 22,

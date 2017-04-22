@@ -4,12 +4,12 @@ import { Icon } from 'react-native-elements';
 
 import styles from '../styles/styles';
 
-const TabBarComponent = props => {
+const TabComponent = props => {
   const routes = props.navigator.getCurrentRoutes();
   return (
     <View style={props.tab === 'create' ? styles.tabBar1 : styles.tabBar2}>
       <Icon
-        color={props.tab === 'feed' ? '#6296f9' : '#5e6977'}
+        color={props.tab === 'feed' ? 'black' : '#5e6977'}
         name='list'
         onPress={() => props.navigator.jumpTo(routes[2])}
         size={33}
@@ -21,7 +21,7 @@ const TabBarComponent = props => {
         size={33}
         underlayColor='transparent' />
       <Icon
-        color={props.tab === 'profile' ? '#6296f9' : '#5e6977'}
+        color={props.tab === 'profile' ? 'black' : '#5e6977'}
         name='person'
         onPress={() => props.navigator.jumpTo(routes[0])}
         size={33}
@@ -30,4 +30,4 @@ const TabBarComponent = props => {
   );
 }
 
-export default TabBarComponent;
+export default TabComponent;

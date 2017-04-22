@@ -1,34 +1,8 @@
 export default {
   events: 47,
-  feed: [
-    {
-      img: 'http://vignette1.wikia.nocookie.net/legomessageboards/images/9/99/MB0Jg7iQ3GkWYLy2nXD2_alexis_texas.jpg/revision/latest?cb=20140615053820',
-      text: 'Same feed text...'
-    },
-    {
-      img: 'http://vignette1.wikia.nocookie.net/legomessageboards/images/9/99/MB0Jg7iQ3GkWYLy2nXD2_alexis_texas.jpg/revision/latest?cb=20140615053820',
-      text: 'Same feed text...'
-    },
-    {
-      img: 'http://vignette1.wikia.nocookie.net/legomessageboards/images/9/99/MB0Jg7iQ3GkWYLy2nXD2_alexis_texas.jpg/revision/latest?cb=20140615053820',
-      text: 'Same feed text...'
-    },
-    {
-      img: 'http://vignette1.wikia.nocookie.net/legomessageboards/images/9/99/MB0Jg7iQ3GkWYLy2nXD2_alexis_texas.jpg/revision/latest?cb=20140615053820',
-      text: 'Same feed text...'
-    },
-    {
-      img: 'http://vignette1.wikia.nocookie.net/legomessageboards/images/9/99/MB0Jg7iQ3GkWYLy2nXD2_alexis_texas.jpg/revision/latest?cb=20140615053820',
-      text: 'Same feed text...'
-    },
-    {
-      img: 'http://vignette1.wikia.nocookie.net/legomessageboards/images/9/99/MB0Jg7iQ3GkWYLy2nXD2_alexis_texas.jpg/revision/latest?cb=20140615053820',
-      text: 'Same feed text...'
-    },
-  ],
   friends: 32,
   img: 'https://images-cdn.9gag.com/photo/amr5B26_700b.jpg',
-  tag: 'Porn, sex, $$$ | < 3 fluffy animals',
+  tag: 'Porn, sex, $$$ | <3 fluffy animals',
   upcomings: [
     {
       cover: 'https://s-media-cache-ak0.pinimg.com/originals/16/05/e8/1605e89e8e11282cb04454da44d926d4.jpg',

@@ -8,7 +8,7 @@ import {
 import Camera from 'react-native-camera';
 import { Icon } from 'react-native-elements';
 
-import TabBarComponent from './tab-bar.component'
+import TabComponent from './tab.component'
 
 import http from '../services/http.service';
 import styles from '../styles/styles';
@@ -48,7 +48,7 @@ export default class CameraComponent extends Component {
             <View style={styles.cameraWhiteCircle} />
           </TouchableHighlight>
         </View>
-        <TabBarComponent capture={this.capture} navigator={this.props.navigator} tab={'create'} />
+        <TabComponent capture={this.capture} navigator={this.props.navigator} tab={'create'} />
       </Camera>
     );
   }

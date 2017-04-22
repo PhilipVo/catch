@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import AvailableComponent from './available.component';
+import ListComponent from './list.component';
 import NotificationComponent from './notification.component';
-import TabBarComponent from './tab-bar.component';
+import TabComponent from './tab.component';
 import UpcomingComponent from './upcoming.component';
 import UserComponent from './user.component';
 
@@ -13,7 +13,7 @@ import styles from '../styles/styles';
 export default class ProfileComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { component: 'AvailableComponent' };
+    this.state = { component: 'ListComponent' };
   }
 
   componentDidMount() {
@@ -23,8 +23,8 @@ export default class ProfileComponent extends Component {
   renderComponent = () => {
     let component;
     switch (this.state.component) {
-      case 'AvailableComponent':
-        component = <AvailableComponent />
+      case 'ListComponent':
+        component = <ListComponent />
         break;
       case 'UpcomingComponent':
         component = <UpcomingComponent />
@@ -33,7 +33,7 @@ export default class ProfileComponent extends Component {
         component = <NotificationComponent />
         break;
       default:
-        component = <AvailableComponent />
+        component = <ListComponent />
         break;
     }
 
@@ -47,20 +47,29 @@ export default class ProfileComponent extends Component {
       <View style={styles.avoidTop}>
         <View style={{ flex: 11 }}>
           <UserComponent style={{ flex: 2 }} />
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-around', borderTopColor: 'gray', borderTopWidth: 0.5, borderBottomColor: 'gray', borderBottomWidth: 0.5 }}>
+          <View style={styles.profileNavigator}>
             <Icon
-              name={'photo-camera'}
-              size={33} />
+              color={this.state.component === 'ListComponent' ? 'black' : '#5e6977'}
+              name='photo-camera'
+              onPress={() => this.setState({ component: 'ListComponent' })}
+              size={33}
+              underlayColor='transparent' />
             <Icon
-              name={'card-giftcard'}
-              size={33} />
+              color={this.state.component === 'UpcomingComponent' ? 'black' : '#5e6977'}
+              name='card-giftcard'
+              onPress={() => this.setState({ component: 'UpcomingComponent' })}
+              size={33}
+              underlayColor='transparent' />
             <Icon
-              name={'mail-outline'}
-              size={33} />
+              color={this.state.component === 'NotificationComponent' ? 'black' : '#5e6977'}
+              name='mail-outline'
+              onPress={() => this.setState({ component: 'NotificationComponent' })}
+              size={33}
+              underlayColor='transparent' />
           </View>
           {this.renderComponent()}
         </View>
-        <TabBarComponent navigator={this.props.navigator} tab={'profile'} />
+        <TabComponent navigator={this.props.navigator} tab={'profile'} />
       </View>
     );
   }

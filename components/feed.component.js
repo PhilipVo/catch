@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Image, ListView, Text, View } from 'react-native';
+import { Image, ListView, Text, TouchableHighlight, View } from 'react-native';
 
-import TabBarComponent from './tab-bar.component';
+import TabComponent from './tab.component';
 
-import feed from './sample-feed';
 import http from '../services/http.service';
+
 import styles from '../styles/styles';
+
+import past from './sample-past';
+import upcoming from './sample-upcoming';
 
 export default class FeedComponent extends Component {
   constructor(props) {
@@ -13,13 +16,25 @@ export default class FeedComponent extends Component {
 
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      data: feed,
-      dataSource: ds.cloneWithRows(feed)
-    }
+      data: upcoming,
+      dataSource: ds.cloneWithRows(upcoming),
+      feed: 'upcoming'
+    };
   }
 
   componentDidMount() {
     console.log('mounted feed');
+  }
+
+  changeFeed = (feed) => {
+    if (this.state.feed !== feed) {
+      const data = feed === 'past' ? past : upcoming;
+      this.setState({
+        data: data,
+        dataSource: this.state.dataSource.cloneWithRows(data),
+        feed: feed
+      });
+    }
   }
 
   render() {
@@ -27,17 +42,31 @@ export default class FeedComponent extends Component {
       <View style={styles.avoidTop}>
         <View style={{ flex: 11 }}>
           <Text style={styles.header}>Catch</Text>
+          <View style={styles.feedTab}>
+            <TouchableHighlight
+              onPress={() => this.changeFeed('upcoming')}
+              style={this.state.feed === 'upcoming' ? styles.activeFeed : { flex: 1 }}
+              underlayColor='transparent'>
+              <Text style={{ textAlign: 'center' }}>Upcoming</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.changeFeed('past')}
+              style={this.state.feed === 'past' ? styles.activeFeed : { flex: 1 }}
+              underlayColor='transparent'>
+              <Text style={{ textAlign: 'center' }}>Past</Text>
+            </TouchableHighlight>
+          </View>
           <ListView
             dataSource={this.state.dataSource}
-            renderRow={(rowData, sectionID, rowID) => {
-              return (
-                <Image style={styles.coverImage} source={{ uri: rowData.cover }}>
-                  <Text style={styles.coverText}>{rowData.event}</Text>
-                </Image>
-              );
-            }} />
+            removeClippedSubviews={false}
+            renderRow={(rowData, sectionID, rowID) => (
+              <Image style={styles.coverImage} source={{ uri: rowData.cover }}>
+                <Text style={styles.coverText}>{rowData.event}</Text>
+              </Image>)
+            }
+          />
         </View>
-        <TabBarComponent navigator={this.props.navigator} tab={'feed'} />
+        <TabComponent navigator={this.props.navigator} tab={'feed'} />
       </View>
     );
   }
