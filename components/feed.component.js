@@ -5,7 +5,7 @@ import TabBarComponent from './tab-bar.component';
 
 import feed from './sample-feed';
 import http from '../services/http.service';
-import styles from '../services/styles.service';
+import styles from '../styles/styles';
 
 export default class FeedComponent extends Component {
   constructor(props) {
@@ -24,9 +24,9 @@ export default class FeedComponent extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.avoidTop}>
         <View style={{ flex: 11 }}>
-          <Text style={{ fontSize: 16, textAlign: 'center', padding: 30 }}>Catch</Text>
+          <Text style={styles.header}>Catch</Text>
           <ListView
             dataSource={this.state.dataSource}
             renderRow={(rowData, sectionID, rowID) => {

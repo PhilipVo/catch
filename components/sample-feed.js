@@ -1,6 +1,6 @@
 export default [
   {
-    cover: 'http://www.cellphone-wallpapers.net/Wallpapers/User/25881-Madison-Ivy-7.jpg',
+    cover: 'https://static1.comicvine.com/uploads/original/11119/111195216/5124343-1944820252-25890.jpg',
     event: 'Madison Ivy\'s Debut',
     date: '2017-05-25T12:01:20Z'
   },
@@ -10,7 +10,7 @@ export default [
     date: '2017-06-25T12:5:40Z'
   },
   {
-    cover: 'http://farm9.static.flickr.com/8351/8320226110_9c992d6f7f.jpg',
+    cover: 'https://pbs.twimg.com/media/BuFiy-BCMAAI_wh.jpg',
     event: 'Madison Ivy\'s DVD',
     date: '2018-07-25T12:10:23Z'
   },
@@ -30,7 +30,7 @@ export default [
     date: '2017-10-25T12:11:11Z'
   },
   {
-    cover: 'http://www.cellphone-wallpapers.net/Wallpapers/User/25881-Madison-Ivy-7.jpg',
+    cover: 'https://static1.comicvine.com/uploads/original/11119/111195216/5124343-1944820252-25890.jpg',
     event: 'Madison Ivy\'s ...',
     date: '2017-11-25T12:12:30Z'
   },

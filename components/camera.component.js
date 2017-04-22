@@ -11,21 +11,22 @@ import { Icon } from 'react-native-elements';
 import TabBarComponent from './tab-bar.component'
 
 import http from '../services/http.service';
-import styles from '../services/styles.service';
+import styles from '../styles/styles';
 
 export default class CameraComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
       type: 1,
-      mirror: false,
+      mirror: false
     };
   }
 
   capture() {
-    this.camera.capture()
-      .then(data => this.props.navigator.push({ component: 'PreviewComponent', path: data.path }))
-      .catch(error => { });
+    console.log('captured')
+    // this.camera.capture()
+    //   .then(data => this.props.navigator.push({ component: 'PreviewComponent', path: data.path }))
+    //   .catch(error => { });
   }
 
   toggle() {
@@ -42,7 +43,11 @@ export default class CameraComponent extends Component {
         mirrorImage={this.state.mirror}
         ref={cam => this.camera = cam}
         type={this.state.type} >
-        <View style={{ flex: 11 }} />
+        <View style={styles.cameraView}>
+          <TouchableHighlight underlayColor='transparent' onPress={this.capture}>
+            <View style={styles.cameraWhiteCircle} />
+          </TouchableHighlight>
+        </View>
         <TabBarComponent capture={this.capture} navigator={this.props.navigator} tab={'create'} />
       </Camera>
     );
