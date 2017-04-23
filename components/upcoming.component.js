@@ -28,7 +28,7 @@ export default class UpcomingComponent extends Component {
         dataSource={this.state.dataSource}
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
-          <View style={{ marginBottom: 10 }}>
+          <View style={{ marginBottom: 40 }}>
             <Image
               source={{ uri: rowData.cover }}
               style={{
@@ -40,11 +40,15 @@ export default class UpcomingComponent extends Component {
             </Image>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
               <View>
-                <Text>{rowData.event}</Text>
-                <View style={{ flexDirection: 'row' }}>
-                  <Icon color='purple' name='star' size={15} />
-                  <Text style={{ fontSize: 12 }}>You created this event</Text>
-                </View>
+                <Text style={{ fontSize: 16 }}>{rowData.event}</Text>
+                {
+                  rowData.isCreator ?
+                    <View style={{ flexDirection: 'row' }}>
+                      <Icon color='purple' name='star' size={15} />
+                      <Text style={{ fontSize: 12 }}>You created this event</Text>
+                    </View> :
+                    <Text style={{ fontSize: 12 }}>You're following this event</Text>
+                }
               </View>
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center' }}>
@@ -69,13 +73,28 @@ export default class UpcomingComponent extends Component {
                 <Icon name='arrow-drop-down' />
               </View>
             </TouchableHighlight>
-            <Button
-              backgroundColor='red'
-              borderRadius={5}
-              icon={{ name: 'add' }}
-              iconRight
-              raised
-              title='Invite Others to Contribute' />
+            <View style={{ paddingHorizontal: 30 }}>
+              <View
+                onPress={() => {
+
+                }}
+                style={{
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  backgroundColor: 'red',
+                  width: 300,
+                  height: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 5
+                }}>
+                <Text style={{ color: 'white' }}>Invite others to contribute </Text>
+                <Icon color='white' name='add' size={10} />
+              </View>
+              <Text style={{ marginTop: 10, textAlign: 'justify' }}>{rowData.detail}</Text>
+
+            </View>
           </View>)
         }
       />

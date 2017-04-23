@@ -9,21 +9,29 @@ const TabComponent = props => {
   return (
     <View style={props.tab === 'create' ? styles.tabBar1 : styles.tabBar2}>
       <Icon
-        color={props.tab === 'feed' ? 'black' : '#5e6977'}
+        color={props.tab === 'feed' ? 'black' : 'gray'}
         name='list'
-        onPress={() => props.navigator.jumpTo(routes[2])}
+        onPress={() => {
+          console.log(routes)
+          props.navigator.jumpTo(routes[2])
+        }}
         size={33}
         underlayColor='transparent' />
       <Icon
-        color={props.tab === 'create' ? 'transparent' : '#5e6977'}
+        color={props.tab === 'create' ? 'transparent' : 'gray'}
         name='add-circle-outline'
-        onPress={() => props.tab === 'create' ? null : props.navigator.jumpTo(routes[1])}
+        onPress={() => props.tab === 'create' ?
+          null : props.navigator.jumpTo(routes[1])}
         size={33}
         underlayColor='transparent' />
       <Icon
-        color={props.tab === 'profile' ? 'black' : '#5e6977'}
+        color={props.tab === 'profile' ? 'black' : 'gray'}
         name='person'
-        onPress={() => props.navigator.jumpTo(routes[0])}
+        onPress={() => {
+          console.log(routes)
+          props.navigator.jumpTo(routes[0])
+        }
+        }
         size={33}
         underlayColor='transparent' />
     </View>

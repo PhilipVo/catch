@@ -52,22 +52,22 @@ export default class ProfileComponent extends Component {
     return (
       <View style={styles.avoidTop}>
         <View style={{ flex: 11 }}>
-          <UserComponent style={{ flex: 2 }} />
+          <UserComponent navigator={this.props.navigator} style={{ flex: 2 }} />
           <View style={styles.profileNavigator}>
             <Icon
-              color={this.state.component === 'ListComponent' ? 'black' : '#5e6977'}
+              color={this.state.component === 'ListComponent' ? 'black' : 'gray'}
               name='photo-camera'
               onPress={() => this.setState({ component: 'ListComponent' })}
               size={33}
               underlayColor='transparent' />
             <Icon
-              color={this.state.component === 'UpcomingComponent' ? 'black' : '#5e6977'}
+              color={this.state.component === 'UpcomingComponent' ? 'black' : 'gray'}
               name='card-giftcard'
               onPress={() => this.setState({ component: 'UpcomingComponent' })}
               size={33}
               underlayColor='transparent' />
             <Icon
-              color={this.state.component === 'NotificationComponent' ? 'black' : '#5e6977'}
+              color={this.state.component === 'NotificationComponent' ? 'black' : 'gray'}
               name='mail-outline'
               onPress={() => this.setState({ component: 'NotificationComponent' })}
               size={33}

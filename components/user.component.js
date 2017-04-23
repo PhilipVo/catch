@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, View } from 'react-native';
+import { Image, TouchableHighlight, View } from 'react-native';
 import { h4, Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles'
@@ -18,8 +18,17 @@ export default class UserComponent extends Component {
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
-        <View style={styles.avatarView}>
-          <Image source={{ uri: user.img }} style={styles.avatarImage} />
+        <View
+          style={styles.avatarView}>
+          <TouchableHighlight
+            TouchableHighlight
+            underlayColor='transparent'
+            onPress={() => {
+              {/*this.props.navigator.jumpTo(this.props.navigator.getCurrentRoutes()[2])*/ }
+              this.props.navigator.push({ component: 'AvatarComponent' })
+            }}>
+            <Image source={{ uri: user.img }} style={styles.avatarImage} />
+          </TouchableHighlight>
         </View>
         <View style={styles.userView}>
           <Text style={styles.username} > {user.username}</Text>
@@ -37,7 +46,7 @@ export default class UserComponent extends Component {
         </View>
         <View style={{ flex: 1 }}>
           <Icon
-            color='#5e6977'
+            color='gray'
             name='settings'
             onPress={() => { }}
             size={30}

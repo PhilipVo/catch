@@ -9,6 +9,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flex: 1
   },
+  avatarHeader: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row'
+  },
+  avatarHeaderText: {
+    fontSize: 16,
+    textAlign: 'center'
+  },
   avatarView: {
     alignItems: 'flex-end',
     flex: 1,
@@ -19,6 +28,7 @@ const styles = StyleSheet.create({
     height: 60,
     width: 60
   },
+  // USED IN MORE THAN ONE PLACE
   avoidTop: {
     flex: 1,
     paddingTop: 30
@@ -90,6 +100,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   tabBar2: {
+    backgroundColor: 'floralwhite',
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
     flex: 1,
