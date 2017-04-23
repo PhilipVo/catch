@@ -42,6 +42,12 @@ export default class ProfileComponent extends Component {
     );
   }
 
+  shouldDisplay(component) {
+    if (this.state.component === component)
+      return null;
+    return { display: 'none' };
+  }
+
   render() {
     return (
       <View style={styles.avoidTop}>
@@ -67,7 +73,17 @@ export default class ProfileComponent extends Component {
               size={33}
               underlayColor='transparent' />
           </View>
-          {this.renderComponent()}
+          <View style={{ flex: 10 }}>
+            <ListComponent
+              style={this.state.component === 'ListComponent'
+                ? null : { display: 'none' }} />
+            <UpcomingComponent
+              style={this.state.component === 'UpcomingComponent'
+                ? null : { display: 'none' }} />
+            <NotificationComponent
+              style={this.state.component === 'NotificaionComponent'
+                ? null : { display: 'none' }} />
+          </View>
         </View>
         <TabComponent navigator={this.props.navigator} tab={'profile'} />
       </View>

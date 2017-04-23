@@ -5,7 +5,7 @@ import { Icon, Text } from 'react-native-elements';
 import styles from '../styles/styles';
 
 import past from './sample-past';
-import upcoming from './sample-upcoming';
+import upcoming from './sample-past-contributions';
 
 export default class ListComponent extends Component {
   constructor(props) {
@@ -26,10 +26,11 @@ export default class ListComponent extends Component {
   render() {
     return (
       <ListView
+        style={this.props.style}
         dataSource={this.state.dataSource}
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
-          <Image style={styles.coverImage} source={{ uri: rowData.cover }}>
+          <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
             <Text style={styles.coverText}>{rowData.event}</Text>
           </Image>)
         }

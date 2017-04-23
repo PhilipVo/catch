@@ -15,6 +15,8 @@ import {
 
 import session from '../services/session.service';
 
+import styles from '../styles/styles';
+
 export default class LoginComponent extends Component {
   constructor(props) {
     super(props);
@@ -54,9 +56,10 @@ export default class LoginComponent extends Component {
   render() {
     console.ignoredYellowBox = ['Warning: You are manually'];
     return (
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'center' }}
-          behavior={'padding'}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={'padding'}
+          style={styles.keyboardAvoidingView}>
           <Text style={{ textAlign: 'center' }} h2>Catch</Text>
           <FormLabel>Email</FormLabel>
           <FormInput
@@ -75,14 +78,14 @@ export default class LoginComponent extends Component {
               {this.state.error}
             </FormValidationMessage>}
           <Button
-            buttonStyle={{ marginTop: 10 }}
             backgroundColor='black'
+            buttonStyle={{ marginTop: 10 }}
             onPress={this.login}
             small
             title='Login' />
           <Button
-            buttonStyle={{ marginTop: 10 }}
             backgroundColor='blue'
+            buttonStyle={{ marginTop: 10 }}
             icon={{ name: 'facebook-official', type: 'font-awesome' }}
             onPress={() => this.props.navigator.resetTo({ component: 'RegisterComponent' })}
             small

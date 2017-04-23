@@ -19,8 +19,7 @@ export default class UserComponent extends Component {
     return (
       <View style={{ flexDirection: 'row' }}>
         <View style={styles.avatarView}>
-          <Image style={styles.avatarImage}
-            source={{ uri: user.img }} />
+          <Image source={{ uri: user.img }} style={styles.avatarImage} />
         </View>
         <View style={styles.userView}>
           <Text style={styles.username} > {user.username}</Text>

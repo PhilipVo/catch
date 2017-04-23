@@ -38,17 +38,21 @@ export default class CameraComponent extends Component {
 
   render() {
     return (
-      <Camera style={styles.camera}
+      <Camera
         captureTarget={Camera.constants.CaptureTarget.temp}
         mirrorImage={this.state.mirror}
         ref={cam => this.camera = cam}
+        style={styles.camera}
         type={this.state.type} >
         <View style={styles.cameraView}>
-          <TouchableHighlight underlayColor='transparent' onPress={this.capture}>
+          <TouchableHighlight onPress={this.capture} underlayColor='transparent'>
             <View style={styles.cameraWhiteCircle} />
           </TouchableHighlight>
         </View>
-        <TabComponent capture={this.capture} navigator={this.props.navigator} tab={'create'} />
+        <TabComponent
+          capture={this.capture}
+          navigator={this.props.navigator}
+          tab='create' />
       </Camera>
     );
   }

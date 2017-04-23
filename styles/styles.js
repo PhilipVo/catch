@@ -64,20 +64,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     textAlign: 'center'
   },
-  tabBar1: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  },
-  tabBar2: {
-    borderTopColor: 'gray',
-    borderTopWidth: 0.5,
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  },
   hidden: {
     display: 'none'
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'center'
   },
   paddingTopBottom: {
     paddingBottom: 10,
@@ -86,6 +78,18 @@ const styles = StyleSheet.create({
   profileNavigator: {
     borderBottomColor: 'gray',
     borderBottomWidth: 0.5,
+    borderTopColor: 'gray',
+    borderTopWidth: 0.5,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  tabBar1: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  tabBar2: {
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
     flex: 1,
