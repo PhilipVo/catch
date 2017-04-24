@@ -1,30 +1,29 @@
 import React, { Component } from 'react';
 import { Navigator } from 'react-native';
 
-import AvatarComponent from './avatar.component';
 import CreateComponent from './create.component';
 import FeedComponent from './feed.component';
 import ProfileComponent from './profile.component';
 
 export default class MainComponent extends Component {
   configureScene(route, routeStack) {
-    if (route.component === 'AvatarComponent')
-      return Navigator.SceneConfigs.HorizontalSwipeJump
-    return {
-      gestures: null,
-      defaultTransitionVelocity: null,
-      springFriction: null,
-      springTension: 20000,
-      animationInterpolators: {
-        into: r => r.opacity = 1,
-        out: r => r.opacity = 1,
-      }
-    };
+    // if (route.component === 'AvatarComponent')
+    return Navigator.SceneConfigs.SwipeFromLeft;
+
+    // return {
+    //   gestures: null,
+    //   defaultTransitionVelocity: null,
+    //   springFriction: null,
+    //   springTension: 20000,
+    //   animationInterpolators: {
+    //     into: r => r.opacity = 1,
+    //     out: r => r.opacity = 1,
+    //   }
+    // };
   }
 
   renderScene(route, navigator) {
     switch (route.component) {
-      case 'AvatarComponent': return <AvatarComponent navigator={navigator} />
       case 'CreateComponent': return <CreateComponent navigator={navigator} />
       case 'FeedComponent': return <FeedComponent navigator={navigator} />
       case 'ProfileComponent': return <ProfileComponent navigator={navigator} />

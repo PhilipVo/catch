@@ -3043,9 +3043,19 @@ react-devtools-core@^2.0.8:
     cross-env "^3.1.4"
     ws "^2.0.3"
 
+react-native-animatable@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.1.1.tgz#00ddc72985f62f62a11a505abb1a06e77a92cd8a"
+
 react-native-camera@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-0.6.0.tgz#dd2760b7857d660761c78f2da575b494fdc8dcb5"
+
+react-native-display@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-display/-/react-native-display-1.0.8.tgz#e212d58faaafa75bd8a057d1e97381821c9bdafc"
+  dependencies:
+    react-native-animatable "^1.1.0"
 
 react-native-elements@^0.11.1:
   version "0.11.1"

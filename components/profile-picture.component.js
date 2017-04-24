@@ -4,7 +4,7 @@ import { Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles'
 
-export default class AvatarComponent extends Component {
+export default class ProfilePictureComponent extends Component {
   constructor(props) {
     super(props);
     this.state = { avatar: 'https://geo-media.beatport.com/image/8802230.jpg' };
@@ -12,7 +12,6 @@ export default class AvatarComponent extends Component {
 
   componentDidMount() {
     console.log('mounted avatar');
-    console.log(this.props.navigator.getCurrentRoutes())
   }
 
   componentWillUnMount() {
@@ -21,15 +20,14 @@ export default class AvatarComponent extends Component {
 
   render() {
     return (
-      <View style={styles.avoidTop}>
+      <View style={{ flex: 1 }}>
+
+        {/* Header */}
         <View style={styles.avatarHeader}>
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
-              onPress={() => {
-                this.props.navigator.pop();
-                this.props.navigator.jumpTo(this.props.navigator.getCurrentRoutes()[0]);
-              }}
+              onPress={() => this.props.setView('default')}
               size={40} />
           </View>
           <View style={{ flex: 10 }}>
@@ -37,10 +35,14 @@ export default class AvatarComponent extends Component {
           </View>
           <View style={{ flex: 1 }} />
         </View>
+
+        {/* Main image */}
         <View style={{ borderTopColor: 'gray', borderTopWidth: 1, borderBottomColor: 'gray', borderBottomWidth: 1, flex: 7 }}>
           <Image style={{ flex: 1 }} source={{ uri: this.state.avatar }}>
           </Image>
         </View>
+
+        {/* Camera roll */}
         <View style={{ flex: 4 }}>
           <View style={{ flex: 1, flexDirection: 'row' }}>
             <TouchableHighlight
@@ -68,6 +70,7 @@ export default class AvatarComponent extends Component {
                 source={{ uri: 'https://pbs.twimg.com/media/BwXoU63CIAAfPCj.jpg' }} />
             </TouchableHighlight>
           </View>
+
           <View style={{ flex: 1, flexDirection: 'row' }}>
             <TouchableHighlight
               style={{ flex: 1 }}
@@ -95,6 +98,7 @@ export default class AvatarComponent extends Component {
             </TouchableHighlight>
           </View>
         </View>
+
       </View>
     );
   }

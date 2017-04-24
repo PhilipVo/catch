@@ -6,7 +6,7 @@ import styles from '../styles/styles'
 
 import user from './sample-user';
 
-export default class UserComponent extends Component {
+export default class ProfileUserComponent extends Component {
   componentDidMount() {
     console.log('mounted user');
   }
@@ -23,10 +23,7 @@ export default class UserComponent extends Component {
           <TouchableHighlight
             TouchableHighlight
             underlayColor='transparent'
-            onPress={() => {
-              {/*this.props.navigator.jumpTo(this.props.navigator.getCurrentRoutes()[2])*/ }
-              this.props.navigator.push({ component: 'AvatarComponent' })
-            }}>
+            onPress={() => this.props.setView('picture')}>
             <Image source={{ uri: user.img }} style={styles.avatarImage} />
           </TouchableHighlight>
         </View>
@@ -48,7 +45,7 @@ export default class UserComponent extends Component {
           <Icon
             color='gray'
             name='settings'
-            onPress={() => { }}
+            onPress={() => this.props.setView('settings')}
             size={30}
             underlayColor='transparent' />
         </View>

@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10
   },
-  profileNavigator: {
+  profileListTab: {
     borderBottomColor: 'gray',
     borderBottomWidth: 0.5,
     borderTopColor: 'gray',

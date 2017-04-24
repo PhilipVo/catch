@@ -87,7 +87,7 @@ export default class FeedComponent extends Component {
             style={this.state.feed === 'past' ? { display: 'none' } : null}
           />
         </View>
-        <TabComponent navigator={this.props.navigator} tab={'feed'} />
+        <TabComponent navigator={this.props.navigator} tab='feed' />
       </View>
     );
   }
