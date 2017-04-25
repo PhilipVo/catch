@@ -4,6 +4,7 @@ import {
   Image,
   ListView,
   Text,
+  TouchableHighlight,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -21,7 +22,7 @@ export default class FeedUpcomingComponent extends Component {
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: upcoming,
-      dataSource: this.ds.cloneWithRows(upcoming)
+      dataSource: this.ds.cloneWithRows(upcoming),
     };
   }
 
@@ -41,41 +42,47 @@ export default class FeedUpcomingComponent extends Component {
 
   render() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        removeClippedSubviews={false}
-        renderRow={(rowData, sectionID, rowID) => (
-          <Image source={{ uri: rowData.cover }} style={styles.feedImage}>
-            <Text style={styles.feedText}>{rowData.event}</Text>
-            {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
+      <View>
+        <ListView
+          dataSource={this.state.dataSource}
+          removeClippedSubviews={false}
+          renderRow={(rowData, sectionID, rowID) => (
+            <TouchableHighlight
+              onPress={() => this.props.setSelected(rowData)}
+              underlayColor='transparent'>
+              <Image source={{ uri: rowData.cover }} style={styles.feedImage}>
+                <Text style={styles.feedText}>{rowData.event}</Text>
+                {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
 
-            {/* Timer */}
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.feedTimerText}>
-                  {moment(rowData.date).diff(Date.now(), 'days')}
-                </Text>
-                <Text style={styles.feedTimerText}>Days</Text>
-              </View>
-              <Text style={styles.feedTimerText}>:</Text>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.feedTimerText}>
-                  {moment(rowData.date).diff(Date.now(), 'hours') % 24}
-                </Text>
-                <Text style={styles.feedTimerText}>Hrs</Text>
-              </View>
-              <Text style={styles.feedTimerText}>:</Text>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.feedTimerText}>
-                  {moment(rowData.date).diff(Date.now(), 'minutes') % 60}
-                </Text>
-                <Text style={styles.feedTimerText}>Mins</Text>
-              </View>
-            </View>
-          </Image>)
-        }
-        style={this.props.style}
-      />
+                {/* Timer */}
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.feedTimerText}>
+                      {moment(rowData.date).diff(Date.now(), 'days')}
+                    </Text>
+                    <Text style={styles.feedTimerText}>Days</Text>
+                  </View>
+                  <Text style={styles.feedTimerText}>:</Text>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.feedTimerText}>
+                      {moment(rowData.date).diff(Date.now(), 'hours') % 24}
+                    </Text>
+                    <Text style={styles.feedTimerText}>Hrs</Text>
+                  </View>
+                  <Text style={styles.feedTimerText}>:</Text>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={styles.feedTimerText}>
+                      {moment(rowData.date).diff(Date.now(), 'minutes') % 60}
+                    </Text>
+                    <Text style={styles.feedTimerText}>Mins</Text>
+                  </View>
+                </View>
+              </Image>
+            </TouchableHighlight>)
+          }
+          style={this.props.style}
+        />
+      </View>
     );
   }
 }

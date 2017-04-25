@@ -1,3 +1,4 @@
+const moment = require('moment');
 import React, { Component } from 'react';
 import { Image, ListView, TouchableHighlight, View } from 'react-native';
 import { Button, Icon, Text } from 'react-native-elements';
@@ -10,15 +11,20 @@ export default class ProfileListUpcomingComponent extends Component {
   constructor(props) {
     super(props);
 
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: upcoming,
-      dataSource: ds.cloneWithRows(upcoming)
+      dataSource: this.ds.cloneWithRows(upcoming)
     }
   }
 
   componentDidMount() {
-    console.log('mounted upcoming');
+    setInterval(() => {
+      this.setState({
+        data: upcoming,
+        dataSource: this.ds.cloneWithRows(upcoming)
+      });
+    }, 1000);
   }
 
   render() {
@@ -27,7 +33,7 @@ export default class ProfileListUpcomingComponent extends Component {
         dataSource={this.state.dataSource}
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
-          <View style={{ marginBottom: 40 }}>
+          <View style={{ marginBottom: 20 }}>
             <Image
               source={{ uri: rowData.cover }}
               style={styles.upcomingImage}>
@@ -37,7 +43,7 @@ export default class ProfileListUpcomingComponent extends Component {
               }
             </Image>
 
-            {/* Header + sub-header */}
+            {/* Header */}
             <View style={styles.headerView}>
               <View>
                 <Text style={{ fontSize: 16 }}>{rowData.event}</Text>
@@ -54,23 +60,29 @@ export default class ProfileListUpcomingComponent extends Component {
               {/* Timer */}
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ color: 'red' }}>01</Text>
+                  <Text style={{ color: 'red' }}>
+                    {moment(rowData.date).diff(Date.now(), 'days')}
+                  </Text>
                   <Text style={{ color: 'red' }}>Days</Text>
                 </View>
                 <Text style={{ color: 'red' }}>:</Text>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ color: 'red' }}>22</Text>
+                  <Text style={{ color: 'red' }}>
+                    {moment(rowData.date).diff(Date.now(), 'hours') % 24}
+                  </Text>
                   <Text style={{ color: 'red' }}>Hrs</Text>
                 </View>
                 <Text style={{ color: 'red' }}>:</Text>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ color: 'red' }}>56</Text>
+                  <Text style={{ color: 'red' }}>
+                    {moment(rowData.date).diff(Date.now(), 'minutes') % 60}
+                  </Text>
                   <Text style={{ color: 'red' }}>Mins</Text>
                 </View>
               </View>
             </View>
 
-            <TouchableHighlight>
+            {/*<TouchableHighlight>
               <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                 <Text>Contributors</Text>
                 <Icon name='arrow-drop-down' />
@@ -95,8 +107,13 @@ export default class ProfileListUpcomingComponent extends Component {
                 <Text style={{ color: 'white' }}>Invite others to contribute </Text>
                 <Icon color='white' name='add' size={10} />
               </View>
-              <Text style={{ marginTop: 10, textAlign: 'justify' }}>{rowData.detail}</Text>
 
+            </View>*/}
+            <Text style={{ paddingHorizontal: 30, marginTop: 10, textAlign: 'justify' }}>{rowData.detail}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 }}>
+              <Icon name='chat-bubble-outline' size={25} />
+              <Icon name='people-outline' size={25} />
+              <Icon name='group-add' size={25} />
             </View>
           </View>)
         }
