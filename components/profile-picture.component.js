@@ -23,7 +23,7 @@ export default class ProfilePictureComponent extends Component {
       <View style={{ flex: 1 }}>
 
         {/* Header */}
-        <View style={styles.avatarHeader}>
+        <View style={styles.profileHeader}>
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
@@ -31,7 +31,7 @@ export default class ProfilePictureComponent extends Component {
               size={40} />
           </View>
           <View style={{ flex: 10 }}>
-            <Text style={styles.avatarHeaderText}>Change Profile Picture</Text>
+            <Text style={styles.profileText}>Change Profile Picture</Text>
           </View>
           <View style={{ flex: 1 }} />
         </View>

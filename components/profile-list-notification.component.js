@@ -4,9 +4,9 @@ import { Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles';
 
-export default class AvailableComponent extends Component {
+export default class ProfileListNotificationComponent extends Component {
   componentDidMount() {
-    console.log('mounted available');
+    console.log('mounted notification');
   }
 
   render() {

@@ -33,15 +33,13 @@ export default class ProfileComponent extends Component {
           <TabComponent navigator={this.props.navigator} tab='profile' />
         </Display>
 
-        {/* Picture view */}
-        <Display enable={this.state.view === 'picture'} style={{ flex: 11 }}>
-          <ProfilePictureComponent setView={this.setView} />
-        </Display>
-
-        {/*Settings view*/}
-        <Display enable={this.state.view === 'settings'} style={{ flex: 11 }}>
-          <ProfileSettingsComponent setView={this.setView} />
-        </Display>
+        {
+          this.state.view === 'picture' ?
+            <ProfilePictureComponent setView={this.setView} style={{ flex: 11 }} /> :
+            this.state.view === 'settings' ?
+              <ProfileSettingsComponent setView={this.setView} style={{ flex: 11 }} /> :
+              null
+        }
 
       </View>
     );

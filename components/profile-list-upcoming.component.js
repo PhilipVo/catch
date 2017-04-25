@@ -6,7 +6,7 @@ import styles from '../styles/styles';
 
 import upcoming from './sample-upcoming-contributions';
 
-export default class UpcomingComponent extends Component {
+export default class ProfileListUpcomingComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -24,21 +24,21 @@ export default class UpcomingComponent extends Component {
   render() {
     return (
       <ListView
-        style={this.props.style}
         dataSource={this.state.dataSource}
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
           <View style={{ marginBottom: 40 }}>
             <Image
               source={{ uri: rowData.cover }}
-              style={{
-                alignItems: 'flex-end',
-                height: 120,
-                justifyContent: 'flex-end'
-              }}>
-              <Icon color='white' name='play-circle-outline' size={33} />
+              style={styles.upcomingImage}>
+              {
+                rowData.isCreator ?
+                  <Icon color='white' name='play-circle-outline' size={33} /> : null
+              }
             </Image>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
+
+            {/* Header + sub-header */}
+            <View style={styles.headerView}>
               <View>
                 <Text style={{ fontSize: 16 }}>{rowData.event}</Text>
                 {
@@ -50,6 +50,8 @@ export default class UpcomingComponent extends Component {
                     <Text style={{ fontSize: 12 }}>You're following this event</Text>
                 }
               </View>
+
+              {/* Timer */}
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: 'red' }}>01</Text>
@@ -67,6 +69,7 @@ export default class UpcomingComponent extends Component {
                 </View>
               </View>
             </View>
+
             <TouchableHighlight>
               <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
                 <Text>Contributors</Text>
@@ -97,6 +100,7 @@ export default class UpcomingComponent extends Component {
             </View>
           </View>)
         }
+        style={this.props.style}
       />
     );
   }

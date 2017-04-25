@@ -19,17 +19,17 @@ export default class ProfileUserComponent extends Component {
     return (
       <View style={{ flexDirection: 'row' }}>
         <View
-          style={styles.avatarView}>
+          style={styles.profileUserView}>
           <TouchableHighlight
             TouchableHighlight
             underlayColor='transparent'
             onPress={() => this.props.setView('picture')}>
-            <Image source={{ uri: user.img }} style={styles.avatarImage} />
+            <Image source={{ uri: user.img }} style={styles.profileUserImage} />
           </TouchableHighlight>
         </View>
         <View style={styles.userView}>
           <Text style={styles.username} > {user.username}</Text>
-          <View style={styles.paddingTopBottom}>
+          <View style={{ paddingVertical: 10 }} >
             <View style={styles.userCounts}>
               <Text style={{ fontSize: 16 }}>{user.friends}</Text>
               <Text style={{ fontSize: 16 }}>{user.events}</Text>

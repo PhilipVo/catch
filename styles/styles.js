@@ -4,34 +4,18 @@ import {
 } from 'react-native';
 
 const styles = StyleSheet.create({
-  activeFeed: {
+  activeTab: {
     borderBottomColor: 'red',
     borderBottomWidth: 1,
     flex: 1
   },
-  avatarHeader: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row'
-  },
-  avatarHeaderText: {
-    fontSize: 16,
+  activeTabText: {
+    fontWeight: 'bold',
     textAlign: 'center'
   },
-  avatarView: {
-    alignItems: 'flex-end',
+  avoidTop: { // Used in multiple files
     flex: 1,
-    justifyContent: 'center'
-  },
-  avatarImage: {
-    borderRadius: 30,
-    height: 60,
-    width: 60
-  },
-  // USED IN MORE THAN ONE PLACE
-  avoidTop: {
-    flex: 1,
-    paddingTop: 30
+    paddingTop: 20
   },
   camera: {
     flex: 1,
@@ -50,29 +34,41 @@ const styles = StyleSheet.create({
     height: 90,
     width: 90
   },
-  coverImage: {
+  feedImage: {
     alignItems: 'flex-end',
     flexDirection: 'row',
     height: 120,
-    width: null
-  },
-  coverText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-    paddingLeft: 5,
-    textShadowColor: 'black',
-    textShadowOffset: { width: 1, height: 1 }
+    justifyContent: 'space-between'
   },
   feedTab: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 1
   },
+  feedText: { // Used in multiple files
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  feedTimerText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
   header: {
     fontSize: 16,
     paddingBottom: 10,
     textAlign: 'center'
+  },
+  headerView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10
   },
   hidden: {
     display: 'none'
@@ -81,9 +77,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center'
   },
-  paddingTopBottom: {
-    paddingBottom: 10,
-    paddingTop: 10
+  pastImage: {
+    height: 120,
+    justifyContent: 'space-between'
+  },
+  pastImageView: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  pastTimer: {
+    alignSelf: 'flex-end',
+    color: 'white',
+    fontWeight: 'bold',
+    paddingRight: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  profileHeader: { // Used in multiple files
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row'
+  },
+  profileText: { // Used in multiple files
+    fontSize: 16,
+    textAlign: 'center'
   },
   profileListTab: {
     borderBottomColor: 'gray',
@@ -94,12 +112,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around'
   },
-  tabBar1: {
+  profileUserImage: {
+    borderRadius: 30,
+    height: 60,
+    width: 60
+  },
+  profileUserView: {
+    alignItems: 'flex-end',
+    flex: 1,
+    justifyContent: 'center'
+  },
+  tab1: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around'
   },
-  tabBar2: {
+  tab2: {
     backgroundColor: 'floralwhite',
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
@@ -110,6 +138,11 @@ const styles = StyleSheet.create({
   tag: {
     fontSize: 12,
     textAlign: 'center'
+  },
+  upcomingImage: {
+    alignItems: 'flex-end',
+    height: 120,
+    justifyContent: 'flex-end'
   },
   userCounts: {
     flexDirection: 'row',
@@ -122,8 +155,7 @@ const styles = StyleSheet.create({
   userView: {
     flex: 3,
     justifyContent: 'center',
-    paddingBottom: 10,
-    paddingTop: 10
+    paddingVertical: 10
   }
 });
 

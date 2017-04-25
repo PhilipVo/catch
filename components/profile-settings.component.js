@@ -10,7 +10,7 @@ export default class ProfileSettingsComponent extends Component {
       <View style={{ flex: 1 }}>
 
         {/* Header */}
-        <View style={styles.avatarHeader}>
+        <View style={styles.profileHeader}>
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
@@ -18,7 +18,7 @@ export default class ProfileSettingsComponent extends Component {
               size={40} />
           </View>
           <View style={{ flex: 10 }}>
-            <Text style={styles.avatarHeaderText}>Settings</Text>
+            <Text style={styles.profileText}>Settings</Text>
           </View>
           <View style={{ flex: 1 }} />
         </View>

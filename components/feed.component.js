@@ -7,43 +7,24 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 
+import FeedPastComponent from './feed-past.component';
+import FeedUpcomingComponent from './feed-upcoming.component';
 import TabComponent from './tab.component';
 
 import http from '../services/http.service';
 
 import styles from '../styles/styles';
 
-import past from './sample-past';
-import upcoming from './sample-upcoming';
-
 export default class FeedComponent extends Component {
   constructor(props) {
     super(props);
-
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    this.state = {
-      pastData: past,
-      pastDataSource: ds.cloneWithRows(past),
-      upcomingData: upcoming,
-      upcomingDataSource: ds.cloneWithRows(upcoming),
-      feed: 'upcoming'
-    };
+    this.state = { tab: 'upcoming' };
   }
 
   componentDidMount() {
     console.log('mounted feed');
-  }
-
-  changeFeed = (feed) => {
-    if (this.state.feed !== feed) {
-      // const data = feed === 'past' ? past : upcoming;
-      this.setState({
-        // data: data,
-        // dataSource: this.state.dataSource.cloneWithRows(data),
-        feed: feed
-      });
-    }
   }
 
   render() {
@@ -51,41 +32,30 @@ export default class FeedComponent extends Component {
       <View style={styles.avoidTop}>
         <View style={{ flex: 11 }}>
           <Text style={styles.header}>Catch</Text>
+
+          {/* Tab bar */}
           <View style={styles.feedTab}>
             <TouchableHighlight
-              onPress={() => this.changeFeed('upcoming')}
-              style={this.state.feed === 'upcoming' ?
-                styles.activeFeed : { flex: 1 }}
+              onPress={() => this.setState({ tab: 'upcoming' })}
+              style={this.state.tab === 'upcoming' ?
+                styles.activeTab : { flex: 1 }}
               underlayColor='transparent'>
-              <Text style={{ textAlign: 'center' }}>Upcoming</Text>
+              <Text style={this.state.tab === 'upcoming' ?
+                styles.activeTabText : { textAlign: 'center' }}>Upcoming</Text>
             </TouchableHighlight>
             <TouchableHighlight
-              onPress={() => this.changeFeed('past')}
-              style={this.state.feed === 'past' ? styles.activeFeed : { flex: 1 }}
+              onPress={() => this.setState({ tab: 'past' })}
+              style={this.state.tab === 'past' ? styles.activeTab : { flex: 1 }}
               underlayColor='transparent'>
-              <Text style={{ textAlign: 'center' }}>Past</Text>
+              <Text style={this.state.tab === 'past' ?
+                styles.activeTabText : { textAlign: 'center' }}>Past</Text>
             </TouchableHighlight>
           </View>
-          <ListView
-            dataSource={this.state.pastDataSource}
-            removeClippedSubviews={false}
-            renderRow={(rowData, sectionID, rowID) => (
-              <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
-                <Text style={styles.coverText}>{rowData.event}</Text>
-              </Image>)
-            }
-            style={this.state.feed === 'upcoming' ? { display: 'none' } : null}
-          />
-          <ListView
-            dataSource={this.state.upcomingDataSource}
-            removeClippedSubviews={false}
-            renderRow={(rowData, sectionID, rowID) => (
-              <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
-                <Text style={styles.coverText}>{rowData.event}</Text>
-              </Image>)
-            }
-            style={this.state.feed === 'past' ? { display: 'none' } : null}
-          />
+
+          <FeedUpcomingComponent
+            style={this.state.tab === 'upcoming' ? null : { display: 'none' }} />
+          <FeedPastComponent
+            style={this.state.tab === 'past' ? null : { display: 'none' }} />
         </View>
         <TabComponent navigator={this.props.navigator} tab='feed' />
       </View>

@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native';
 import { Observable } from 'rxjs/Observable';
-import IO from 'socket.io-client/dist/socket.io';
+import IO from 'socket.io-client';
 
 import http from './http.service';
 
