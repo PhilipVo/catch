@@ -24,7 +24,7 @@ export default class ProfileListUpcomingComponent extends Component {
         data: upcoming,
         dataSource: this.ds.cloneWithRows(upcoming)
       });
-    }, 1000);
+    }, 60000);
   }
 
   render() {

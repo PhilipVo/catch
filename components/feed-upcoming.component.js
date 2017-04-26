@@ -32,7 +32,7 @@ export default class FeedUpcomingComponent extends Component {
         data: upcoming,
         dataSource: this.ds.cloneWithRows(upcoming)
       });
-    }, 1000);
+    }, 60000);
   }
 
   renderCountdowns = () => {
