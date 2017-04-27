@@ -5,7 +5,7 @@ import { Button, Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles';
 
-import upcoming from './sample-upcoming-contributions';
+import upcoming from '../samples/upcoming-contributions';
 
 export default class ProfileListUpcomingComponent extends Component {
   constructor(props) {

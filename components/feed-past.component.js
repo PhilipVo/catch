@@ -11,7 +11,7 @@ import http from '../services/http.service';
 
 import styles from '../styles/styles';
 
-import past from './sample-past';
+import past from '../samples/past';
 
 export default class FeedComponent extends Component {
   constructor(props) {

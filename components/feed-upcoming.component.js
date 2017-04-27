@@ -13,7 +13,7 @@ import http from '../services/http.service';
 
 import styles from '../styles/styles';
 
-import upcoming from './sample-upcoming';
+import upcoming from '../samples/upcoming';
 
 export default class FeedUpcomingComponent extends Component {
   constructor(props) {

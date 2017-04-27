@@ -8,6 +8,6 @@ export default class WelcomeComponent extends Component {
   render() {
     return (
       <Text>Hi</Text>
-    )
+    );
   }
 }

@@ -4,7 +4,7 @@ import { h4, Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles'
 
-import user from './sample-user';
+import user from '../samples/user';
 
 export default class ProfileUserComponent extends Component {
   componentDidMount() {

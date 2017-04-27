@@ -17,7 +17,7 @@ export default [
   },
   {
     img: 'https://media.licdn.com/mpr/mpr/shrink_100_100/AAEAAQAAAAAAAAkdAAAAJDk4ZTYyM2I4LTViODEtNGUxMC05NzQ5LTlkNWFlNTlkODdiZg.jpg',
-    comment: 'ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys'
+    comment: 'ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys '
   },
   {
     img: 'http://i.ebayimg.com/images/g/-FgAAOSw0e9UuX-P/s-l300.jpg',

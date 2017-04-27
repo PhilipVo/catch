@@ -1,18 +1,18 @@
 export default [
   {
-    cover: 'https://s-media-cache-ak0.pinimg.com/originals/97/45/c2/9745c28d9ad847fd001d3d9a6b727e51.jpg',
+    cover: 'https://media.giphy.com/media/PB9pBoDBQuAco/giphy.gif',
     event: 'Lisa Ann\'s Retirement',
     date: '2017-04-19T19:00:00Z',
     detail: 'I\m retiring today! Come and join me at my retirement party!'
   },
   {
-    cover: 'https://static1.comicvine.com/uploads/original/11119/111195216/5124343-1944820252-25890.jpg',
+    cover: 'https://i.makeagif.com/media/5-25-2015/A2LiQe.gif',
     event: 'Madison Ivy\'s Debut',
     date: '2017-05-25T12:01:00Z',
     detail: 'Madison\'s debut in the porn scene.'
   },
   {
-    cover: 'http://media-cache-ec0.pinimg.com/736x/23/b3/96/23b3969c960d561f2446a129b1d0ef53.jpg',
+    cover: 'http://gifspx.com/gifs-animados-x/gspx_menudo-culazo-que-tiene-christy-mack-04.gif',
     event: 'Christy\'s Cam Show',
     date: '2017-06-20T11:15:00Z',
     detail: 'Christy Mack\'s weekly cam show.'
