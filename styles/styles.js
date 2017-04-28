@@ -34,6 +34,21 @@ const styles = StyleSheet.create({
     height: 90,
     width: 90
   },
+  comment: {
+    backgroundColor: 'white',
+    flex: 1,
+    minHeight: 50,
+    padding: 10
+  },
+  commentImage: {
+    height: 50,
+    width: 50
+  },
+  commentView: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 2
+  },
   feedImage: {
     alignItems: 'flex-end',
     flexDirection: 'row',
@@ -76,6 +91,48 @@ const styles = StyleSheet.create({
   keyboardAvoidingView: {
     flex: 1,
     justifyContent: 'center'
+  },
+  modalView0: {
+    flex: 3,
+    padding: 20
+  },
+  modalView1: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  modalImage: {
+    alignItems: 'flex-end',
+    flex: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  modalText1: {
+    color: 'white',
+    fontSize: 12
+  },
+  modalText2: {
+    color: 'white',
+    fontSize: 10
+  },
+  modalText3: {
+    color: 'white',
+    fontSize: 16,
+    padding: 5
+  },
+  modalText4: {
+    color: 'white',
+    fontSize: 12,
+    marginTop: 10
+  },
+  modalTextInput: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderRadius: 5,
+    borderWidth: 1,
+    height: 40,
+    marginTop: 5,
+    padding: 10
   },
   pastImage: {
     height: 120,

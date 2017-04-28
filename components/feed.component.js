@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import FeedModalComponent from './feed-modal.component';
 import FeedPastComponent from './feed-past.component';
+import FeedPastModalComponent from './feed-past-modal.component';
 import FeedUpcomingComponent from './feed-upcoming.component';
+import FeedUpcomingModalComponent from './feed-upcoming-modal.component';
 import TabComponent from './tab.component';
 
 import http from '../services/http.service';
@@ -22,7 +23,7 @@ export default class FeedComponent extends Component {
     super(props);
 
     this.state = {
-      showModal: false,
+      modal: null,
       selected: null,
       tab: 'upcoming',
     };
@@ -56,11 +57,16 @@ export default class FeedComponent extends Component {
 
             <FeedUpcomingComponent
               setSelected={selected => this.setState({
-                showModal: true,
+                modal: 'upcoming',
                 selected: selected
               })}
               style={this.state.tab === 'upcoming' ? null : { display: 'none' }} />
+              
             <FeedPastComponent
+              setSelected={selected => this.setState({
+                modal: 'past',
+                selected: selected
+              })}
               style={this.state.tab === 'past' ? null : { display: 'none' }} />
 
           </View>
@@ -68,10 +74,14 @@ export default class FeedComponent extends Component {
         </View>
 
         {
-          this.state.showModal ?
-            <FeedModalComponent
+          this.state.modal === 'upcoming' ?
+            <FeedUpcomingModalComponent
               selected={this.state.selected}
-              hideModal={() => this.setState({ showModal: false })} /> :
+              hideModal={() => this.setState({ modal: null })} /> : 
+              this.state.modal === 'past' ?
+            <FeedPastModalComponent
+              selected={this.state.selected}
+              hideModal={() => this.setState({ modal: null })} /> :
             null
         }
 

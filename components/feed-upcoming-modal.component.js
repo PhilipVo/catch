@@ -6,11 +6,9 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ListView,
-  StatusBar,
   Switch,
   Text,
   TextInput,
-  TouchableHighlight,
   TouchableWithoutFeedback,
   View
 } from 'react-native';
@@ -27,7 +25,7 @@ import styles from '../styles/styles';
 
 import chat from '../samples/chat';
 
-export default class FeedmodalComponent extends Component {
+export default class FeedUpcomingModalComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -35,8 +33,7 @@ export default class FeedmodalComponent extends Component {
     this.state = {
       data: chat,
       dataSource: this.ds.cloneWithRows(chat),
-      comment: '',
-      isOpen: false,
+      comment: ''
     };
   }
 
@@ -51,32 +48,14 @@ export default class FeedmodalComponent extends Component {
       <Modal
         isOpen={true}
         onClosed={this.props.hideModal}
+        style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
         swipeArea={Dimensions.get('window').height / 2}
-        swipeToClose={true}
-        style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
-        <StatusBar hidden={true} />
-        {/*<Icon
-                color='white'
-                name='close'
-                onPress={() => this.setState({ isOpen: false })}
-                size={40}
-                style={{
-                  alignSelf: 'flex-start',
-                  marginTop: 10
-                }} />*/}
-
+        swipeToClose={true}>
         <KeyboardAvoidingView
           behavior={'padding'}
-          style={{ flex: 1 }}
-        >
-          <Image source={{ uri: this.props.selected.cover }} style={{
-            alignItems: 'flex-end',
-            flexDirection: 'row',
-            flex: 2,
-            justifyContent: 'space-between'
-          }}>
+          style={{ flex: 1 }}>
+          <Image source={{ uri: this.props.selected.cover }} style={styles.modalImage}>
             <Text style={styles.feedText}>{this.props.selected.event}</Text>
-            {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
 
             {/* Timer */}
             <View style={{ flexDirection: 'row' }}>
@@ -101,14 +80,12 @@ export default class FeedmodalComponent extends Component {
                 <Text style={styles.feedTimerText}>Mins</Text>
               </View>
             </View>
+
           </Image>
-          <View style={{ flex: 3, padding: 20 }}>
-            <View style={{
-              alignItems: 'center',
-              flexDirection: 'row',
-              justifyContent: 'space-between'
-            }}>
-              <Text style={{ color: 'white', fontSize: 12 }}>27 Following</Text>
+
+          <View style={styles.modalView0}>
+            <View style={styles.modalView1}>
+              <Text style={styles.modalText1}>27 Following</Text>
               <View style={{ alignItems: 'center' }}>
                 <Switch
                   onValueChange={(value) => this.setState({
@@ -118,34 +95,26 @@ export default class FeedmodalComponent extends Component {
                     }
                   })}
                   value={this.props.selected.isFollowing} />
-                <Text style={{ color: 'white', fontSize: 10 }}> Notifications</Text>
+                <Text style={styles.modalText2}> Notifications</Text>
               </View>
             </View>
 
-            <Text style={{ color: 'white', fontSize: 16, padding: 5 }}>{this.props.selected.detail}</Text>
-            <Text style={{ color: 'white', fontSize: 12, marginTop: 10 }}>Comments</Text>
+            <Text style={styles.modalText3}>{this.props.selected.detail}</Text>
+            <Text style={styles.modalText4}>Comments</Text>
 
+            {/* Comments */}
             <ListView
               dataSource={this.state.dataSource}
               ref={listView => _listView = listView}
               removeClippedSubviews={false}
               renderRow={(rowData, sectionID, rowID) => (
-                <View style={{ flexDirection: 'row', flex: 1, padding: 2 }}>
-                  <Image
-                    source={{ uri: rowData.img }}
-                    style={{
-                      height: 50,
-                      width: 50
-                    }}
-                  />
-                  <View style={{
-                    flex: 1
-                  }}>
-                    <Text style={{ backgroundColor: 'white', minHeight: 50, padding: 10 }}>{rowData.comment}</Text>
+                <View style={styles.commentView}>
+                  <Image source={{ uri: rowData.img }} style={styles.commentImage} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.comment}>{rowData.comment}</Text>
                   </View>
                 </View>
-              )}
-            />
+              )} />
 
             <TextInput
               autoCapitalize='sentences'
@@ -158,20 +127,10 @@ export default class FeedmodalComponent extends Component {
               }}
               placeholder='comment'
               returnKeyType='send'
-              style={{
-                height: 40,
-                borderColor: 'gray',
-                borderWidth: 1,
-                borderRadius: 5,
-                backgroundColor: 'white',
-                marginTop: 5,
-                padding: 10
-              }}
+              style={styles.modalTextInput}
               value={this.state.comment} />
           </View>
-
         </KeyboardAvoidingView>
-
       </Modal>
     );
   }

@@ -3,6 +3,7 @@ import {
   Image,
   ListView,
   Text,
+  TouchableHighlight,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -13,7 +14,7 @@ import styles from '../styles/styles';
 
 import past from '../samples/past';
 
-export default class FeedComponent extends Component {
+export default class FeedPastComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -34,10 +35,14 @@ export default class FeedComponent extends Component {
         dataSource={this.state.dataSource}
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
-          <Image source={{ uri: rowData.cover }} style={styles.feedImage}>
-            <Text style={styles.feedText}>{rowData.event}</Text>
-            <Icon color='white' name='play-circle-outline' size={33} />
-          </Image>)
+          <TouchableHighlight
+            onPress={() => this.props.setSelected(rowData)}
+            underlayColor='transparent'>
+            <Image source={{ uri: rowData.cover }} style={styles.feedImage}>
+              <Text style={styles.feedText}>{rowData.event}</Text>
+              <Icon color='white' name='play-circle-outline' size={33} />
+            </Image>
+          </TouchableHighlight>)
         }
         style={this.props.style}
       />
