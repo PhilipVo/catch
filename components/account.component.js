@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import Display from 'react-native-display';
 
-import ProfileListComponent from './profile-list.component';
-import ProfilePictureComponent from './profile-picture.component';
-import ProfileSettingsComponent from './profile-settings.component';
-import ProfileUserComponent from './profile-user.component';
+import AccountListComponent from './account-list.component';
+import AccountPictureComponent from './account-picture.component';
+import AccountSettingsComponent from './account-settings.component';
+import AccountUserComponent from './account-user.component';
 import TabComponent from './tab.component';
 
 import styles from '../styles/styles';
 
-export default class ProfileComponent extends Component {
+export default class AccountComponent extends Component {
   constructor(props) {
     super(props);
     this.state = { view: 'default' };
@@ -27,17 +27,17 @@ export default class ProfileComponent extends Component {
         {/* Default view */}
         <Display enable={this.state.view === 'default'} keepAlive style={{ flex: 1 }}>
           <View style={{ flex: 11 }}>
-            <ProfileUserComponent setView={this.setView} />
-            <ProfileListComponent />
+            <AccountUserComponent setView={this.setView} />
+            <AccountListComponent />
           </View>
-          <TabComponent navigator={this.props.navigator} tab='profile' />
+          <TabComponent navigator={this.props.navigator} tab='account' />
         </Display>
 
         {
           this.state.view === 'picture' ?
-            <ProfilePictureComponent setView={this.setView} style={{ flex: 11 }} /> :
+            <AccountPictureComponent setView={this.setView} style={{ flex: 11 }} /> :
             this.state.view === 'settings' ?
-              <ProfileSettingsComponent setView={this.setView} style={{ flex: 11 }} /> :
+              <AccountSettingsComponent setView={this.setView} style={{ flex: 11 }} /> :
               null
         }
 

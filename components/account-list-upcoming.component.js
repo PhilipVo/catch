@@ -1,13 +1,18 @@
 const moment = require('moment');
 import React, { Component } from 'react';
-import { Image, ListView, TouchableHighlight, View } from 'react-native';
+import {
+  Image,
+  ListView,
+  StyleSheet,
+  TouchableHighlight,
+  View
+} from 'react-native';
 import { Button, Icon, Text } from 'react-native-elements';
-
-import styles from '../styles/styles';
+import TimerMixin from 'react-timer-mixin';
 
 import upcoming from '../samples/upcoming-contributions';
 
-export default class ProfileListUpcomingComponent extends Component {
+export default class AccountListUpcomingComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -19,7 +24,7 @@ export default class ProfileListUpcomingComponent extends Component {
   }
 
   componentDidMount() {
-    setInterval(() => {
+    TimerMixin.setInterval(() => {
       this.setState({
         data: upcoming,
         dataSource: this.ds.cloneWithRows(upcoming)
@@ -36,7 +41,7 @@ export default class ProfileListUpcomingComponent extends Component {
           <View style={{ marginBottom: 20 }}>
             <Image
               source={{ uri: rowData.cover }}
-              style={styles.upcomingImage}>
+              style={styles.image}>
               {
                 rowData.isCreator ?
                   <Icon color='white' name='play-circle-outline' size={33} /> : null
@@ -44,7 +49,7 @@ export default class ProfileListUpcomingComponent extends Component {
             </Image>
 
             {/* Header */}
-            <View style={styles.headerView}>
+            <View style={styles.header}>
               <View>
                 <Text style={{ fontSize: 16 }}>{rowData.event}</Text>
                 {
@@ -109,7 +114,9 @@ export default class ProfileListUpcomingComponent extends Component {
               </View>
 
             </View>*/}
-            <Text style={{ paddingHorizontal: 30, marginTop: 10, textAlign: 'justify' }}>{rowData.detail}</Text>
+            <Text style={{ paddingHorizontal: 30, marginTop: 10, textAlign: 'justify' }}>
+              {rowData.detail}
+            </Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 }}>
               <Icon name='chat-bubble-outline' size={25} />
               <Icon name='people-outline' size={25} />
@@ -122,3 +129,16 @@ export default class ProfileListUpcomingComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10
+  },
+  image: {
+    alignItems: 'flex-end',
+    height: 120,
+    justifyContent: 'flex-end'
+  },
+});

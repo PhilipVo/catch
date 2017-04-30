@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
+import TimerMixin from 'react-timer-mixin';
 
 import FeedPastComponent from './feed-past.component';
 import FeedUpcomingComponent from './feed-upcoming.component';
@@ -38,7 +39,7 @@ export default class FeedUpcomingModalComponent extends Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
+    TimerMixin.setTimeout(() => {
       _listView.scrollToEnd();
     }, 1000);
   }

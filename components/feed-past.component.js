@@ -3,14 +3,13 @@ import {
   Image,
   ListView,
   Text,
+  StyleSheet,
   TouchableHighlight,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 import http from '../services/http.service';
-
-import styles from '../styles/styles';
 
 import past from '../samples/past';
 
@@ -38,8 +37,8 @@ export default class FeedPastComponent extends Component {
           <TouchableHighlight
             onPress={() => this.props.setSelected(rowData)}
             underlayColor='transparent'>
-            <Image source={{ uri: rowData.cover }} style={styles.feedImage}>
-              <Text style={styles.feedText}>{rowData.event}</Text>
+            <Image source={{ uri: rowData.cover }} style={styles.image}>
+              <Text style={styles.text}>{rowData.event}</Text>
               <Icon color='white' name='play-circle-outline' size={33} />
             </Image>
           </TouchableHighlight>)
@@ -49,3 +48,20 @@ export default class FeedPastComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  image: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    height: 120,
+    justifyContent: 'space-between'
+  },
+  text: { // Used in multiple files
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  }
+});

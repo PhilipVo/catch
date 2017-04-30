@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableHighlight, View } from 'react-native';
+import { StatusBar, TouchableHighlight, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 import styles from '../styles/styles';
@@ -8,6 +8,7 @@ const TabComponent = props => {
   const routes = props.navigator.getCurrentRoutes();
   return (
     <View style={props.tab === 'create' ? styles.tab1 : styles.tab2}>
+      <StatusBar hidden={props.hideStatusBar} />
       <Icon
         color={props.tab === 'feed' ? 'black' : 'gray'}
         name='list'
@@ -28,8 +29,7 @@ const TabComponent = props => {
         name='person'
         onPress={() => {
           props.navigator.jumpTo(routes[0])
-        }
-        }
+        }}
         size={33}
         underlayColor='transparent' />
     </View>

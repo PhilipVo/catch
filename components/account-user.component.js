@@ -6,7 +6,7 @@ import styles from '../styles/styles'
 
 import user from '../samples/user';
 
-export default class ProfileUserComponent extends Component {
+export default class AccountUserComponent extends Component {
   componentDidMount() {
     console.log('mounted user');
   }

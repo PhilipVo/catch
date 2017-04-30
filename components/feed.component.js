@@ -25,6 +25,7 @@ export default class FeedComponent extends Component {
     this.state = {
       modal: null,
       selected: null,
+      hideStatusBar: false,
       tab: 'upcoming',
     };
   }
@@ -58,31 +59,42 @@ export default class FeedComponent extends Component {
             <FeedUpcomingComponent
               setSelected={selected => this.setState({
                 modal: 'upcoming',
-                selected: selected
+                selected: selected,
+                hideStatusBar: true
               })}
               style={this.state.tab === 'upcoming' ? null : { display: 'none' }} />
-              
+
             <FeedPastComponent
               setSelected={selected => this.setState({
                 modal: 'past',
-                selected: selected
+                selected: selected,
+                hideStatusBar: true
               })}
               style={this.state.tab === 'past' ? null : { display: 'none' }} />
 
           </View>
-          <TabComponent navigator={this.props.navigator} tab='feed' />
+          <TabComponent
+            navigator={this.props.navigator}
+            hideStatusBar={this.state.hideStatusBar}
+            tab='feed' />
         </View>
 
         {
           this.state.modal === 'upcoming' ?
             <FeedUpcomingModalComponent
               selected={this.state.selected}
-              hideModal={() => this.setState({ modal: null })} /> : 
-              this.state.modal === 'past' ?
-            <FeedPastModalComponent
-              selected={this.state.selected}
-              hideModal={() => this.setState({ modal: null })} /> :
-            null
+              hideModal={() => this.setState({
+                modal: null,
+                hideStatusBar: false
+              })} /> :
+            this.state.modal === 'past' ?
+              <FeedPastModalComponent
+                selected={this.state.selected}
+                hideModal={() => this.setState({
+                  modal: null,
+                  hideStatusBar: false
+                })} /> :
+              null
         }
 
       </View>

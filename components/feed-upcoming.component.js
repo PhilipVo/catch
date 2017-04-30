@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import TimerMixin from 'react-timer-mixin';
 
 import http from '../services/http.service';
 
@@ -27,7 +28,7 @@ export default class FeedUpcomingComponent extends Component {
   }
 
   componentDidMount() {
-    setInterval(() => {
+    TimerMixin.setInterval(() => {
       this.setState({
         data: upcoming,
         dataSource: this.ds.cloneWithRows(upcoming)

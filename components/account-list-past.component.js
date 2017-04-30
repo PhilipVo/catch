@@ -1,13 +1,11 @@
 const moment = require('moment');
 import React, { Component } from 'react';
-import { Image, ListView, View } from 'react-native';
+import { Image, ListView, StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-
-import styles from '../styles/styles';
 
 import past from '../samples/past';
 
-export default class ProfileListPastComponent extends Component {
+export default class AccountListPastComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -15,7 +13,7 @@ export default class ProfileListPastComponent extends Component {
     this.state = {
       data: past,
       dataSource: ds.cloneWithRows(past)
-    }
+    };
   }
 
   componentDidMount() {
@@ -28,11 +26,11 @@ export default class ProfileListPastComponent extends Component {
         dataSource={this.state.dataSource}
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
-          <Image source={{ uri: rowData.cover }} style={styles.pastImage}>
+          <Image source={{ uri: rowData.cover }} style={styles.image}>
             <Text style={styles.pastTimer}>
               {moment(rowData.date).fromNow().toString()}
             </Text>
-            <View style={styles.pastImageView}>
+            <View style={styles.view}>
               <Text style={styles.feedText}>{rowData.event}</Text>
               <Icon color='white' name='play-circle-outline' size={33} />
             </View>
@@ -43,3 +41,15 @@ export default class ProfileListPastComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  image: {
+    height: 120,
+    justifyContent: 'space-between'
+  },
+  view: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
+});

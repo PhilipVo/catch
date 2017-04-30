@@ -4,7 +4,7 @@ import { Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles'
 
-export default class ProfilePictureComponent extends Component {
+export default class AccountPictureComponent extends Component {
   constructor(props) {
     super(props);
     this.state = { avatar: 'https://geo-media.beatport.com/image/8802230.jpg' };

@@ -4,7 +4,7 @@ import { Icon, Text } from 'react-native-elements';
 
 import styles from '../styles/styles'
 
-export default class ProfileSettingsComponent extends Component {
+export default class AccountSettingsComponent extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
