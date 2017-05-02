@@ -1,40 +1,30 @@
 import React, { Component } from 'react';
-import { Image, TouchableHighlight, View } from 'react-native';
+import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { h4, Icon, Text } from 'react-native-elements';
-
-import styles from '../styles/styles'
 
 import user from '../samples/user';
 
 export default class AccountUserComponent extends Component {
-  componentDidMount() {
-    console.log('mounted user');
-  }
-
-  componentWillUnMount() {
-    console.log('unmounted user')
-  }
-
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
         <View
-          style={styles.profileUserView}>
+          style={styles.avatarView}>
           <TouchableHighlight
             TouchableHighlight
             underlayColor='transparent'
             onPress={() => this.props.setView('picture')}>
-            <Image source={{ uri: user.img }} style={styles.profileUserImage} />
+            <Image source={{ uri: user.img }} style={styles.avatarImage} />
           </TouchableHighlight>
         </View>
-        <View style={styles.userView}>
+        <View style={styles.view}>
           <Text style={styles.username} > {user.username}</Text>
           <View style={{ paddingVertical: 10 }} >
-            <View style={styles.userCounts}>
+            <View style={styles.count}>
               <Text style={{ fontSize: 16 }}>{user.friends}</Text>
               <Text style={{ fontSize: 16 }}>{user.events}</Text>
             </View>
-            <View style={styles.userCounts}>
+            <View style={styles.count}>
               <Text style={{ fontSize: 10 }}>Friends</Text>
               <Text style={{ fontSize: 10 }}>Events</Text>
             </View>
@@ -53,3 +43,33 @@ export default class AccountUserComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  avatarView: {
+    alignItems: 'flex-end',
+    flex: 1,
+    justifyContent: 'center'
+  },
+  avatarImage: {
+    borderRadius: 30,
+    height: 60,
+    width: 60
+  },
+  count: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+  tag: {
+    fontSize: 12,
+    textAlign: 'center'
+  },
+  username: {
+    fontSize: 22,
+    textAlign: 'center'
+  },
+  view: {
+    flex: 3,
+    justifyContent: 'center',
+    paddingVertical: 10
+  }
+});

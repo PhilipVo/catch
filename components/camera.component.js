@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {
+  Dimensions,
   Image,
+  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -11,7 +13,6 @@ import { Icon } from 'react-native-elements';
 import TabComponent from './tab.component'
 
 import http from '../services/http.service';
-import styles from '../styles/styles';
 
 export default class CameraComponent extends Component {
   constructor(props) {
@@ -44,9 +45,9 @@ export default class CameraComponent extends Component {
         ref={cam => this.camera = cam}
         style={styles.camera}
         type={this.state.type} >
-        <View style={styles.cameraView}>
+        <View style={styles.view}>
           <TouchableHighlight onPress={this.capture} underlayColor='transparent'>
-            <View style={styles.cameraWhiteCircle} />
+            <View style={styles.button} />
           </TouchableHighlight>
         </View>
         <TabComponent
@@ -57,3 +58,23 @@ export default class CameraComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  camera: {
+    flex: 1,
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width
+  },
+  view: {
+    alignItems: 'center',
+    flex: 11,
+    justifyContent: 'flex-end'
+  },
+  button: {
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderRadius: 45,
+    borderWidth: 2,
+    height: 90,
+    width: 90
+  },
+});

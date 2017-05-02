@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Image, TouchableHighlight, View } from 'react-native';
+import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-
-import styles from '../styles/styles'
 
 export default class AccountSettingsComponent extends Component {
   render() {
@@ -10,7 +8,7 @@ export default class AccountSettingsComponent extends Component {
       <View style={{ flex: 1 }}>
 
         {/* Header */}
-        <View style={styles.profileHeader}>
+        <View style={styles.header}>
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
@@ -18,7 +16,7 @@ export default class AccountSettingsComponent extends Component {
               size={40} />
           </View>
           <View style={{ flex: 10 }}>
-            <Text style={styles.profileText}>Settings</Text>
+            <Text style={styles.text}>Settings</Text>
           </View>
           <View style={{ flex: 1 }} />
         </View>
@@ -27,3 +25,15 @@ export default class AccountSettingsComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row'
+  },
+  text: {
+    fontSize: 16,
+    textAlign: 'center'
+  }
+});

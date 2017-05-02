@@ -1,8 +1,6 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
-  Animated,
-  Dimensions,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -19,6 +17,7 @@ import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
 
 import FeedPastComponent from './feed-past.component';
+import FeedTimerBarComponent from './feed-timer-bar.component.js';
 import FeedUpcomingComponent from './feed-upcoming.component';
 import TabComponent from './tab.component';
 
@@ -31,10 +30,8 @@ export default class FeedPastModalComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 1,
-      item: story[0],
-      timerDownAnimation: new Animated.Value(1),
-      timerUpAnimation: new Animated.Value(0)
+      index: 0,
+      item: story[0]
     };
   }
 
@@ -65,66 +62,28 @@ export default class FeedPastModalComponent extends Component {
     this.setItem();
   }
 
-  renderTimerBar = () => {
-    let TimerBar = [];
-    for (let i = 0; i < story.length; i++) {
-      TimerBar.push(
-        <View
-          key={i}
-          ref='bar'
-          style={{
-            flex: 1,
-            borderRadius: 5,
-            height: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-            marginHorizontal: 1,
-          }}>
-          {
-            i === this.state.index - 1 ?
-              <View style={{
-                flex: 1,
-                borderRadius: 5,
-                flexDirection: 'row'
-              }}>
-                <Animated.View style={{
-                  backgroundColor: 'white',
-                  borderRadius: 5,
-                  flex: this.state.timerUpAnimation
-                }} />
-                <Animated.View style={{
-                  flex: this.state.timerDownAnimation
-                }} />
-              </View> : null
-          }
-        </View>
-      );
-    }
-
-    return TimerBar;
-  }
-
   setItem = () => {
     const currentItem = this.state.item;
-    const nextItem = story[this.state.index];
+    const nextItem = story[this.state.index + 1];
 
-    Animated.parallel([
-      Animated.timing(this.state.timerDownAnimation, {
-        toValue: 0,
-        duration: currentItem.duration
-      }),
-      Animated.timing(this.state.timerUpAnimation, {
-        toValue: 1,
-        duration: currentItem.duration
-      })
-    ]).start();
+    // Animated.parallel([
+    //   Animated.timing(this.state.timerDownAnimation, {
+    //     toValue: 0,
+    //     duration: currentItem.duration
+    //   }),
+    //   Animated.timing(this.state.timerUpAnimation, {
+    //     toValue: 1,
+    //     duration: currentItem.duration
+    //   })
+    // ]).start();
 
     if (nextItem) {
       this.interval = TimerMixin.setTimeout(() => {
         this.setState({
           index: this.state.index + 1,
           item: nextItem,
-          timerDownAnimation: new Animated.Value(1),
-          timerUpAnimation: new Animated.Value(0)
+          // timerDownAnimation: new Animated.Value(1),
+          // timerUpAnimation: new Animated.Value(0)
         });
       }, currentItem.duration);
     }
@@ -151,9 +110,11 @@ export default class FeedPastModalComponent extends Component {
             height: null,
           }}>
             <View style={{ paddingTop: 20, flex: 1 }}>
-              <View style={{ flexDirection: 'row' }}>
-                {this.renderTimerBar()}
-              </View>
+              <FeedTimerBarComponent
+                index={this.state.index}
+                length={story.length}
+                duration={this.state.item.duration}
+                story={story} />
 
               <Text style={{
                 backgroundColor: 'transparent',

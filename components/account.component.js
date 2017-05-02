@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Display from 'react-native-display';
 
 import AccountListComponent from './account-list.component';
@@ -7,8 +7,6 @@ import AccountPictureComponent from './account-picture.component';
 import AccountSettingsComponent from './account-settings.component';
 import AccountUserComponent from './account-user.component';
 import TabComponent from './tab.component';
-
-import styles from '../styles/styles';
 
 export default class AccountComponent extends Component {
   constructor(props) {
@@ -22,7 +20,7 @@ export default class AccountComponent extends Component {
 
   render() {
     return (
-      <View style={styles.avoidTop}>
+      <View style={styles.view}>
 
         {/* Default view */}
         <Display enable={this.state.view === 'default'} keepAlive style={{ flex: 1 }}>
@@ -45,3 +43,10 @@ export default class AccountComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  view: {
+    flex: 1,
+    paddingTop: 20
+  }
+});
