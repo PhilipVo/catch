@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 import styles from '../styles/styles';
 
 const TabComponent = props => {
-  const routes = props.navigator.getCurrentRoutes();
+  const routes = props.mainNavigator.getCurrentRoutes();
   return (
     <View style={props.tab === 'create' ? styles.tab1 : styles.tab2}>
       <StatusBar hidden={props.hideStatusBar} />
@@ -13,7 +13,7 @@ const TabComponent = props => {
         color={props.tab === 'feed' ? 'black' : 'gray'}
         name='list'
         onPress={() => {
-          props.navigator.jumpTo(routes[2])
+          props.mainNavigator.jumpTo(routes[2])
         }}
         size={33}
         underlayColor='transparent' />
@@ -21,14 +21,14 @@ const TabComponent = props => {
         color={props.tab === 'create' ? 'transparent' : 'gray'}
         name='add-circle-outline'
         onPress={() => props.tab === 'create' ?
-          null : props.navigator.jumpTo(routes[1])}
+          null : props.mainNavigator.jumpTo(routes[1])}
         size={33}
         underlayColor='transparent' />
       <Icon
-        color={props.tab === 'profile' ? 'black' : 'gray'}
+        color={props.tab === 'account' ? 'black' : 'gray'}
         name='person'
         onPress={() => {
-          props.navigator.jumpTo(routes[0])
+          props.mainNavigator.jumpTo(routes[0])
         }}
         size={33}
         underlayColor='transparent' />

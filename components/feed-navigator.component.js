@@ -20,12 +20,16 @@ export default class FeedNavigatorComponent extends Component {
     };
   }
 
-  renderScene(route, navigator) {
+  renderScene = (route, navigator) => {
     switch (route.component) {
       case 'FeedComponent':
-        return <FeedComponent navigator={navigator} />
+        return <FeedComponent
+          mainNavigator={this.props.navigator}
+          navigator={navigator} />
       default:
-        return <FeedComponent navigator={navigator} />
+        return <FeedComponent
+          mainNavigator={this.props.navigator}
+          navigator={navigator} />
     };
   }
 

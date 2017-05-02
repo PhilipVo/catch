@@ -30,7 +30,7 @@ export default class AccountComponent extends Component {
             <AccountUserComponent setView={this.setView} />
             <AccountListComponent />
           </View>
-          <TabComponent navigator={this.props.navigator} tab='account' />
+          <TabComponent mainNavigator={this.props.mainNavigator} tab='account' />
         </Display>
 
         {

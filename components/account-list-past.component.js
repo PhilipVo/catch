@@ -27,11 +27,11 @@ export default class AccountListPastComponent extends Component {
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
           <Image source={{ uri: rowData.cover }} style={styles.image}>
-            <Text style={styles.pastTimer}>
+            <Text style={styles.timer}>
               {moment(rowData.date).fromNow().toString()}
             </Text>
             <View style={styles.view}>
-              <Text style={styles.feedText}>{rowData.event}</Text>
+              <Text style={styles.text}>{rowData.event}</Text>
               <Icon color='white' name='play-circle-outline' size={33} />
             </View>
           </Image>)
@@ -46,6 +46,22 @@ const styles = StyleSheet.create({
   image: {
     height: 120,
     justifyContent: 'space-between'
+  },
+  text: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  timer: {
+    alignSelf: 'flex-end',
+    color: 'white',
+    fontWeight: 'bold',
+    paddingRight: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
   },
   view: {
     alignItems: 'flex-end',

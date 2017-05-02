@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Image, TouchableHighlight, View } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  TouchableHighlight,
+  View
+} from 'react-native';
 import { Icon, Text } from 'react-native-elements';
-
-import styles from '../styles/styles'
 
 export default class AccountPictureComponent extends Component {
   constructor(props) {
@@ -10,20 +13,12 @@ export default class AccountPictureComponent extends Component {
     this.state = { avatar: 'https://geo-media.beatport.com/image/8802230.jpg' };
   }
 
-  componentDidMount() {
-    console.log('mounted avatar');
-  }
-
-  componentWillUnMount() {
-    console.log('unmounted avatar')
-  }
-
   render() {
     return (
       <View style={{ flex: 1 }}>
 
         {/* Header */}
-        <View style={styles.profileHeader}>
+        <View style={styles.header}>
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
@@ -31,20 +26,20 @@ export default class AccountPictureComponent extends Component {
               size={40} />
           </View>
           <View style={{ flex: 10 }}>
-            <Text style={styles.profileText}>Change Profile Picture</Text>
+            <Text style={styles.headerText}>Change Profile Picture</Text>
           </View>
           <View style={{ flex: 1 }} />
         </View>
 
         {/* Main image */}
-        <View style={{ borderTopColor: 'gray', borderTopWidth: 1, borderBottomColor: 'gray', borderBottomWidth: 1, flex: 7 }}>
+        <View style={styles.image}>
           <Image style={{ flex: 1 }} source={{ uri: this.state.avatar }}>
           </Image>
         </View>
 
         {/* Camera roll */}
         <View style={{ flex: 4 }}>
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={styles.row}>
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
@@ -71,7 +66,7 @@ export default class AccountPictureComponent extends Component {
             </TouchableHighlight>
           </View>
 
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={styles.row}>
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
@@ -103,3 +98,26 @@ export default class AccountPictureComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row'
+  },
+  headerText: {
+    fontSize: 16,
+    textAlign: 'center'
+  },
+  image: {
+    borderTopColor: 'gray',
+    borderTopWidth: 1,
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+    flex: 7
+  },
+  row: {
+    flex: 1,
+    flexDirection: 'row'
+  }
+});

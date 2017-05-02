@@ -51,7 +51,7 @@ export default class CameraComponent extends Component {
         </View>
         <TabComponent
           capture={this.capture}
-          navigator={this.props.navigator}
+          mainNavigator={this.props.mainNavigator}
           tab='create' />
       </Camera>
     );

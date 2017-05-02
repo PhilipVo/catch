@@ -22,7 +22,7 @@ export default class AccountNavigatorComponent extends Component {
     };
   }
 
-  renderScene(route, navigator) {
+  renderScene = (route, navigator) => {
     switch (route.component) {
       case 'AccountComponent':
         return <AccountComponent

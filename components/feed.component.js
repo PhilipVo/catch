@@ -74,7 +74,7 @@ export default class FeedComponent extends Component {
 
           </View>
           <TabComponent
-            navigator={this.props.navigator}
+            mainNavigator={this.props.mainNavigator}
             hideStatusBar={this.state.hideStatusBar}
             tab='feed' />
         </View>

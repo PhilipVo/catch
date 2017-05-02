@@ -114,10 +114,8 @@ export default class AccountListUpcomingComponent extends Component {
               </View>
 
             </View>*/}
-            <Text style={{ paddingHorizontal: 30, marginTop: 10, textAlign: 'justify' }}>
-              {rowData.detail}
-            </Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 }}>
+            <Text style={styles.detailText}>{rowData.detail}</Text>
+            <View style={styles.iconView}>
               <Icon name='chat-bubble-outline' size={25} />
               <Icon name='people-outline' size={25} />
               <Icon name='group-add' size={25} />
@@ -131,10 +129,20 @@ export default class AccountListUpcomingComponent extends Component {
 }
 
 const styles = StyleSheet.create({
+  detailText: {
+    paddingHorizontal: 30,
+    marginTop: 10,
+    textAlign: 'justify'
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10
+  },
+  iconView: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10
   },
   image: {
     alignItems: 'flex-end',
