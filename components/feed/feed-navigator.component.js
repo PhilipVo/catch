@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Navigator } from 'react-native';
 
 import FeedComponent from './feed.component';
+import StoryComponent from '../common/story.component';
 
 export default class FeedNavigatorComponent extends Component {
   configureScene(route, routeStack) {
-    // if (route.component === 'AvatarComponent')
-    // return Navigator.SceneConfigs.SwipeFromLeft;
+    if (route.component === 'StoryComponent')
+      return Navigator.SceneConfigs.VerticalUpSwipeJump;
 
     return {
       animationInterpolators: {
@@ -20,16 +21,20 @@ export default class FeedNavigatorComponent extends Component {
     };
   }
 
-  renderScene = (route, navigator) => {
+  renderScene = (route, feedNavigator) => {
     switch (route.component) {
       case 'FeedComponent':
         return <FeedComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          feedNavigator={feedNavigator}
+          navigator={this.props.navigator} />
+      case 'StoryComponent':
+        return <StoryComponent
+          feedNavigator={feedNavigator}
+          selected={route.selected} />
       default:
         return <FeedComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          feedNavigator={feedNavigator}
+          navigator={this.props.navigator} />
     };
   }
 

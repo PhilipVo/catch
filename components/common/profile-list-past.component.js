@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import { Image, ListView, StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 
-import past from '../samples/past';
+import past from '../../samples/past';
 
-export default class AccountListPastComponent extends Component {
+export default class ProfileListPastComponent extends Component {
   constructor(props) {
     super(props);
 

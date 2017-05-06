@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { h4, Icon, Text } from 'react-native-elements';
 
-import user from '../samples/user';
+import user from '../../samples/user';
 
-export default class AccountUserComponent extends Component {
+export default class ProfileDetailsComponent extends Component {
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -13,7 +13,7 @@ export default class AccountUserComponent extends Component {
           <TouchableHighlight
             TouchableHighlight
             underlayColor='transparent'
-            onPress={() => this.props.setView('picture')}>
+            onPress={() => this.props.accountNavigator.push({component: 'AccountPictureComponent'})}>
             <Image source={{ uri: user.img }} style={styles.avatarImage} />
           </TouchableHighlight>
         </View>
@@ -35,7 +35,7 @@ export default class AccountUserComponent extends Component {
           <Icon
             color='gray'
             name='settings'
-            onPress={() => this.props.setView('settings')}
+            onPress={() => this.props.accountNavigator.push({component: 'AccountSettingsComponent'})}
             size={30}
             underlayColor='transparent' />
         </View>

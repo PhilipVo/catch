@@ -6,25 +6,21 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ListView,
+  StyleSheet,
   Switch,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
 
-import FeedPastComponent from './feed-past.component';
-import FeedUpcomingComponent from './feed-upcoming.component';
-import TabComponent from './tab.component';
+import TabComponent from '../common/tab.component';
 
-import http from '../services/http.service';
+import http from '../../services/http.service';
 
-import styles from '../styles/styles';
-
-import chat from '../samples/chat';
+import chat from '../../samples/chat';
 
 export default class FeedUpcomingModalComponent extends Component {
   constructor(props) {
@@ -55,33 +51,32 @@ export default class FeedUpcomingModalComponent extends Component {
         <KeyboardAvoidingView
           behavior={'padding'}
           style={{ flex: 1 }}>
-          <Image source={{ uri: this.props.selected.cover }} style={styles.modalImage}>
-            <Text style={styles.feedText}>{this.props.selected.event}</Text>
+          <Image source={{ uri: this.props.selected.cover }} style={styles.mainImage}>
+            <Text style={styles.eventText}>{this.props.selected.event}</Text>
 
             {/* Timer */}
             <View style={{ flexDirection: 'row' }}>
               <View style={{ alignItems: 'center' }}>
-                <Text style={styles.feedTimerText}>
+                <Text style={styles.timerText}>
                   {moment(this.props.selected.date).diff(Date.now(), 'days')}
                 </Text>
-                <Text style={styles.feedTimerText}>Days</Text>
+                <Text style={styles.timerText}>Days</Text>
               </View>
-              <Text style={styles.feedTimerText}>:</Text>
+              <Text style={styles.timerText}>:</Text>
               <View style={{ alignItems: 'center' }}>
-                <Text style={styles.feedTimerText}>
+                <Text style={styles.timerText}>
                   {moment(this.props.selected.date).diff(Date.now(), 'hours') % 24}
                 </Text>
-                <Text style={styles.feedTimerText}>Hrs</Text>
+                <Text style={styles.timerText}>Hrs</Text>
               </View>
-              <Text style={styles.feedTimerText}>:</Text>
+              <Text style={styles.timerText}>:</Text>
               <View style={{ alignItems: 'center' }}>
-                <Text style={styles.feedTimerText}>
+                <Text style={styles.timerText}>
                   {moment(this.props.selected.date).diff(Date.now(), 'minutes') % 60}
                 </Text>
-                <Text style={styles.feedTimerText}>Mins</Text>
+                <Text style={styles.timerText}>Mins</Text>
               </View>
             </View>
-
           </Image>
 
           <View style={styles.modalView0}>
@@ -136,3 +131,78 @@ export default class FeedUpcomingModalComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  comment: {
+    backgroundColor: 'white',
+    flex: 1,
+    minHeight: 50,
+    padding: 10
+  },
+  commentImage: {
+    height: 50,
+    width: 50
+  },
+  commentView: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 2
+  },
+  eventText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  mainImage: {
+    alignItems: 'flex-end',
+    flex: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  modalText1: {
+    color: 'white',
+    fontSize: 12
+  },
+  modalText2: {
+    color: 'white',
+    fontSize: 10
+  },
+  modalText3: {
+    color: 'white',
+    fontSize: 16,
+    padding: 5
+  },
+  modalText4: {
+    color: 'white',
+    fontSize: 12,
+    marginTop: 10
+  },
+  modalTextInput: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderRadius: 5,
+    borderWidth: 1,
+    height: 40,
+    marginTop: 5,
+    padding: 10
+  },
+  modalView0: {
+    flex: 3,
+    padding: 20
+  },
+  modalView1: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  timerText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  }
+});

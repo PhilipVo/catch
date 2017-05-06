@@ -10,7 +10,7 @@ import {
 import { Button, Icon, Text } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
-import upcoming from '../samples/upcoming-contributions';
+import upcoming from '../../samples/upcoming-contributions';
 
 export default class AccountListUpcomingComponent extends Component {
   constructor(props) {

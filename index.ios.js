@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import LoginComponent from './components/login.component';
-import MainNavigatorComponent from './components/main-navigator.component';
+import NavigatorComponent from './components/navigator.component';
 import RegisterComponent from './components/register.component';
 import WelcomeComponent from './components/welcome.component';
 
@@ -23,7 +23,7 @@ export default class Catch extends Component {
       .then(catchToken => {
         if (catchToken) {
           session.setSession(catchToken);
-          this.setState({ initialComponent: 'MainComponent' });
+          this.setState({ initialComponent: 'NavigatorComponent' });
         }
       })
       .catch(error => console.log(error));
@@ -32,7 +32,7 @@ export default class Catch extends Component {
   renderScene(route, navigator) {
     switch (route.component) {
       case 'LoginComponent': return <LoginComponent navigator={navigator} />
-      case 'MainComponent': return <MainComponent navigator={navigator} />
+      case 'NavigatorComponent': return <NavigatorComponent navigator={navigator} />
       case 'RegisterComponent': return <RegisterComponent navigator={navigator} />
       case 'WelcomeComponent': return <WelcomeComponent navigator={navigator} />
     }
@@ -46,7 +46,7 @@ export default class Catch extends Component {
           renderScene={(route, navigator) => this.renderScene(route, navigator)}
           configureScene={(route, routeStack) => Navigator.SceneConfigs.FadeAndroid}
         /> :
-        <MainNavigatorComponent />
+        <NavigatorComponent />
     );
   }
 }

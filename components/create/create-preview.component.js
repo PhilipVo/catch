@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
-import { Image, TouchableHighlight, Text, View } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View
+} from 'react-native';
 
-import http from '../services/http.service';
+import http from '../../services/http.service';
 
-export default class PreviewComponent extends Component {
+export default class CreatePreviewComponent extends Component {
   componentDidMount() {
     console.log('mounted preview')
   }
@@ -29,7 +35,7 @@ export default class PreviewComponent extends Component {
   }
 }
 
-const styles = {
+const styles = StyleSheet.create({
   image0: { flex: 1 },
   image1: {
     height: 50,
@@ -43,4 +49,4 @@ const styles = {
     justifyContent: 'space-between',
     padding: 10
   }
-};
+});

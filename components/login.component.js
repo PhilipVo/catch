@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
+  StyleSheet,
   TouchableWithoutFeedback,
   View
 } from 'react-native';
@@ -14,8 +15,6 @@ import {
 } from 'react-native-elements';
 
 import session from '../services/session.service';
-
-import styles from '../styles/styles';
 
 export default class LoginComponent extends Component {
   constructor(props) {
@@ -95,3 +94,10 @@ export default class LoginComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'center'
+  }
+});

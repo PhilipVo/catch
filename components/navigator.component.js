@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Navigator } from 'react-native';
 
-import AccountNavigatorComponent from './account-navigator.component';
-import CreateNavigatorComponent from './create-navigator.component';
-import FeedNavigatorComponent from './feed-navigator.component';
+import AccountNavigatorComponent from './account/account-navigator.component';
+import CreateNavigatorComponent from './create/create-navigator.component';
+import FeedNavigatorComponent from './feed/feed-navigator.component';
 
-export default class MainNavigatorComponent extends Component {
+export default class NavigatorComponent extends Component {
   configureScene(route, routeStack) {
     // if (route.component === 'AvatarComponent')
     // return Navigator.SceneConfigs.SwipeFromLeft;

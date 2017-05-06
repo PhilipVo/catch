@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {
   Image,
   ListView,
+  StyleSheet,
   Text,
   TouchableHighlight,
   View
@@ -10,11 +11,9 @@ import {
 import { Icon } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
-import http from '../services/http.service';
+import http from '../../services/http.service';
 
-import styles from '../styles/styles';
-
-import upcoming from '../samples/upcoming';
+import upcoming from '../../samples/upcoming';
 
 export default class FeedUpcomingComponent extends Component {
   constructor(props) {
@@ -50,31 +49,31 @@ export default class FeedUpcomingComponent extends Component {
           <TouchableHighlight
             onPress={() => this.props.setSelected(rowData)}
             underlayColor='transparent'>
-            <Image source={{ uri: rowData.cover }} style={styles.feedImage}>
-              <Text style={styles.feedText}>{rowData.event}</Text>
+            <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
+              <Text style={styles.eventText}>{rowData.event}</Text>
               {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
 
               {/* Timer */}
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.feedTimerText}>
+                  <Text style={styles.timerText}>
                     {moment(rowData.date).diff(Date.now(), 'days')}
                   </Text>
-                  <Text style={styles.feedTimerText}>Days</Text>
+                  <Text style={styles.timerText}>Days</Text>
                 </View>
-                <Text style={styles.feedTimerText}>:</Text>
+                <Text style={styles.timerText}>:</Text>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.feedTimerText}>
+                  <Text style={styles.timerText}>
                     {moment(rowData.date).diff(Date.now(), 'hours') % 24}
                   </Text>
-                  <Text style={styles.feedTimerText}>Hrs</Text>
+                  <Text style={styles.timerText}>Hrs</Text>
                 </View>
-                <Text style={styles.feedTimerText}>:</Text>
+                <Text style={styles.timerText}>:</Text>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.feedTimerText}>
+                  <Text style={styles.timerText}>
                     {moment(rowData.date).diff(Date.now(), 'minutes') % 60}
                   </Text>
-                  <Text style={styles.feedTimerText}>Mins</Text>
+                  <Text style={styles.timerText}>Mins</Text>
                 </View>
               </View>
             </Image>
@@ -85,3 +84,27 @@ export default class FeedUpcomingComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  coverImage: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    height: 120,
+    justifyContent: 'space-between'
+  },
+  eventText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  timerText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  }
+});

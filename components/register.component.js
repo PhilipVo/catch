@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
+  StyleSheet,
   TouchableWithoutFeedback,
   View
 } from 'react-native';
@@ -56,7 +57,7 @@ export default class RegisterComponent extends Component {
     console.ignoredYellowBox = ['Warning: You are manually'];
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'center' }}
+        <KeyboardAvoidingView style={styles.keyboardAvoidingView}
           behavior={'padding'}>
           <Text style={{ textAlign: 'center' }} h2>Catch</Text>
           <FormLabel>Username</FormLabel>
@@ -98,3 +99,10 @@ export default class RegisterComponent extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'center'
+  }
+});

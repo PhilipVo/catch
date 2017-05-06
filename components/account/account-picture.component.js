@@ -22,7 +22,7 @@ export default class AccountPictureComponent extends Component {
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
-              onPress={() => this.props.setView('default')}
+              onPress={this.props.accountNavigator.pop}
               size={40} />
           </View>
           <View style={{ flex: 10 }}>

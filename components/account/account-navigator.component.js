@@ -7,8 +7,9 @@ import AccountSettingsComponent from './account-settings.component';
 
 export default class AccountNavigatorComponent extends Component {
   configureScene(route, routeStack) {
-    // if (route.component === 'AvatarComponent')
-    // return Navigator.SceneConfigs.SwipeFromLeft;
+    if (route.component === 'AccountPictureComponent' ||
+      route.component === 'AccountSettingsComponent')
+      return Navigator.SceneConfigs.HorizontalSwipeJump;
 
     return {
       animationInterpolators: {
@@ -22,24 +23,24 @@ export default class AccountNavigatorComponent extends Component {
     };
   }
 
-  renderScene = (route, navigator) => {
+  renderScene = (route, accountNavigator) => {
     switch (route.component) {
       case 'AccountComponent':
         return <AccountComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          navigator={this.props.navigator}
+          accountNavigator={accountNavigator} />
       case 'AccountPictureComponent':
         return <AccountPictureComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          navigator={this.props.navigator}
+          accountNavigator={accountNavigator} />
       case 'AccountSettingsComponent':
         return <AccountSettingsComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          navigator={this.props.navigator}
+          accountNavigator={accountNavigator} />
       default:
         return <AccountComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          navigator={this.props.navigator}
+          accountNavigator={accountNavigator} />
     };
   }
 

@@ -20,16 +20,16 @@ export default class CreateNavigatorComponent extends Component {
     };
   }
 
-  renderScene = (route, navigator) => {
+  renderScene = (route, createNavigator) => {
     switch (route.component) {
       case 'CreateComponent':
         return <CreateComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          navigator={this.props.navigator}
+          createNavigator={createNavigator} />
       default:
         return <CreateComponent
-          mainNavigator={this.props.navigator}
-          navigator={navigator} />
+          navigator={this.props.navigator}
+          createNavigator={createNavigator} />
     };
   }
 
