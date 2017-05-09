@@ -6,6 +6,7 @@ import AccountDetailsComponent from './account-details.component';
 import AccountListComponent from './account-list.component';
 import AccountPictureComponent from './account-picture.component';
 import AccountSettingsComponent from './account-settings.component';
+import PastModalComponent from '../common/past-modal.component';
 import TabComponent from '../common/tab.component';
 
 export default class AccountComponent extends Component {
@@ -22,7 +23,9 @@ export default class AccountComponent extends Component {
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
             <AccountDetailsComponent accountNavigator={this.props.accountNavigator} />
-            <AccountListComponent accountNavigator={this.props.accountNavigator} />
+            <AccountListComponent
+              accountNavigator={this.props.accountNavigator}
+              onPress={selected => this.setState({ selected: selected })} />
           </View>
           <TabComponent navigator={this.props.navigator} tab='account' />
         </View>
@@ -30,13 +33,11 @@ export default class AccountComponent extends Component {
         {
           this.state.selected ?
             <PastModalComponent
-              hideModal={() => this.setState({
-                selected: null,
-                hideStatusBar: false
-              })}
+              hideModal={() => this.setState({ selected: null })}
               selected={this.state.selected} /> :
             null
         }
+
       </View>
     );
   }

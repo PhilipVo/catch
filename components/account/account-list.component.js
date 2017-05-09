@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import AccountListNotificationComponent from './account-list-notification.component';
-import AccountListUpcomingComponent from './account-list-upcoming.component';
+import AccountNotificationListComponent from './account-notification-list.component';
+import AccountUpcomingListComponent from './account-upcoming-list.component';
 import PastListComponent from '../common/past-list.component';
 
 export default class AccountListComponent extends Component {
@@ -41,13 +41,13 @@ export default class AccountListComponent extends Component {
         {/* Tabs */}
         <View style={{ flex: 10 }}>
           <PastListComponent
-            onPress={selected => this.setState({ selected: selected })}
+            onPress={this.props.onPress}
             style={this.state.tab === 'past'
               ? null : { display: 'none' }} />
-          <AccountListUpcomingComponent
+          <AccountUpcomingListComponent
             style={this.state.tab === 'upcoming'
               ? null : { display: 'none' }} />
-          <AccountListNotificationComponent
+          <AccountNotificationListComponent
             style={this.state.tab === 'notification'
               ? null : { display: 'none' }} />
         </View>

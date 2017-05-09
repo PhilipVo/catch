@@ -10,7 +10,7 @@ import { Icon, Text } from 'react-native-elements';
 export default class AccountPictureComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { avatar: 'https://geo-media.beatport.com/image/8802230.jpg' };
+    this.state = { avatar: 'https://www.sideshowtoy.com/photo_902657_thumb.jpg' };
   }
 
   render() {
@@ -43,26 +43,26 @@ export default class AccountPictureComponent extends Component {
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
-                () => this.setState({ avatar: 'http://images2.gazzettaobjects.it/methode_image/2014/12/25/Calcio/Foto%20Gallery/vieri05_mediagallery-fullscreen.jpg' })}>
+                () => this.setState({ avatar: 'https://vignette2.wikia.nocookie.net/marvelcinematicuniverse/images/d/d2/CACW_Steve_Textless_Poster.jpg/revision/latest/scale-to-width-down/350?cb=20160527050609' })}>
               <Image
                 style={{ flex: 1 }}
-                source={{ uri: 'http://images2.gazzettaobjects.it/methode_image/2014/12/25/Calcio/Foto%20Gallery/vieri05_mediagallery-fullscreen.jpg' }} />
+                source={{ uri: 'https://vignette2.wikia.nocookie.net/marvelcinematicuniverse/images/d/d2/CACW_Steve_Textless_Poster.jpg/revision/latest/scale-to-width-down/350?cb=20160527050609' }} />
             </TouchableHighlight>
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
-                () => this.setState({ avatar: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSxSFc5pV18zBgkCealSoPVQi3oNy71G7zqyJiemS5atP9fCqJI' })}>
+                () => this.setState({ avatar: 'http://cdn.bgr.com/2014/04/captain-america.jpg?quality=98&strip=all' })}>
               <Image
                 style={{ flex: 1 }}
-                source={{ uri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSxSFc5pV18zBgkCealSoPVQi3oNy71G7zqyJiemS5atP9fCqJI' }} />
+                source={{ uri: 'http://cdn.bgr.com/2014/04/captain-america.jpg?quality=98&strip=all' }} />
             </TouchableHighlight>
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
-                () => this.setState({ avatar: 'https://pbs.twimg.com/media/BwXoU63CIAAfPCj.jpg' })}>
+                () => this.setState({ avatar: 'http://cdn.playbuzz.com/cdn/a95e173d-78cc-41cf-8439-352fe28c36f8/a76d3eaf-159d-467d-90ab-d37b40eb7678.jpg' })}>
               <Image
                 style={{ flex: 1 }}
-                source={{ uri: 'https://pbs.twimg.com/media/BwXoU63CIAAfPCj.jpg' }} />
+                source={{ uri: 'http://cdn.playbuzz.com/cdn/a95e173d-78cc-41cf-8439-352fe28c36f8/a76d3eaf-159d-467d-90ab-d37b40eb7678.jpg' }} />
             </TouchableHighlight>
           </View>
 
@@ -70,26 +70,26 @@ export default class AccountPictureComponent extends Component {
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
-                () => this.setState({ avatar: 'https://s-media-cache-ak0.pinimg.com/originals/52/82/d2/5282d2575aeb219ad169c2cf3759724e.png' })}>
+                () => this.setState({ avatar: 'http://115.imagebam.com/download/IL2fKxg0D0JmWPyleGF3-g/47900/478995554/Captain%20America%201.jpg' })}>
               <Image
                 style={{ flex: 1 }}
-                source={{ uri: 'https://s-media-cache-ak0.pinimg.com/originals/52/82/d2/5282d2575aeb219ad169c2cf3759724e.png' }} />
+                source={{ uri: 'http://115.imagebam.com/download/IL2fKxg0D0JmWPyleGF3-g/47900/478995554/Captain%20America%201.jpg' }} />
             </TouchableHighlight>
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
-                () => this.setState({ avatar: 'http://lzimages.lazygirls.info/madison_ivy_twitter_recent_images_by_madison420ivy_L2XgGqA3.sized' })}>
+                () => this.setState({ avatar: 'http://screenrant.com/wp-content/uploads/Chris-Evans-Captain-America-Trilogy.jpg' })}>
               <Image
                 style={{ flex: 1 }}
-                source={{ uri: 'http://lzimages.lazygirls.info/madison_ivy_twitter_recent_images_by_madison420ivy_L2XgGqA3.sized' }} />
+                source={{ uri: 'http://screenrant.com/wp-content/uploads/Chris-Evans-Captain-America-Trilogy.jpg' }} />
             </TouchableHighlight>
             <TouchableHighlight
               style={{ flex: 1 }}
               onPress={
-                () => this.setState({ avatar: 'https://i2.wp.com/www.rnningfool.com/wp-content/uploads/2016/11/Madison-Ivy-smiling-photo1-1.jpg?resize=640%2C272' })}>
+                () => this.setState({ avatar: 'http://www.silverpetticoatreview.com/wp-content/uploads/2015/09/captain-america.jpg' })}>
               <Image
                 style={{ flex: 1 }}
-                source={{ uri: 'https://i2.wp.com/www.rnningfool.com/wp-content/uploads/2016/11/Madison-Ivy-smiling-photo1-1.jpg?resize=640%2C272' }} />
+                source={{ uri: 'http://www.silverpetticoatreview.com/wp-content/uploads/2015/09/captain-america.jpg' }} />
             </TouchableHighlight>
           </View>
         </View>
@@ -103,7 +103,8 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: 20
   },
   headerText: {
     fontSize: 16,

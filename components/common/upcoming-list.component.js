@@ -12,7 +12,7 @@ import TimerMixin from 'react-timer-mixin';
 
 import upcoming from '../../samples/upcoming-contributions';
 
-export default class ProfileListUpcomingComponent extends Component {
+export default class UpcomingListComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -87,33 +87,6 @@ export default class ProfileListUpcomingComponent extends Component {
               </View>
             </View>
 
-            {/*<TouchableHighlight>
-              <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }}>
-                <Text>Contributors</Text>
-                <Icon name='arrow-drop-down' />
-              </View>
-            </TouchableHighlight>
-            <View style={{ paddingHorizontal: 30 }}>
-              <View
-                onPress={() => {
-
-                }}
-                style={{
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  backgroundColor: 'red',
-                  width: 300,
-                  height: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 5
-                }}>
-                <Text style={{ color: 'white' }}>Invite others to contribute </Text>
-                <Icon color='white' name='add' size={10} />
-              </View>
-
-            </View>*/}
             <Text style={styles.detailText}>{rowData.detail}</Text>
             <View style={styles.iconView}>
               <Icon name='chat-bubble-outline' size={25} />

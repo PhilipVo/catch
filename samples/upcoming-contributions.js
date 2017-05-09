@@ -1,37 +1,44 @@
 export default [
   {
-    cover: 'https://s-media-cache-ak0.pinimg.com/originals/16/05/e8/1605e89e8e11282cb04454da44d926d4.jpg',
-    event: 'Madison Ivy\'s First Anal',
-    date: '2018-08-25T12:13:50Z',
-    detail: 'Hey guys, I\'m doing my first anal scene, come and watch me get f***ed in the ass!',
-    isCreator: true
-  },
-  {
-    cover: 'https://pbs.twimg.com/media/BuFiy-BCMAAI_wh.jpg',
-    event: 'Madison Ivy\'s DVD',
-    date: '2018-07-25T12:10:23Z',
-    detail: 'Come join my first DVD release party!',
-    isCreator: true
-  },
-  {
-    cover: 'https://images-na.ssl-images-amazon.com/images/I/41zcCUN-1JL.jpg',
-    event: 'Madison Ivy\'s First Scene',
-    date: '2017-06-25T12:05:40Z',
-    detail: 'Come see my first scene in porn!',
-    isCreator: true
-  },
-  {
-    cover: 'http://media-cache-ec0.pinimg.com/736x/23/b3/96/23b3969c960d561f2446a129b1d0ef53.jpg',
-    event: 'Christy\'s Cam Show',
-    date: '2017-06-20T11:15:40Z',
-    detail: 'Come join my weekly cam show ;)',
+    cover: 'http://cdn3-www.comingsoon.net/assets/uploads/gallery/spider-man-homecoming/coghjzvvmaash8u.jpg',
+    event: 'Spider-Man: Homecoming',
+    date: '2017-07-07T00:00:00Z',
+    detail: 'Spider-Man: Homecoming is an upcoming American superhero film based on the Marvel Comics character Spider-Man',
     isCreator: false
   },
   {
-    cover: 'https://static1.comicvine.com/uploads/original/11119/111195216/5124343-1944820252-25890.jpg',
-    event: 'Madison Ivy\'s Debut',
-    date: '2017-05-25T12:01:20Z',
-    detail: 'Hi, I\'m Madison Ivy and I\'m new to the scene!',
+    cover: 'http://screenrant.com/wp-content/uploads/Chris-Hemsworth-Thor-Ragnarok.jpg',
+    event: 'Thor: Ragnarok',
+    date: '2017-11-03T00:00:00Z',
+    detail: 'Imprisoned on the other side of the universe, the mighty Thor (Chris Hemsworth) finds himself in a deadly gladiatorial contest that pits him against the Hulk (Mark Ruffalo), his former ally and fellow Avenger.',
+    isCreator: false
+  },
+  {
+    cover: 'https://cdn.bleedingcool.net/wp-content/uploads/2016/04/0110-600x566.jpg',
+    event: 'Black Panther',
+    date: '2018-02-16T00:00:00Z',
+    detail: 'Action · T\'Challa, the new ruler of the advanced kingdom of Wakanda, must defend his land from being torn apart by enemies from outside and inside the country.',
+    isCreator: false
+  },
+  {
+    cover: 'http://vignette1.wikia.nocookie.net/marveldatabase/images/4/45/Avengers_Infinity_War_logo_001.jpg',
+    event: 'Avengers: Infinity War',
+    date: '2018-05-04T00:00:00Z',
+    detail: 'Iron Man (Robert Downey Jr.), Thor (Chris Hemsworth), the Hulk (Mark Ruffalo) and the rest of the Avengers face their most powerful enemy yet, the evil Thanos (Josh Brolin).',
     isCreator: true
-  }
+  },
+  {
+    cover: 'http://fantasynscifi.com/wp-content/uploads/2017/04/ant_man_and_the_wasp_movie_poster_by_arkhamnatic-da24z6k.png.jpg',
+    event: 'Ant-Man and the Wasp',
+    date: '2018-07-06T00:00:00Z',
+    detail: 'Ant-Man (Paul Rudd) joins forces with the Wasp (Evangeline Lilly).',
+    isCreator: false
+  },
+  {
+    cover: 'http://screenrant.com/wp-content/uploads/Brie-Larson-Captain-Marvel-Fan-Art.jpg',
+    event: 'Captain Marvel',
+    date: '2019-03-08T00:00:00Z',
+    detail: 'Stars: Brie Larson, Samuel L. Jackson',
+    isCreator: true
+  },
 ]

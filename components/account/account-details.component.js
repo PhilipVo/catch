@@ -8,12 +8,11 @@ export default class AccountDetailsComponent extends Component {
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
-        <View
-          style={styles.avatarView}>
+        <View style={styles.avatarView}>
           <TouchableHighlight
             TouchableHighlight
             underlayColor='transparent'
-            onPress={() => this.props.accountNavigator.push({component: 'AccountPictureComponent'})}>
+            onPress={() => this.props.accountNavigator.push({ component: 'AccountPictureComponent' })}>
             <Image source={{ uri: user.img }} style={styles.avatarImage} />
           </TouchableHighlight>
         </View>
@@ -35,7 +34,7 @@ export default class AccountDetailsComponent extends Component {
           <Icon
             color='gray'
             name='settings'
-            onPress={() => this.props.accountNavigator.push({component: 'AccountSettingsComponent'})}
+            onPress={() => this.props.accountNavigator.push({ component: 'AccountSettingsComponent' })}
             size={30}
             underlayColor='transparent' />
         </View>

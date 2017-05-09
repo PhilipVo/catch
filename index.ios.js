@@ -15,19 +15,20 @@ import session from './services/session.service';
 export default class Catch extends Component {
   constructor() {
     super();
-    this.state = { initialComponent: null };
+    this.state = { initialComponent: 'LoginComponent' };
   }
 
-  componentDidMount() {
-    AsyncStorage.getItem('catchToken')
-      .then(catchToken => {
-        if (catchToken) {
-          session.setSession(catchToken);
-          this.setState({ initialComponent: 'NavigatorComponent' });
-        }
-      })
-      .catch(error => console.log(error));
-  }
+  // componentDidMount() {
+  //   AsyncStorage.getItem('catchToken')
+  //     .then(catchToken => {
+  //       if (catchToken) {
+  //         session.setSession(catchToken);
+  //         this.setState({ initialComponent: 'NavigatorComponent' });
+  //       } else
+  //         this.setState({ initialComponent: 'LoginComponent' });
+  //     })
+  //     .catch(error => console.log(error));
+  // }
 
   renderScene(route, navigator) {
     switch (route.component) {

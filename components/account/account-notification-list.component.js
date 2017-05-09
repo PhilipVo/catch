@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 
-export default class AccountListNotificationComponent extends Component {
+export default class AccountNotificationListComponent extends Component {
   componentDidMount() {
     console.log('mounted notification');
   }

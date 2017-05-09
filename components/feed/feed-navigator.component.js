@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { Navigator } from 'react-native';
 
 import FeedComponent from './feed.component';
-import StoryComponent from '../common/story.component';
+import ProfileComponent from '../common/profile.component';
 
 export default class FeedNavigatorComponent extends Component {
   configureScene(route, routeStack) {
-    if (route.component === 'StoryComponent')
-      return Navigator.SceneConfigs.VerticalUpSwipeJump;
-
     return {
       animationInterpolators: {
         into: r => r.opacity = 1,
@@ -27,10 +24,12 @@ export default class FeedNavigatorComponent extends Component {
         return <FeedComponent
           feedNavigator={feedNavigator}
           navigator={this.props.navigator} />
-      case 'StoryComponent':
-        return <StoryComponent
-          feedNavigator={feedNavigator}
-          selected={route.selected} />
+      case 'ProfileComponent':
+        return <ProfileComponent
+          _navigator={feedNavigator}
+          navigator={this.props.navigator}
+          tabComponent={route.tabComponent}
+          user={route.user} />
       default:
         return <FeedComponent
           feedNavigator={feedNavigator}

@@ -15,7 +15,7 @@ import http from '../../services/http.service';
 
 import upcoming from '../../samples/upcoming';
 
-export default class FeedUpcomingComponent extends Component {
+export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -36,8 +36,9 @@ export default class FeedUpcomingComponent extends Component {
   }
 
   renderCountdowns = () => {
-    return
-    <Text>{this.state.time}</Text>
+    return (
+      <Text>{this.state.time}</Text>
+    );
   }
 
   render() {

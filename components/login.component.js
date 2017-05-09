@@ -32,24 +32,26 @@ export default class LoginComponent extends Component {
   }
 
   login = () => {
-    if (!this.state.disabled) {
-      this.setState({
-        disabled: true,
-        error: null
-      });
+    this.props.navigator.resetTo({ component: 'NavigatorComponent' });
 
-      session.login(this.user)
-        .then(() => this.props.navigator.resetTo({ component: 'MainComponent' }))
-        .catch(error => {
-          if (typeof error !== 'string')
-            error = 'Error encountered.';
+    // if (!this.state.disabled) {
+    //   this.setState({
+    //     disabled: true,
+    //     error: null
+    //   });
 
-          this.setState({
-            disabled: false,
-            error: error
-          });
-        });
-    }
+    //   session.login(this.user)
+    //     .then(() => this.props.navigator.resetTo({ component: 'MainComponent' }))
+    //     .catch(error => {
+    //       if (typeof error !== 'string')
+    //         error = 'Error encountered.';
+
+    //       this.setState({
+    //         disabled: false,
+    //         error: error
+    //       });
+    //     });
+    // }
   }
 
   render() {

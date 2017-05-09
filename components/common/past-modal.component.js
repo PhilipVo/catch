@@ -11,6 +11,7 @@ import {
 import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
 
+import PastModalTimerComponent from './past-modal-timer.component.js';
 import TimerBarComponent from './timer-bar.component.js';
 
 import http from '../../services/http.service';
@@ -19,6 +20,7 @@ import story from '../../samples/story';
 
 export default class PastModalComponent extends Component {
   constructor(props) {
+    console.log('constructed')
     super(props);
     this.state = {
       index: 0,
@@ -61,7 +63,7 @@ export default class PastModalComponent extends Component {
         swipeToClose={true}>
         <Image source={{ uri: this.state.item.uri }} style={styles.image}>
           <View style={styles.top}>
-            <TimerBarComponent
+            <PastModalTimerComponent
               index={this.state.index}
               length={story.length}
               duration={this.state.item.duration} />

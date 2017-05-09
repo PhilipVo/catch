@@ -10,6 +10,7 @@ import {
   Switch,
   Text,
   TextInput,
+  TouchableHighlight,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -105,7 +106,14 @@ export default class FeedUpcomingModalComponent extends Component {
               removeClippedSubviews={false}
               renderRow={(rowData, sectionID, rowID) => (
                 <View style={styles.commentView}>
-                  <Image source={{ uri: rowData.img }} style={styles.commentImage} />
+                  <TouchableHighlight
+                    onPress={() => this.props.feedNavigator.push({
+                      component: 'ProfileComponent',
+                      tabComponent: this.props.tabComponent,
+                      user: rowData
+                    })}>
+                    <Image source={{ uri: rowData.img }} style={styles.commentImage} />
+                  </TouchableHighlight>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.comment}>{rowData.comment}</Text>
                   </View>

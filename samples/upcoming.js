@@ -1,44 +1,32 @@
 export default [
   {
-    cover: 'https://media.giphy.com/media/PB9pBoDBQuAco/giphy.gif',
-    event: 'Lisa Ann\'s Retirement',
-    date: '2017-04-19T19:00:00Z',
-    detail: 'I\m retiring today! Come and join me at my retirement party!'
+    cover: 'http://cdn3-www.comingsoon.net/assets/uploads/gallery/spider-man-homecoming/coghjzvvmaash8u.jpg',
+    event: 'Spider-Man: Homecoming',
+    date: '2017-07-07T00:00:00Z'
   },
   {
-    cover: 'https://i.makeagif.com/media/5-25-2015/A2LiQe.gif',
-    event: 'Madison Ivy\'s Debut',
-    date: '2017-05-25T12:01:00Z',
-    detail: 'Madison\'s debut in the porn scene.'
+    cover: 'http://screenrant.com/wp-content/uploads/Chris-Hemsworth-Thor-Ragnarok.jpg',
+    event: 'Thor: Ragnarok',
+    date: '2017-11-03T00:00:00Z'
   },
   {
-    cover: 'http://gifspx.com/gifs-animados-x/gspx_menudo-culazo-que-tiene-christy-mack-04.gif',
-    event: 'Christy\'s Cam Show',
-    date: '2017-06-20T11:15:00Z',
-    detail: 'Christy Mack\'s weekly cam show.'
+    cover: 'https://cdn.bleedingcool.net/wp-content/uploads/2016/04/0110-600x566.jpg',
+    event: 'Black Panther',
+    date: '2018-02-16T00:00:00Z'
   },
   {
-    cover: 'https://images-na.ssl-images-amazon.com/images/I/41zcCUN-1JL.jpg',
-    event: 'Madison Ivy\'s First Scene',
-    date: '2017-06-25T12:05:00Z',
-    detail: 'Madison\'s first scene in porn'
+    cover: 'http://vignette1.wikia.nocookie.net/marveldatabase/images/4/45/Avengers_Infinity_War_logo_001.jpg',
+    event: 'Avengers: Infinity War',
+    date: '2018-05-04T00:00:00Z'
   },
   {
-    cover: 'https://pbs.twimg.com/media/BuFiy-BCMAAI_wh.jpg',
-    event: 'Madison Ivy\'s DVD',
-    date: '2018-07-25T12:10:00Z',
-    detail: 'Madison\'s DVD release'
+    cover: 'http://fantasynscifi.com/wp-content/uploads/2017/04/ant_man_and_the_wasp_movie_poster_by_arkhamnatic-da24z6k.png.jpg',
+    event: 'Ant-Man and the Wasp',
+    date: '2018-07-06T00:00:00Z'
   },
   {
-    cover: 'http://www.billboard.com/files/media/Nicki-Minaj-fashion-show-b-01-billboard-1240.jpg',
-    event: 'Nicki Minaj\'s New Album Drop',
-    date: '2018-08-12T00:00:00Z',
-    detail: 'NEW ALBUM DROP BITCHESSS'
-  },
-  {
-    cover: 'https://s-media-cache-ak0.pinimg.com/originals/16/05/e8/1605e89e8e11282cb04454da44d926d4.jpg',
-    event: 'Madison Ivy\'s First Anal',
-    date: '2018-08-25T12:13:00Z',
-    detail: 'First anal scene XO'
+    cover: 'http://screenrant.com/wp-content/uploads/Brie-Larson-Captain-Marvel-Fan-Art.jpg',
+    event: 'Captain Marvel',
+    date: '2019-03-08T00:00:00Z'
   },
 ]

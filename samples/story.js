@@ -1,22 +1,22 @@
 export default [
   {
     duration: 3000,
-    uri: 'https://media.giphy.com/media/Uel2r4bUAsn28/giphy.gif'
+    uri: 'http://media.comicbook.com/2017/03/avengers-infinity-war-238299.jpg'
   },
   {
     duration: 2000,
-    uri: 'http://juicygif.com/albums/userpics/2015y/12/07/1/1/6173-blue-bra-madison-ivy.gif'
+    uri: 'https://68.media.tumblr.com/d7c2e2abe6a8c5cc86167f80f81f7dec/tumblr_inline_oat5bqSJHP1sd4ybh_500.gif'
   },
   {
     duration: 3000,
-    uri: 'http://images.sex.com/images/pinporn/2016/05/14/620/15695863.jpg'
+    uri: 'https://i.ytimg.com/vi/WNG3VcdDjvQ/maxresdefault.jpg'
   },
   {
     duration: 4000,
-    uri: 'http://cdn4.images.motherlessmedia.com/images/93A36E5.gif'
+    uri: 'https://media.giphy.com/media/ZTKsQ1W2dqeoU/giphy.gif'
   },
   {
     duration: 2000,
-    uri: 'http://4.bp.blogspot.com/-1icrWdpV7RU/Vltvd3JX-II/AAAAAAAAUYQ/EdFX9g-tBUE/s1600/hot-office-01.jpg'
+    uri: 'https://media.giphy.com/media/13kajTax0GCg0g/giphy.gif'
   },
 ]

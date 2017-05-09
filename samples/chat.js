@@ -1,32 +1,32 @@
 export default [
   {
-    comment: 'You\'re hot',
-    img: 'http://static.comicvine.com/uploads/scale_small/10/101435/2118157-jj.jpg',
-    username: 'Jenna Jameson'
+    comment: 'Shut up @Ironman',
+    img: 'http://vignette2.wikia.nocookie.net/marvelmovies/images/1/11/Avengers_Black_Widow.jpg',
+    username: 'Black Widow'
   },
   {
-    comment: 'Heeeeeeeey baby gurl ;)',
-    img: 'https://upload.wikimedia.org/wikipedia/commons/9/9c/D7K_6390_-_Jynx_Maze_%286746799693%29.jpg',
-    username: 'Jynx Maze'
+    comment: 'Sometimes you gotta run before you can walk.',
+    img: 'http://dailysignal.com/wp-content/uploads/2014_02_23_Stark_Havilah.jpg',
+    username: 'Ironman'
   },
   {
-    comment: 'Word',
-    img: 'http://founderstories.weebly.com/uploads/5/3/5/0/53509507/1433900050.png',
-    username: 'Sonny Tosco'
+    comment: 'You’re big. I’ve fought bigger @Hulk',
+    img: 'http://screenrant.com/wp-content/uploads/thor-3-ragnarok-chris-hemsworth.jpg',
+    username: 'Thor'
   },
   {
-    comment: 'can I give you a hug :)',
-    img: 'https://media.licdn.com/mpr/mpr/shrink_100_100/AAEAAQAAAAAAAAhcAAAAJGNlODM2YmEyLWExYjItNDQ1OS1iZDgxLTMzMjljMTg1MjRkNA.jpg',
-    username: 'Elliot Young'
+    comment: 'HULK SMAAAAAAAASSSSHHHHHHHH',
+    img: 'http://screenrant.com/wp-content/uploads/mark-ruffalo-hulk-thor-ragnarok-hela.jpg',
+    username: 'Hulk'
   },
   {
-    comment: 'ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ass n tittys ',
-    img: 'https://media.licdn.com/mpr/mpr/shrink_100_100/AAEAAQAAAAAAAAkdAAAAJDk4ZTYyM2I4LTViODEtNGUxMC05NzQ5LTlkNWFlNTlkODdiZg.jpg',
-    username: 'funkygeorge69'
+    comment: 'AAAAAAAAARRRRRRRRRRHHHHHHHHHH',
+    img: 'https://typeset-beta.imgix.net/2017%2F3%2F13%2F3006154f-4442-4d5d-ba99-b2ba94ac5a67.png',
+    username: 'Logan'
   },
   {
-    comment: 'heeeeeeeey bby ;)',
-    img: 'http://i.ebayimg.com/images/g/-FgAAOSw0e9UuX-P/s-l300.jpg',
-    username: 'Priya Rai'
+    comment: 'sup guys!',
+    img: 'http://nerdist.com/wp-content/uploads/2016/04/deadpool-2-featured-image.jpg',
+    username: 'Deadpool'
   },
 ]

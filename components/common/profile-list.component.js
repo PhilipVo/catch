@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import ProfileListPastComponent from './profile-list-past.component';
-import ProfileListUpcomingComponent from './profile-list-upcoming.component';
+import PastListComponent from './past-list.component';
+import UpcomingListComponent from './upcoming-list.component';
 
 export default class ProfileListComponent extends Component {
   constructor(props) {
@@ -29,24 +29,15 @@ export default class ProfileListComponent extends Component {
             onPress={() => this.setState({ tab: 'upcoming' })}
             size={33}
             underlayColor='transparent' />
-          <Icon
-            color={this.state.tab === 'notification' ? 'black' : 'gray'}
-            name='mail-outline'
-            onPress={() => this.setState({ tab: 'notification' })}
-            size={33}
-            underlayColor='transparent' />
         </View>
 
         {/* Tabs */}
         <View style={{ flex: 10 }}>
-          <AccountListPastComponent
+          <PastListComponent
             style={this.state.tab === 'past'
               ? null : { display: 'none' }} />
-          <AccountListUpcomingComponent
+          <UpcomingListComponent
             style={this.state.tab === 'upcoming'
-              ? null : { display: 'none' }} />
-          <AccountListNotificationComponent
-            style={this.state.tab === 'notification'
               ? null : { display: 'none' }} />
         </View>
 
