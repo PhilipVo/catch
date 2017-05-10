@@ -16,6 +16,7 @@ import http from '../../services/http.service';
 
 export default class CreateCameraComponent extends Component {
   constructor(props) {
+    console.log('constructed')
     super(props);
     this.state = {
       mirror: false,
@@ -50,8 +51,7 @@ export default class CreateCameraComponent extends Component {
           </TouchableHighlight>
         </View>
         <TabComponent
-          capture={this.capture}
-          navigator={this.props.navigator}
+          navigate={this.props.screenProps.navigate}
           tab='create' />
       </Camera>
     );

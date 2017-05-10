@@ -27,7 +27,9 @@ export default class AccountComponent extends Component {
               accountNavigator={this.props.accountNavigator}
               onPress={selected => this.setState({ selected: selected })} />
           </View>
-          <TabComponent navigator={this.props.navigator} tab='account' />
+          <TabComponent
+            navigate={this.props.screenProps.navigate}
+            tab='account' />
         </View>
 
         {

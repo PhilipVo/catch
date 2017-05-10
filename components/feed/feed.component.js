@@ -32,7 +32,7 @@ export default class FeedComponent extends Component {
   render() {
     const tabComponent = <TabComponent
       hideStatusBar={this.state.hideStatusBar}
-      navigator={this.props.navigator}
+      navigate={this.props.screenProps.navigate}
       tab='feed' />
 
     return (

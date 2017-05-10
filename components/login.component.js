@@ -13,6 +13,7 @@ import {
   FormValidationMessage,
   Text
 } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 
 import session from '../services/session.service';
 
@@ -32,7 +33,14 @@ export default class LoginComponent extends Component {
   }
 
   login = () => {
-    this.props.navigator.resetTo({ component: 'NavigatorComponent' });
+    const resetAction = NavigationActions.reset({
+      actions: [
+        NavigationActions.navigate({ routeName: 'NavigatorComponent' })
+      ],
+      index: 0
+    })
+
+    this.props.navigation.dispatch(resetAction);
 
     // if (!this.state.disabled) {
     //   this.setState({
@@ -41,7 +49,7 @@ export default class LoginComponent extends Component {
     //   });
 
     //   session.login(this.user)
-    //     .then(() => this.props.navigator.resetTo({ component: 'MainComponent' }))
+    //     .then(() => this.props.navigation.reset( 'MainComponent' ))
     //     .catch(error => {
     //       if (typeof error !== 'string')
     //         error = 'Error encountered.';
@@ -55,7 +63,6 @@ export default class LoginComponent extends Component {
   }
 
   render() {
-    console.ignoredYellowBox = ['Warning: You are manually'];
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
@@ -88,7 +95,7 @@ export default class LoginComponent extends Component {
             backgroundColor='blue'
             buttonStyle={{ marginTop: 10 }}
             icon={{ name: 'facebook-official', type: 'font-awesome' }}
-            onPress={() => this.props.navigator.resetTo({ component: 'RegisterComponent' })}
+            onPress={() => this.props.navigation.reset('RegisterComponent')}
             small
             title='Login with Facebook' />
         </KeyboardAvoidingView>

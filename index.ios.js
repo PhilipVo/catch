@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  AsyncStorage,
-  Navigator
-} from 'react-native';
+import { AppRegistry, AsyncStorage } from 'react-native';
+import { StackNavigator } from 'react-navigation';
 
 import LoginComponent from './components/login.component';
 import NavigatorComponent from './components/navigator.component';
@@ -30,26 +27,26 @@ export default class Catch extends Component {
   //     .catch(error => console.log(error));
   // }
 
-  renderScene(route, navigator) {
-    switch (route.component) {
-      case 'LoginComponent': return <LoginComponent navigator={navigator} />
-      case 'NavigatorComponent': return <NavigatorComponent navigator={navigator} />
-      case 'RegisterComponent': return <RegisterComponent navigator={navigator} />
-      case 'WelcomeComponent': return <WelcomeComponent navigator={navigator} />
-    }
-  }
-
   render() {
+    console.ignoredYellowBox = ['Warning: BackAndroid'];
+
+    const Navigator = StackNavigator(
+      {
+        LoginComponent: { screen: LoginComponent },
+        NavigatorComponent: { screen: NavigatorComponent },
+        RegisterComponent: { screen: RegisterComponent },
+        WelcomeComponent: { screen: WelcomeComponent }
+      },
+      {
+        headerMode: 'none'
+      }
+    );
+
     return (
-      this.state.initialComponent ?
-        <Navigator
-          initialRoute={{ component: this.state.initialComponent }}
-          renderScene={(route, navigator) => this.renderScene(route, navigator)}
-          configureScene={(route, routeStack) => Navigator.SceneConfigs.FadeAndroid}
-        /> :
-        <NavigatorComponent />
+      this.state.initialComponent ? <Navigator /> : <NavigatorComponent />
     );
   }
 }
+
 
 AppRegistry.registerComponent('Catch', () => Catch);

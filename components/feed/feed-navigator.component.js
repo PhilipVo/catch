@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Navigator } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+import { Icon } from 'react-native-elements';
 
 import FeedComponent from './feed.component';
 import ProfileComponent from '../common/profile.component';
@@ -38,12 +39,15 @@ export default class FeedNavigatorComponent extends Component {
   }
 
   render() {
+    const FeedNavigator = StackNavigator({
+      FeedComponent: { screen: FeedComponent }
+    }, {
+        headerMode: 'none'
+      });
+
     return (
-      <Navigator
-        configureScene={this.configureScene}
-        initialRoute={{ component: 'FeedComponent' }}
-        renderScene={this.renderScene}
-      />
+      <FeedNavigator screenProps={{ navigate: this.props.navigation.navigate }} />
     );
   }
 }
+
