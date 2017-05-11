@@ -86,11 +86,11 @@ export default class FeedComponent extends Component {
         {
           this.state.modal === 'upcoming' ?
             <FeedUpcomingModalComponent
-              feedNavigator={this.props.feedNavigator}
               hideModal={() => this.setState({
                 modal: null,
                 hideStatusBar: false
               })}
+              navigate={this.props.navigation.navigate}
               selected={this.state.selected}
               tabComponent={tabComponent} /> :
             this.state.modal === 'past' ?

@@ -3,8 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 import AccountNotificationListComponent from './account-notification-list.component';
-import AccountUpcomingListComponent from './account-upcoming-list.component';
 import PastListComponent from '../common/past-list.component';
+import UpcomingListComponent from '../common/upcoming-list.component';
 
 export default class AccountListComponent extends Component {
   constructor(props) {
@@ -44,7 +44,7 @@ export default class AccountListComponent extends Component {
             onPress={this.props.onPress}
             style={this.state.tab === 'past'
               ? null : { display: 'none' }} />
-          <AccountUpcomingListComponent
+          <UpcomingListComponent
             style={this.state.tab === 'upcoming'
               ? null : { display: 'none' }} />
           <AccountNotificationListComponent

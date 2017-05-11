@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 import FeedComponent from './feed.component';
 import ProfileComponent from '../common/profile.component';
 
-export default class FeedNavigatorComponent extends Component {
+module.exports = class FeedNavigatorComponent extends Component {
   configureScene(route, routeStack) {
     return {
       animationInterpolators: {
@@ -40,7 +40,8 @@ export default class FeedNavigatorComponent extends Component {
 
   render() {
     const FeedNavigator = StackNavigator({
-      FeedComponent: { screen: FeedComponent }
+      FeedComponent: { screen: FeedComponent },
+      ProfileComponent: { screen: ProfileComponent }
     }, {
         headerMode: 'none'
       });

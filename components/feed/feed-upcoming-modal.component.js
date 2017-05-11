@@ -107,11 +107,7 @@ export default class FeedUpcomingModalComponent extends Component {
               renderRow={(rowData, sectionID, rowID) => (
                 <View style={styles.commentView}>
                   <TouchableHighlight
-                    onPress={() => this.props.feedNavigator.push({
-                      component: 'ProfileComponent',
-                      tabComponent: this.props.tabComponent,
-                      user: rowData
-                    })}>
+                    onPress={() => this.props.navigate('ProfileComponent')}>
                     <Image source={{ uri: rowData.img }} style={styles.commentImage} />
                   </TouchableHighlight>
                   <View style={{ flex: 1 }}>

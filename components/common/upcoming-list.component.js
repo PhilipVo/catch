@@ -19,7 +19,8 @@ export default class UpcomingListComponent extends Component {
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: upcoming,
-      dataSource: this.ds.cloneWithRows(upcoming)
+      dataSource: this.ds.cloneWithRows(upcoming),
+      now: Date.now()
     }
   }
 
@@ -27,7 +28,8 @@ export default class UpcomingListComponent extends Component {
     TimerMixin.setInterval(() => {
       this.setState({
         data: upcoming,
-        dataSource: this.ds.cloneWithRows(upcoming)
+        dataSource: this.ds.cloneWithRows(upcoming),
+        now: Date.now()
       });
     }, 60000);
   }
@@ -42,10 +44,10 @@ export default class UpcomingListComponent extends Component {
             <Image
               source={{ uri: rowData.cover }}
               style={styles.image}>
-              {
+              {/*{
                 rowData.isCreator ?
                   <Icon color='white' name='play-circle-outline' size={33} /> : null
-              }
+              }*/}
             </Image>
 
             {/* Header */}

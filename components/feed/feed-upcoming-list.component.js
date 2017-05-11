@@ -17,20 +17,21 @@ import upcoming from '../../samples/upcoming';
 
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
+    console.log('constructed feed upcoming list')
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: upcoming,
       dataSource: this.ds.cloneWithRows(upcoming),
+      now: Date.now()
     };
-  }
 
-  componentDidMount() {
     TimerMixin.setInterval(() => {
       this.setState({
         data: upcoming,
-        dataSource: this.ds.cloneWithRows(upcoming)
+        dataSource: this.ds.cloneWithRows(upcoming),
+        now: Date.now()
       });
     }, 60000);
   }
@@ -58,21 +59,21 @@ export default class FeedUpcomingListComponent extends Component {
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={styles.timerText}>
-                    {moment(rowData.date).diff(Date.now(), 'days')}
+                    {moment(rowData.date).diff(this.state.now, 'days')}
                   </Text>
                   <Text style={styles.timerText}>Days</Text>
                 </View>
                 <Text style={styles.timerText}>:</Text>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={styles.timerText}>
-                    {moment(rowData.date).diff(Date.now(), 'hours') % 24}
+                    {moment(rowData.date).diff(this.state.now, 'hours') % 24}
                   </Text>
                   <Text style={styles.timerText}>Hrs</Text>
                 </View>
                 <Text style={styles.timerText}>:</Text>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={styles.timerText}>
-                    {moment(rowData.date).diff(Date.now(), 'minutes') % 60}
+                    {moment(rowData.date).diff(this.state.now, 'minutes') % 60}
                   </Text>
                   <Text style={styles.timerText}>Mins</Text>
                 </View>

@@ -17,7 +17,7 @@ import { NavigationActions } from 'react-navigation';
 
 import session from '../services/session.service';
 
-export default class LoginComponent extends Component {
+module.exports = class LoginComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,14 +33,15 @@ export default class LoginComponent extends Component {
   }
 
   login = () => {
-    const resetAction = NavigationActions.reset({
-      actions: [
-        NavigationActions.navigate({ routeName: 'NavigatorComponent' })
-      ],
-      index: 0
-    })
+    this.props.screenProps.login();
+    // const resetAction = NavigationActions.reset({
+    //   actions: [
+    //     NavigationActions.navigate({ routeName: 'NavigatorComponent' })
+    //   ],
+    //   index: 0
+    // })
 
-    this.props.navigation.dispatch(resetAction);
+    // this.props.navigation.dispatch(resetAction);
 
     // if (!this.state.disabled) {
     //   this.setState({

@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 
 import CreateComponent from './create.component';
 
-export default class CreateNavigatorComponent extends Component {
+module.exports = class CreateNavigatorComponent extends Component {
   constructor(props) {
     super(props);
     console.log('constructed create navigator')

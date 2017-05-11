@@ -16,7 +16,7 @@ import {
 
 import session from '../services/session.service';
 
-export default class RegisterComponent extends Component {
+module.exports = class RegisterComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {

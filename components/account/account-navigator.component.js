@@ -6,7 +6,7 @@ import AccountComponent from './account.component';
 import AccountPictureComponent from './account-picture.component';
 import AccountSettingsComponent from './account-settings.component';
 
-export default class AccountNavigatorComponent extends Component {
+module.exports = class AccountNavigatorComponent extends Component {
   render() {
     const AccountNavigator = StackNavigator(
       {

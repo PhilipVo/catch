@@ -3,7 +3,6 @@ import { StatusBar, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 const TabComponent = props => {
-  // const routes = props.navigator.getCurrentRoutes();
   return (
     <View style={props.tab === 'create' ? styles.tab1 : styles.tab2}>
       <StatusBar hidden={props.hideStatusBar} />

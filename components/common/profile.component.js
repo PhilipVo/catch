@@ -4,7 +4,7 @@ import Display from 'react-native-display';
 
 import ProfileListComponent from './profile-list.component';
 import ProfileDetailsComponent from './profile-details.component';
-// import TabComponent from '../common/tab.component';
+import TabComponent from '../common/tab.component';
 
 export default class ProfileComponent extends Component {
   render() {
@@ -14,8 +14,10 @@ export default class ProfileComponent extends Component {
           <ProfileDetailsComponent navigator={this.props.navigator} />
           <ProfileListComponent navigator={this.props.navigator} />
         </View>
-        {this.props.tabComponent}
-        {/*<TabComponent mainNavigator={this.props.mainNavigator} tab={this.props.tab} />*/}
+        {/*{this.props.tabComponent}*/}
+        <TabComponent
+          navigate={this.props.screenProps.navigate}
+          tab={this.props.tab} />
       </View>
     );
   }
