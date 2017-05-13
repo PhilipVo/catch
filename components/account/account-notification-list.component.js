@@ -3,10 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 
 export default class AccountNotificationListComponent extends Component {
-  componentDidMount() {
-    console.log('mounted notification');
-  }
-
   render() {
     return (
       <View >

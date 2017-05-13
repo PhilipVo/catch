@@ -17,7 +17,6 @@ import upcoming from '../../samples/upcoming';
 
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
-    console.log('constructed feed upcoming list')
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });

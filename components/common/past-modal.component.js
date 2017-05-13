@@ -12,7 +12,6 @@ import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
 
 import PastModalTimerComponent from './past-modal-timer.component.js';
-import TimerBarComponent from './timer-bar.component.js';
 
 import http from '../../services/http.service';
 

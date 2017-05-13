@@ -22,16 +22,18 @@ export default class UpcomingListComponent extends Component {
       dataSource: this.ds.cloneWithRows(upcoming),
       now: Date.now()
     }
-  }
 
-  componentDidMount() {
-    TimerMixin.setInterval(() => {
+    this.interval = TimerMixin.setInterval(() => {
       this.setState({
         data: upcoming,
         dataSource: this.ds.cloneWithRows(upcoming),
         now: Date.now()
       });
     }, 60000);
+  }
+
+  componentWillUnmount() {
+    TimerMixin.clearInterval(this.interval);
   }
 
   render() {
@@ -68,21 +70,21 @@ export default class UpcomingListComponent extends Component {
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: 'red' }}>
-                    {moment(rowData.date).diff(Date.now(), 'days')}
+                    {moment(rowData.date).diff(this.state.now, 'days')}
                   </Text>
                   <Text style={{ color: 'red' }}>Days</Text>
                 </View>
                 <Text style={{ color: 'red' }}>:</Text>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: 'red' }}>
-                    {moment(rowData.date).diff(Date.now(), 'hours') % 24}
+                    {moment(rowData.date).diff(this.state.now, 'hours') % 24}
                   </Text>
                   <Text style={{ color: 'red' }}>Hrs</Text>
                 </View>
                 <Text style={{ color: 'red' }}>:</Text>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: 'red' }}>
-                    {moment(rowData.date).diff(Date.now(), 'minutes') % 60}
+                    {moment(rowData.date).diff(this.state.now, 'minutes') % 60}
                   </Text>
                   <Text style={{ color: 'red' }}>Mins</Text>
                 </View>

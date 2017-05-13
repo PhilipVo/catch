@@ -34,6 +34,7 @@ export default class ProfileListComponent extends Component {
         {/* Tabs */}
         <View style={{ flex: 10 }}>
           <PastListComponent
+            onPress={this.props.onPress}
             style={this.state.tab === 'past'
               ? null : { display: 'none' }} />
           <UpcomingListComponent

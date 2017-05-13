@@ -12,9 +12,7 @@ import TabComponent from '../common/tab.component';
 export default class AccountComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selected: null
-    };
+    this.state = { selected: null };
   }
 
   render() {

@@ -24,10 +24,6 @@ export default class PastListComponent extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log('mounted feed');
-  }
-
   render() {
     return (
       <ListView
