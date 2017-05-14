@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 
-import CreateComponent from './create.component';
+import CreateCameraComponent from './create-camera.component';
+import CreatePreviewComponent from './create-preview.component';
 
 module.exports = class CreateNavigatorComponent extends Component {
   constructor(props) {
@@ -12,9 +13,11 @@ module.exports = class CreateNavigatorComponent extends Component {
 
   render() {
     const CreateNavigator = StackNavigator({
-      CreateComponent: { screen: CreateComponent }
+      CreateCameraComponent: { screen: CreateCameraComponent },
+      CreatePreviewComponent: { screen: CreatePreviewComponent }
     }, {
-        headerMode: 'none'
+        headerMode: 'none',
+        initialRouteName: 'CreateCameraComponent',
       });
 
     return (

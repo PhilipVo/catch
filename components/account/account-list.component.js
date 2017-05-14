@@ -41,10 +41,11 @@ export default class AccountListComponent extends Component {
         {/* Tabs */}
         <View style={{ flex: 10 }}>
           <PastListComponent
-            onPress={this.props.onPress}
+            setSelected={this.props.setSelected}
             style={this.state.tab === 'past'
               ? null : { display: 'none' }} />
           <UpcomingListComponent
+            setSelected={this.props.setSelected}
             style={this.state.tab === 'upcoming'
               ? null : { display: 'none' }} />
           <AccountNotificationListComponent

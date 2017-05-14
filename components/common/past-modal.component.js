@@ -5,6 +5,7 @@ import {
   ListView,
   Text,
   TextInput,
+  StatusBar,
   StyleSheet,
   View
 } from 'react-native';
@@ -60,6 +61,7 @@ export default class PastModalComponent extends Component {
           this.props.hideModal();
         }}
         swipeToClose={true}>
+        <StatusBar hidden={true} />
         <Image source={{ uri: this.state.item.uri }} style={styles.image}>
           <View style={styles.top}>
             <PastModalTimerComponent

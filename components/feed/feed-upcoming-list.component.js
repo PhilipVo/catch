@@ -26,7 +26,7 @@ export default class FeedUpcomingListComponent extends Component {
       now: Date.now()
     };
 
-    TimerMixin.setInterval(() => {
+    this.interval = TimerMixin.setInterval(() => {
       this.setState({
         data: upcoming,
         dataSource: this.ds.cloneWithRows(upcoming),
@@ -39,6 +39,10 @@ export default class FeedUpcomingListComponent extends Component {
     return (
       <Text>{this.state.time}</Text>
     );
+  }
+
+  componentWillUnmount() {
+    TimerMixin.clearInterval(this.interval);
   }
 
   render() {

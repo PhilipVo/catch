@@ -11,7 +11,8 @@ module.exports = class FeedNavigatorComponent extends Component {
       FeedComponent: { screen: FeedComponent },
       ProfileComponent: { screen: ProfileComponent }
     }, {
-        headerMode: 'none'
+        headerMode: 'none',
+        initialRouteName: 'FeedComponent'
       });
 
     return (

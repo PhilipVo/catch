@@ -6,6 +6,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ListView,
+  StatusBar,
   StyleSheet,
   Switch,
   Text,
@@ -23,7 +24,7 @@ import http from '../../services/http.service';
 
 import chat from '../../samples/chat';
 
-export default class FeedUpcomingModalComponent extends Component {
+export default class UpcomingModalComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -49,6 +50,7 @@ export default class FeedUpcomingModalComponent extends Component {
         style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
         swipeArea={Dimensions.get('window').height / 2}
         swipeToClose={true}>
+        <StatusBar hidden={true} />
         <KeyboardAvoidingView
           behavior={'padding'}
           style={{ flex: 1 }}>
@@ -108,9 +110,9 @@ export default class FeedUpcomingModalComponent extends Component {
                 <View style={styles.commentView}>
                   <TouchableHighlight
                     onPress={() => this.props.navigate('ProfileComponent', {
-                      tab: 'feed',
+                      tabBar: this.props.tabBar,
                       username: rowData.username
-                      })}>
+                    })}>
                     <Image source={{ uri: rowData.img }} style={styles.commentImage} />
                   </TouchableHighlight>
                   <View style={{ flex: 1 }}>

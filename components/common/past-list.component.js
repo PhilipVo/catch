@@ -31,7 +31,7 @@ export default class PastListComponent extends Component {
         removeClippedSubviews={false}
         renderRow={(rowData, sectionID, rowID) => (
           <TouchableHighlight
-            onPress={() => this.props.onPress(rowData)}
+            onPress={() => this.props.setSelected('past', rowData)}
             underlayColor='transparent'>
             <Image source={{ uri: rowData.cover }} style={styles.image}>
               <Text style={styles.timer}>

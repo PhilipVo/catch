@@ -1,11 +1,21 @@
+////////////////////////////////////////////////////////////
+//                ProfileComponent
+//  User's profile component which includes their details
+//  and their list of catches. 
+//  
+//                Required params
+//  tabBar: instance of TabBarComponent
+//  username: 'username'
+////////////////////////////////////////////////////////////
+
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import Display from 'react-native-display';
 
 import PastModalComponent from './past-modal.component';
 import ProfileListComponent from './profile-list.component';
 import ProfileDetailsComponent from './profile-details.component';
-import TabComponent from '../common/tab.component';
+import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import users from '../../samples/users';
 
@@ -13,39 +23,51 @@ export default class ProfileComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hideStatusBar: false,
+      modal: null,
       selected: null
     };
   }
 
-  componentWillUnmount() {
-    console.log('unmounted')
-  }
-
   render() {
+    const { params } = this.props.navigation.state;
     return (
       <View style={{ flex: 1 }}>
+        <StatusBar hidden={false} />
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
             <ProfileDetailsComponent
               goBack={this.props.navigation.goBack}
-              user={users[this.props.navigation.state.params.username]} />
+              user={users[params.username]} />
             <ProfileListComponent
               navigate={this.props.navigation.navigate}
-              onPress={selected => this.setState({ selected: selected })} />
+              setSelected={(modal, selected) => this.setState({
+                modal: modal,
+                selected: selected
+              })} />
           </View>
-          {/*{this.props.tabComponent}*/}
-          <TabComponent
-            navigate={this.props.screenProps.navigate}
-            tab={this.props.navigation.state.params.tab} />
+          {params.tabBar}
         </View>
 
-        {
-          this.state.selected ?
+        { // Modals
+          this.state.modal === 'past' ?
             <PastModalComponent
-              hideModal={() => this.setState({ selected: null })}
-              selected={this.state.selected} /> :
-            null
+              hideModal={() => this.setState({
+                modal: null,
+                selected: null
+              })}
+              navigate={this.props.navigation.navigate}
+              selected={this.state.selected}
+              tabBar={params.tabBar} /> :
+            this.state.modal === 'upcoming' ?
+              <UpcomingModalComponent
+                hideModal={() => this.setState({
+                  modal: null,
+                  selected: null
+                })}
+                navigate={this.props.navigation.navigate}
+                selected={this.state.selected}
+                tabBar={params.tabBar} /> :
+              null
         }
 
       </View>

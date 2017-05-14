@@ -31,13 +31,14 @@ export default class ProfileListComponent extends Component {
             underlayColor='transparent' />
         </View>
 
-        {/* Tabs */}
+        {/* Lists */}
         <View style={{ flex: 10 }}>
           <PastListComponent
-            onPress={this.props.onPress}
+            setSelected={this.props.setSelected}
             style={this.state.tab === 'past'
               ? null : { display: 'none' }} />
           <UpcomingListComponent
+            setSelected={this.props.setSelected}
             style={this.state.tab === 'upcoming'
               ? null : { display: 'none' }} />
         </View>

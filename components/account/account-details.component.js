@@ -10,9 +10,8 @@ export default class AccountDetailsComponent extends Component {
       <View style={{ flexDirection: 'row' }}>
         <View style={styles.avatarView}>
           <TouchableHighlight
-            TouchableHighlight
             underlayColor='transparent'
-            onPress={() => this.props.accountNavigator.push({ component: 'AccountPictureComponent' })}>
+            onPress={() => this.props.navigate('AccountPictureComponent')}>
             <Image source={{ uri: user.img }} style={styles.avatarImage} />
           </TouchableHighlight>
         </View>
@@ -20,12 +19,14 @@ export default class AccountDetailsComponent extends Component {
           <Text style={styles.username} > {user.username}</Text>
           <View style={{ paddingVertical: 10 }} >
             <View style={styles.count}>
-              <Text style={{ fontSize: 16 }}>{user.friends}</Text>
-              <Text style={{ fontSize: 16 }}>{user.events}</Text>
-            </View>
-            <View style={styles.count}>
-              <Text style={{ fontSize: 10 }}>Friends</Text>
-              <Text style={{ fontSize: 10 }}>Events</Text>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 16 }}>{user.friends}</Text>
+                <Text style={{ fontSize: 10 }}>Friends</Text>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 16 }}>{user.events}</Text>
+                <Text style={{ fontSize: 10 }}>Events</Text>
+              </View>
             </View>
           </View>
           <Text style={styles.tag}>{user.tag}</Text>
@@ -34,7 +35,7 @@ export default class AccountDetailsComponent extends Component {
           <Icon
             color='gray'
             name='settings'
-            onPress={() => this.props.accountNavigator.push({ component: 'AccountSettingsComponent' })}
+            onPress={() => this.props.navigate('AccountSettingsComponent')}
             size={30}
             underlayColor='transparent' />
         </View>

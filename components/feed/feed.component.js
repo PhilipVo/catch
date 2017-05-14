@@ -2,6 +2,7 @@ const moment = require('moment');
 import React, { Component } from 'react';
 import {
   Image,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -10,10 +11,10 @@ import {
 import { Icon } from 'react-native-elements';
 
 import FeedUpcomingListComponent from './feed-upcoming-list.component';
-import FeedUpcomingModalComponent from './feed-upcoming-modal.component';
 import PastListComponent from '../common/past-list.component';
 import PastModalComponent from '../common/past-modal.component';
 import TabComponent from '../common/tab.component';
+import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
 
@@ -24,21 +25,23 @@ export default class FeedComponent extends Component {
     this.state = {
       modal: null,
       selected: null,
-      hideStatusBar: false,
       tab: 'upcoming',
     };
   }
 
   render() {
-    const tabComponent = <TabComponent
-      hideStatusBar={this.state.hideStatusBar}
-      navigate={this.props.screenProps.navigate}
-      tab='feed' />
+    const tabBar = (
+      <TabComponent
+        navigate={this.props.screenProps.navigate}
+        tab='feed' />
+    );
 
     return (
       <View style={{ flex: 1 }}>
+        <StatusBar hidden={false} />
         <View style={styles.avoidTop}>
           <View style={{ flex: 11 }}>
+
             <Text style={styles.header}>Catch</Text>
 
             {/* Tab bar */}
@@ -60,19 +63,18 @@ export default class FeedComponent extends Component {
               </TouchableHighlight>
             </View>
 
+            {/* Upcoming list */}
             <FeedUpcomingListComponent
               setSelected={selected => this.setState({
-                hideStatusBar: true,
                 modal: 'upcoming',
                 selected: selected,
               })}
               style={this.state.tab === 'upcoming' ? null : { display: 'none' }} />
 
+            {/* Past list */}
             <PastListComponent
-              onPress={selected => {
-                console.log(selected)
+              setSelected={(modal, selected) => {
                 this.setState({
-                  hideStatusBar: true,
                   modal: 'past',
                   selected: selected,
                 })
@@ -80,29 +82,31 @@ export default class FeedComponent extends Component {
               style={this.state.tab === 'past' ? null : { display: 'none' }} />
 
           </View>
-          {tabComponent}
+
+          {tabBar}
         </View>
 
-        {
-          this.state.modal === 'upcoming' ?
-            <FeedUpcomingModalComponent
+        { // Modals
+          this.state.modal === 'past' ?
+            <PastModalComponent
               hideModal={() => this.setState({
                 modal: null,
-                hideStatusBar: false
+                selected: null
               })}
               navigate={this.props.navigation.navigate}
               selected={this.state.selected}
-              tabComponent={tabComponent} /> :
-            this.state.modal === 'past' ?
-              <PastModalComponent
+              tabBar={tabBar} /> :
+            this.state.modal === 'upcoming' ?
+              <UpcomingModalComponent
                 hideModal={() => this.setState({
                   modal: null,
-                  hideStatusBar: false
+                  selected: null
                 })}
-                selected={this.state.selected} /> :
+                navigate={this.props.navigation.navigate}
+                selected={this.state.selected}
+                tabBar={tabBar} /> :
               null
         }
-
       </View>
     );
   }

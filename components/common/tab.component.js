@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 const TabComponent = props => {
   return (
     <View style={props.tab === 'create' ? styles.tab1 : styles.tab2}>
-      <StatusBar hidden={props.hideStatusBar} />
+      {/*<StatusBar hidden={props.hideStatusBar} />*/}
       <Icon
         color={props.tab === 'feed' ? 'black' : 'gray'}
         name='list'

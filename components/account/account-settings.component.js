@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Icon, Text } from 'react-native-elements';
 
 export default class AccountSettingsComponent extends Component {
@@ -12,7 +12,7 @@ export default class AccountSettingsComponent extends Component {
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
-              onPress={this.props.accountNavigator.pop}
+              onPress={() => this.props.navigation.goBack()}
               size={40} />
           </View>
           <View style={{ flex: 10 }}>

@@ -93,9 +93,18 @@ export default class UpcomingListComponent extends Component {
 
             <Text style={styles.detailText}>{rowData.detail}</Text>
             <View style={styles.iconView}>
-              <Icon name='chat-bubble-outline' size={25} />
-              <Icon name='people-outline' size={25} />
-              <Icon name='group-add' size={25} />
+              <Icon
+                name='chat-bubble-outline'
+                onPress={() => this.props.setSelected('upcoming', rowData)}
+                size={25} />
+              <Icon
+                name='people-outline'
+                onPress={() => { }}
+                size={25} />
+              <Icon
+                name='group-add'
+                onPress={() => { }}
+                size={25} />
             </View>
           </View>)
         }

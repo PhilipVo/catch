@@ -22,8 +22,9 @@ export default class AccountPictureComponent extends Component {
           <View style={{ flex: 1 }}>
             <Icon
               name='keyboard-arrow-left'
-              onPress={this.props.accountNavigator.pop}
-              size={40} />
+              onPress={() => this.props.navigation.goBack()}
+              size={40}
+              underlayColor='transparent' />
           </View>
           <View style={{ flex: 10 }}>
             <Text style={styles.headerText}>Change Profile Picture</Text>

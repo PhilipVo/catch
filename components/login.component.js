@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
+  StatusBar,
   StyleSheet,
   TouchableWithoutFeedback,
   View

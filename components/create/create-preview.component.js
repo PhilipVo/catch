@@ -6,47 +6,59 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import { Icon } from 'react-native-elements';
+
+import CreatePreviewModalComponent from './create-preview-modal.component';
 
 import http from '../../services/http.service';
 
 export default class CreatePreviewComponent extends Component {
-  componentDidMount() {
-    console.log('mounted preview')
-  }
-
-  confirm() {
-
+  constructor(props) {
+    super(props);
+    this.state = { showModal: false };
   }
 
   render() {
+    const { params } = this.props.navigation.state;
     return (
-      <Text>{this.props.path}</Text>
-      /*<Image style={styles.image0} source={{ uri: this.props.path }}>
-        <View style={styles.view}>
-          <TouchableHighlight underlayColor='transparent' onPress={() => { }}>
-            <Image style={styles.image1} />
-          </TouchableHighlight>
-          <TouchableHighlight underlayColor='transparent' onPress={() => this.confirm}>
-            <Image style={styles.image1} />
-          </TouchableHighlight>
-        </View>
-      </Image>*/
+      <Image style={{ flex: 1 }} source={{ uri: params.path }}>
+        <Icon
+          color='white'
+          name='clear'
+          onPress={() => this.props.navigation.goBack()}
+          size={40}
+          style={styles.clearIcon}
+          underlayColor='transparent' />
+
+        {
+          this.state.showModal ?
+            <CreatePreviewModalComponent
+              hideModal={() => this.setState({ showModal: false })}
+              navigate={this.props.navigation.navigate}
+            /> :
+            <Icon
+              color='white'
+              containerStyle={styles.arrowIcon}
+              name='angle-right'
+              onPress={() => this.setState({ showModal: true })}
+              size={60}
+              type='font-awesome'
+              underlayColor='transparent' />
+        }
+      </Image >
     );
   }
 }
 
 const styles = StyleSheet.create({
-  image0: { flex: 1 },
-  image1: {
-    height: 50,
-    resizeMode: 'contain',
-    width: 50
-  },
-  view: {
+  arrowIcon: {
     alignItems: 'flex-end',
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 10
+    justifyContent: 'flex-end',
+    padding: 20
+  },
+  clearIcon: {
+    alignSelf: 'flex-start',
+    paddingTop: 20
   }
 });
