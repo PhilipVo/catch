@@ -3,7 +3,6 @@ import {
   Image,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -22,29 +21,33 @@ export default class CreatePreviewComponent extends Component {
     const { params } = this.props.navigation.state;
     return (
       <Image style={{ flex: 1 }} source={{ uri: params.path }}>
-        <Icon
-          color='white'
-          name='clear'
-          onPress={() => this.props.navigation.goBack()}
-          size={40}
-          style={styles.clearIcon}
-          underlayColor='transparent' />
 
         {
           this.state.showModal ?
             <CreatePreviewModalComponent
               hideModal={() => this.setState({ showModal: false })}
               navigate={this.props.navigation.navigate}
-            /> :
-            <Icon
-              color='white'
-              containerStyle={styles.arrowIcon}
-              name='angle-right'
-              onPress={() => this.setState({ showModal: true })}
-              size={60}
-              type='font-awesome'
-              underlayColor='transparent' />
+            /> : (
+              <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                <Icon
+                  color='white'
+                  name='clear'
+                  onPress={() => this.props.navigation.goBack()}
+                  size={40}
+                  style={styles.clearIcon}
+                  underlayColor='transparent' />
+                <Icon
+                  color='white'
+                  name='angle-right'
+                  onPress={() => this.setState({ showModal: true })}
+                  size={60}
+                  style={styles.arrowIcon}
+                  type='font-awesome'
+                  underlayColor='transparent' />
+              </View>
+            )
         }
+
       </Image >
     );
   }
@@ -52,9 +55,7 @@ export default class CreatePreviewComponent extends Component {
 
 const styles = StyleSheet.create({
   arrowIcon: {
-    alignItems: 'flex-end',
-    flex: 1,
-    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
     padding: 20
   },
   clearIcon: {
