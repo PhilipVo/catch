@@ -16,6 +16,7 @@ module.exports = class AccountNavigatorComponent extends Component {
         AccountSettingsComponent: { screen: AccountSettingsComponent },
         ProfileComponent: { screen: ProfileComponent }
       }, {
+        cardStyle: { backgroundColor: 'white' },
         headerMode: 'none'
       });
 

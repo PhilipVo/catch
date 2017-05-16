@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Image,
+  StatusBar,
   StyleSheet,
   Text,
   View
@@ -21,10 +22,12 @@ export default class CreatePreviewComponent extends Component {
     const { params } = this.props.navigation.state;
     return (
       <Image style={{ flex: 1 }} source={{ uri: params.path }}>
+        <StatusBar hidden={true} />
 
         {
           this.state.showModal ?
             <CreatePreviewModalComponent
+              dispatch={this.props.navigation.dispatch}
               hideModal={() => this.setState({ showModal: false })}
               navigate={this.props.navigation.navigate}
             /> : (
@@ -60,6 +63,6 @@ const styles = StyleSheet.create({
   },
   clearIcon: {
     alignSelf: 'flex-start',
-    paddingTop: 20
+    marginTop: 20
   }
 });

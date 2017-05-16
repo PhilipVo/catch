@@ -22,7 +22,6 @@ export default class CreateCameraComponent extends Component {
   }
 
   capture = () => {
-    console.log('captured')
     this.camera.capture()
       .then(data => this.props.navigation.navigate('CreatePreviewComponent', { path: data.path }))
       .catch(error => { });
@@ -45,7 +44,9 @@ export default class CreateCameraComponent extends Component {
         type={this.state.type}>
 
         {/* Skip button */}
-        <TouchableHighlight onPress={() => { }} style={{ flex: 1 }}>
+        <TouchableHighlight
+          onPress={() => this.props.navigation.navigate('CreateNewEventComponent')}
+          style={{ flex: 1 }}>
           <View style={styles.skipView}>
             <Text style={styles.skipText}>Skip  </Text>
             <Icon
@@ -107,8 +108,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end'
   },
   flip: {
-    flex: 1,
     alignItems: 'flex-start',
+    flex: 1,
     justifyContent: 'flex-end'
   },
   skipText: {

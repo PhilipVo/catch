@@ -11,6 +11,7 @@ module.exports = class FeedNavigatorComponent extends Component {
       FeedComponent: { screen: FeedComponent },
       ProfileComponent: { screen: ProfileComponent }
     }, {
+        cardStyle: { backgroundColor: 'white' },
         headerMode: 'none',
         initialRouteName: 'FeedComponent'
       });

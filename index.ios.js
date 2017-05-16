@@ -58,6 +58,7 @@ export default class Catch extends Component {
           WelcomeComponent: { screen: WelcomeComponent }
         },
         {
+          cardStyle: { backgroundColor: 'white' },
           headerMode: 'none'
         });
     }
