@@ -52,7 +52,6 @@ class HttpService {
   }
 
   post(url, body) {
-    console.log(url, body)
     return AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         return fetch(`${this.ip}${url}`, {
@@ -84,9 +83,6 @@ class HttpService {
       .catch(error => Promise.reject(error));
   }
 
-  print() {
-    console.log(this.ip);
-  }
 }
 
 export default new HttpService();

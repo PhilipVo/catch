@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
-import { AppRegistry, AsyncStorage } from 'react-native';
+import { AppRegistry, AsyncStorage, Image } from 'react-native';
 
 import session from './services/session.service';
 
 export default class Catch extends Component {
   constructor(props) {
     super(props);
-    this.state = { isLoggedIn: false };
+    this.state = { isLoggedIn: undefined };
   }
 
   componentWillMount() {
     AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         if (catchToken) {
-          session.setSession(catchToken);
-          this.setState({ isLoggedIn: true });
+          session.setSession(catchToken)
+            .then(() => this.setState({ isLoggedIn: true }))
+            .catch(error => { });
         } else
           this.setState({ isLoggedIn: false });
       })
@@ -30,7 +31,7 @@ export default class Catch extends Component {
 
     let Navigator;
     // Conditionally load components ('lazy loading'):
-    if (this.state.isLoggedIn) {
+    if (this.state.isLoggedIn === true) {
       const AccountNavigatorComponent = require('./components/account/account-navigator.component');
       const CreateNavigatorComponent = require('./components/create/create-navigator.component');
       const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
@@ -46,16 +47,12 @@ export default class Catch extends Component {
           initialRouteName: 'FeedNavigatorComponent',
           navigationOptions: { tabBarVisible: false }
         });
-    } else {
+    } else if (this.state.isLoggedIn === false) {
       const LoginComponent = require('./components/login.component');
-      const RegisterComponent = require('./components/register.component');
-      const WelcomeComponent = require('./components/welcome.component');
 
       Navigator = require('react-navigation').StackNavigator(
         {
           LoginComponent: { screen: LoginComponent },
-          RegisterComponent: { screen: RegisterComponent },
-          WelcomeComponent: { screen: WelcomeComponent }
         },
         {
           cardStyle: { backgroundColor: 'white' },
@@ -64,9 +61,11 @@ export default class Catch extends Component {
     }
 
     return (
-      this.state.isLoggedIn ?
+      this.state.isLoggedIn === true ?
         <Navigator screenProps={{ logout: () => this.setState({ isLoggedIn: false }) }} /> :
-        <Navigator screenProps={{ login: () => this.setState({ isLoggedIn: true }) }} />
+        this.state.isLoggedIn === false ?
+          <Navigator screenProps={{ login: () => this.setState({ isLoggedIn: true }) }} /> :
+          <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} />
     );
   }
 }

@@ -54,7 +54,8 @@ export default class CreateCameraComponent extends Component {
               name='angle-right'
               onPress={() => { }}
               size={33}
-              type='font-awesome' />
+              type='font-awesome'
+              underlayColor='transparent' />
           </View>
         </TouchableHighlight>
 

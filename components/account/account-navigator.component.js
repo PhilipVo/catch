@@ -21,7 +21,10 @@ module.exports = class AccountNavigatorComponent extends Component {
       });
 
     return (
-      <AccountNavigator screenProps={{ navigate: this.props.navigation.navigate }} />
+      <AccountNavigator screenProps={{
+        logout: this.props.screenProps.logout,
+        navigate: this.props.navigation.navigate
+      }} />
     );
   }
 }

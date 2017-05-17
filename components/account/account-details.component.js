@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { h4, Icon, Text } from 'react-native-elements';
 
+import session from '../../services/session.service';
+
 import user from '../../samples/user';
 
 export default class AccountDetailsComponent extends Component {
@@ -16,7 +18,7 @@ export default class AccountDetailsComponent extends Component {
           </TouchableHighlight>
         </View>
         <View style={styles.view}>
-          <Text style={styles.username} > {user.username}</Text>
+          <Text style={styles.username}>{session.username}</Text>
           <View style={{ paddingVertical: 10 }} >
             <View style={styles.count}>
               <View style={{ alignItems: 'center' }}>

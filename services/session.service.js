@@ -1,9 +1,15 @@
+const base64 = require('base-64');
 import { AsyncStorage } from 'react-native';
 
 import http from './http.service';
 import socket from './socket.service';
 
 class SessionService {
+  constructor() {
+    this.img;
+    this.username;
+  }
+
   login(data) {
     return http.post('/users/login', JSON.stringify(data))
       .then(catchToken => AsyncStorage.setItem('catchToken', catchToken))
@@ -14,7 +20,12 @@ class SessionService {
 
   logout() {
     return AsyncStorage.removeItem('catchToken')
-      .then(() => socket.disconnect())
+      .then(() => {
+        socket.disconnect();
+
+        this.img = undefined;
+        this.username = undefined;
+      })
       .catch(error => Promise.reject(error));
   }
 
@@ -27,13 +38,18 @@ class SessionService {
   }
 
   setSession(catchToken) {
-    try {
-      socket.connect();
-    } catch (e) {
-      this.logout();
-    }
-  }
+    return new Promise((resolve, reject) => {
+      // Set user:
+      payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
+      this.img = payload.img;
+      this.username = payload.username;
 
+      // Connect to sockets:
+      socket.connect();
+
+      return resolve();
+    })
+  }
 }
 
 export default new SessionService();
