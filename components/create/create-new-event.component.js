@@ -1,112 +1,144 @@
+const moment = require('moment');
 import React, { Component } from 'react';
 import {
   Image,
   Keyboard,
   StatusBar,
   StyleSheet,
+  Text,
   TextInput,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   View
 } from 'react-native';
-import { h3, Icon, Text } from 'react-native-elements';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import { Icon } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class CreateNewEventComponent extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      date: Date.now(),
+      isDateTimePickerVisible: false,
+    }
+
     this.event = {
 
     };
   }
 
+  _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+  _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+  _handleDatePicked = (date) => {
+    console.log('A date has been picked: ', date);
+    this._hideDateTimePicker();
+  };
+
+  onDateChange = (date) => {
+    this.setState({ date: date });
+    console.log(date)
+  };
+
   render() {
+    console.ignoredYellowBox = ['Warning'];
+
+
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <KeyboardAwareScrollView>
-          <View style={{ flex: 1 }}>
-            <StatusBar hidden={false} />
+        {/*<KeyboardAwareScrollView>*/}
+        <View style={{ flex: 1 }}>
+          <StatusBar hidden={false} />
 
-            {/* Header */}
-            <View style={{ alignItems: 'center', flex: 1, flexDirection: 'row', marginTop: 20 }}>
-              <View style={{ flex: 1 }}>
-                <Icon
-                  name='angle-left'
-                  onPress={() => this.props.navigation.goBack()}
-                  size={40}
-                  style={{ marginLeft: 10 }}
-                  type='font-awesome'
-                  underlayColor='transparent' />
-              </View>
-              <View style={{ flex: 10 }}>
-                <Text style={{ fontSize: 20, textAlign: 'center' }}>Create a Catch</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-              </View>
-            </View>
-
-            {/* Body */}
-            <View style={{ flex: 10 }}>
-
-              {/* Cover photo */}
-              <Image style={styles.cover} >
-                <View style={styles.coverView}>
-                  <Text style={{ color: 'white' }}>Add a cover photo</Text>
-                  <Icon color='white' name='add-circle-outline' />
-                </View>
-              </Image>
-
-              {/* Form */}
-              <View style={{ padding: 20 }}>
-                {/* Event */}
-                <Text style={{ fontSize: 16 }}>Event</Text>
-                <TextInput style={styles.textInput} />
-
-                {/* Open on */}
-                <Text style={{ fontSize: 16 }}>Open on</Text>
-                <View style={styles.timeView}>
-                  <TextInput style={styles.timeInput1} />
-                  <Text> : </Text>
-                  <TextInput style={styles.timeInput1} />
-                  <TextInput style={styles.timeInput2} />
-                </View>
-                <View style={styles.dateView}>
-                  <TextInput style={styles.timeInput1} />
-                  <TextInput style={styles.timeInput2} />
-                  <View />
-                </View>
-
-
-                {/* Who */}
-                <Text style={{ fontSize: 16 }}>Who will view this?</Text>
-                <TextInput style={styles.textInput} />
-
-
-                {/* Description */}
-                <Text style={{ fontSize: 16 }}>Description</Text>
-                <TextInput multiline={true} style={styles.description} />
-              </View>
-
-            </View>
-
-            {/*Footer*/}
-            <View style={styles.invite}>
-              <Text
-                onPress={() =>
-                  this.props.navigation.navigate('CreateInviteComponent', { event: this.state })}
-                style={{ fontSize: 20 }}>
-                {'Invite Contributors  '}
-              </Text>
+          {/* Header */}
+          <View style={{ alignItems: 'center', flex: 1, flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flex: 1 }}>
               <Icon
-                name='angle-right'
-                onPress={() =>
-                  this.props.navigation.navigate('CreateInviteComponent', { event: this.state })}
+                name='angle-left'
+                onPress={() => this.props.navigation.goBack()}
                 size={40}
+                style={{ marginLeft: 10 }}
                 type='font-awesome'
                 underlayColor='transparent' />
             </View>
+            <View style={{ flex: 10 }}>
+              <Text style={{ fontSize: 20, textAlign: 'center' }}>Create a Catch</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+            </View>
+          </View>
+
+          {/* Body */}
+          <View style={{ flex: 10 }}>
+
+            {/* Cover photo */}
+            <Image style={styles.cover} >
+              <View style={styles.coverView}>
+                <Text style={{ color: 'white' }}>Add a cover photo</Text>
+                <Icon color='white' name='add-circle-outline' />
+              </View>
+            </Image>
+
+            {/* Form */}
+            <View style={{ padding: 20 }}>
+              {/* Event */}
+              <Text style={{ fontSize: 16 }}>Event</Text>
+              <TextInput style={styles.textInput} />
+
+              {/* Open on */}
+              <TouchableHighlight
+                onPress={() => this.setState({ isDateTimePickerVisible: true })}
+                underlayColor='transparent'>
+                <View>
+                  <Text style={{ fontSize: 16 }}>Open on</Text>
+                  <TextInput
+                    editable={false}
+                    value={moment(this.state.date).format('MMMM D YYYY, h:mm a')}
+                    style={styles.textInput} />
+                </View>
+              </TouchableHighlight>
+
+              {/* Open on */}
+              <DateTimePicker
+                mode='datetime'
+                isVisible={this.state.isDateTimePickerVisible}
+                onConfirm={this._handleDatePicked}
+                onCancel={this._hideDateTimePicker}
+              />
+
+              {/* Who */}
+              <Text style={{ fontSize: 16 }}>Who will view this?</Text>
+              <TextInput style={styles.textInput} />
+
+              {/* Description */}
+              <Text style={{ fontSize: 16 }}>Description</Text>
+              <TextInput multiline={true} style={styles.description} />
+            </View>
 
           </View>
-        </KeyboardAwareScrollView>
+
+          {/*Footer*/}
+          <View style={styles.invite}>
+            <Text
+              onPress={() =>
+                this.props.navigation.navigate('CreateInviteComponent', { event: this.state })}
+              style={{ fontSize: 20 }}>
+              {'Invite Contributors  '}
+            </Text>
+            <Icon
+              name='angle-right'
+              onPress={() =>
+                this.props.navigation.navigate('CreateInviteComponent', { event: this.state })}
+              size={40}
+              type='font-awesome'
+              underlayColor='transparent' />
+          </View>
+
+        </View>
+        {/*</KeyboardAwareScrollView>*/}
       </TouchableWithoutFeedback>
     );
   }
@@ -132,6 +164,7 @@ const styles = StyleSheet.create({
   description: {
     borderColor: 'gray',
     borderWidth: 0.5,
+    fontSize: 16,
     height: 60,
     marginBottom: 20,
     padding: 5
@@ -148,6 +181,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     height: 30,
     marginBottom: 20,
+    textAlign: 'center',
     padding: 5
   },
   timeInput1: {
