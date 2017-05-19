@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {
   Image,
   Keyboard,
+  SegmentedControlIOS,
   StatusBar,
   StyleSheet,
   Text,
@@ -13,40 +14,40 @@ import {
 } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { Icon } from 'react-native-elements';
+import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class CreateNewEventComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      date: Date.now(),
-      isDateTimePickerVisible: false,
-    }
-
     this.event = {
+      audience: 0,
+      cover: '',
+      date: Date.now(),
+      description: '',
+      event: '',
+    };
 
+    this.state = {
+      cover: 'images/Background.png',
+      isVisible: false,
     };
   }
 
-  _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
-
-  _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
-
-  _handleDatePicked = (date) => {
-    console.log('A date has been picked: ', date);
-    this._hideDateTimePicker();
-  };
-
-  onDateChange = (date) => {
-    this.setState({ date: date });
-    console.log(date)
-  };
+  openPicker = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 120,
+      cropping: true
+    }).then(image => {
+      console.log(image)
+      this.event.cover = image.path;
+      this.setState({ cover: image.path });
+    }).catch(() => { });
+  }
 
   render() {
-    console.ignoredYellowBox = ['Warning'];
-
-
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {/*<KeyboardAwareScrollView>*/}
@@ -75,47 +76,72 @@ export default class CreateNewEventComponent extends Component {
           <View style={{ flex: 10 }}>
 
             {/* Cover photo */}
-            <Image style={styles.cover} >
-              <View style={styles.coverView}>
-                <Text style={{ color: 'white' }}>Add a cover photo</Text>
-                <Icon color='white' name='add-circle-outline' />
-              </View>
-            </Image>
+            <TouchableHighlight onPress={this.openPicker} underlayColor='transparent'>
+              <Image source={{ uri: this.state.cover }} style={styles.cover}>
+                <View style={styles.coverView}>
+                  <Text style={{ color: 'white' }}>Add a cover photo</Text>
+                  <Icon color='white' name='add-circle-outline' />
+                </View>
+              </Image>
+            </TouchableHighlight>
 
             {/* Form */}
             <View style={{ padding: 20 }}>
               {/* Event */}
               <Text style={{ fontSize: 16 }}>Event</Text>
-              <TextInput style={styles.textInput} />
+              <TextInput
+                autoCapitalize='words'
+                autoCorrect={true}
+                onChangeText={event => this.event.event = event}
+                style={styles.textInput}
+              />
 
               {/* Open on */}
               <TouchableHighlight
-                onPress={() => this.setState({ isDateTimePickerVisible: true })}
+                onPress={() => this.setState({ isVisible: true })}
                 underlayColor='transparent'>
                 <View>
                   <Text style={{ fontSize: 16 }}>Open on</Text>
                   <TextInput
                     editable={false}
-                    value={moment(this.state.date).format('MMMM D YYYY, h:mm a')}
-                    style={styles.textInput} />
+                    style={styles.textInput}
+                    value={moment(this.event.date).format('MMMM D YYYY, h:mm a')} />
                 </View>
               </TouchableHighlight>
 
               {/* Open on */}
               <DateTimePicker
+                isVisible={this.state.isVisible}
+                maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
+                minimumDate={new Date()}
                 mode='datetime'
-                isVisible={this.state.isDateTimePickerVisible}
-                onConfirm={this._handleDatePicked}
-                onCancel={this._hideDateTimePicker}
-              />
+                onCancel={() => this.setState({ isVisible: false })}
+                onConfirm={date => {
+                  this.event.date = date;
+                  this.setState({ isVisible: false });
+                }} />
 
               {/* Who */}
               <Text style={{ fontSize: 16 }}>Who will view this?</Text>
-              <TextInput style={styles.textInput} />
+              <SegmentedControlIOS
+                onChange={event => this.event.audience = event.nativeEvent.selectedSegmentIndex}
+                selectedIndex={this.event.audience}
+                style={{ marginBottom: 20 }}
+                tintColor='#f74434'
+                values={['Public', 'Private']} />
+
 
               {/* Description */}
               <Text style={{ fontSize: 16 }}>Description</Text>
-              <TextInput multiline={true} style={styles.description} />
+              <TextInput
+                autoCapitalize='sentences'
+                autoCorrect={true}
+                multiline={true}
+                onChangeText={description => {
+                  this.event.description = description
+                  console.log(this.event)
+                }}
+                style={styles.description} />
             </View>
 
           </View>
@@ -146,10 +172,10 @@ export default class CreateNewEventComponent extends Component {
 
 const styles = StyleSheet.create({
   cover: {
-    backgroundColor: 'gray',
+    // backgroundColor: 'gray',
     height: 120,
     justifyContent: 'flex-end',
-    marginTop: 20
+    marginTop: 20,
   },
   coverView: {
     alignItems: 'center',

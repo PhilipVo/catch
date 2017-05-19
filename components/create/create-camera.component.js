@@ -52,7 +52,6 @@ export default class CreateCameraComponent extends Component {
             <Icon
               color='rgba(255,255,255,0.5)'
               name='angle-right'
-              onPress={() => { }}
               size={33}
               type='font-awesome'
               underlayColor='transparent' />

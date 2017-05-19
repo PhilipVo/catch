@@ -54,7 +54,7 @@ export default class AccountSettingsComponent extends Component {
                 autoCapitalize='none'
                 autoCorrect={false}
                 keyboardType='email-address'
-                onChangeText={(email) => this.user.email = email}
+                onChangeText={email => this.user.email = email}
                 style={styles.inputText}
                 value={user.email} />
             </View>
@@ -68,7 +68,7 @@ export default class AccountSettingsComponent extends Component {
               <TextInput
                 autoCapitalize='sentences'
                 autoCorrect={true}
-                onChangeText={(tag) => this.user.tag = tag}
+                onChangeText={tag => this.user.tag = tag}
                 style={styles.inputText}
                 value={user.tag} />
             </View>

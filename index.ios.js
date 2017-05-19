@@ -70,5 +70,4 @@ export default class Catch extends Component {
   }
 }
 
-
 AppRegistry.registerComponent('Catch', () => Catch);
