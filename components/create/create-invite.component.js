@@ -21,42 +21,60 @@ export default class CreateNewEventComponent extends Component {
     this.state = {
       data: [],
       dataSource: this.ds.cloneWithRows([]),
+      error: null
     }
   }
 
   componentDidMount() {
-    http.get('/api/friends')
-      .then(friends => {
+    http.get('/api/contacts')
+      .then(contacts => {
         this.setState({
-          data: friends,
-          dataSource: this.ds.cloneWithRows(friends)
+          data: contacts,
+          dataSource: this.ds.cloneWithRows(contacts)
         });
       })
-      .catch(error => { });
+      .catch(error => {
+        this.setState({
+          error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+        });
+      });
   }
 
   complete = () => {
-    const event = {
-      ...this.props.navigation.state.params.event,
-      contributors: this.contributors
-    };
+    const event = this.props.navigation.state.params.event;
+    const formData = new FormData();
 
-    http.post('/api/events', JSON.stringify(event))
+    formData.append('audience', event.audience);
+    formData.append('contributors', JSON.stringify(this.contributors));
+    formData.append('date', event.date);
+    formData.append('description', event.description);
+    formData.append('event', event.event);
+    formData.append('media', { name: 'cover', uri: event.cover });
+
+    // Append story if it exists:
+    if (event.story) formData.append('media', { uri: event.story });
+
+    http.post('/api/events', formData)
       .then(() => {
-        this.props.navigation.dispatch(NavigationActions.reset({
-          actions: [
-            NavigationActions.navigate({
-              params: {
-                event: event,
-                isNew: true
-              },
-              routeName: 'CreateCompleteComponent'
-            })
-          ],
-          index: 0
-        }));
+        // this.props.navigation.dispatch(NavigationActions.reset({
+        //   actions: [
+        //     NavigationActions.navigate({
+        //       params: {
+        //         event: event,
+        //         isNew: true
+        //       },
+        //       routeName: 'CreateCompleteComponent'
+        //     })
+        //   ],
+        //   index: 0
+        // }));
       })
-      .catch(error => { });
+      .catch(error => {
+        console.log(error)
+        this.setState({
+          error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+        })
+      });
   }
 
   invite = (rowData, rowID) => {
@@ -110,7 +128,8 @@ export default class CreateNewEventComponent extends Component {
 
         {/* Body */}
         <View style={styles.body}>
-          {
+
+          { // Contact list
             this.state.data.length > 0 ?
               <ListView
                 dataSource={this.state.dataSource}
@@ -137,11 +156,19 @@ export default class CreateNewEventComponent extends Component {
                     </TouchableHighlight>
                   </View>
                 )} /> :
-              <Text style={styles.grayText}>No friends were found</Text>
+              <Text style={styles.grayText}>No contacts were found</Text>
           }
+
         </View>
 
         {/* Footer */}
+
+        { // Error message
+          this.state.error && <Text style={styles.error}>
+            {this.state.error}
+          </Text>
+        }
+
         <TouchableHighlight
           onPress={this.complete}
           underlayColor='transparent'>
@@ -164,6 +191,10 @@ const styles = StyleSheet.create({
   body: {
     flex: 10,
     padding: 20
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center'
   },
   footer: {
     alignItems: 'center',
