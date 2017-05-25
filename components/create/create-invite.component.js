@@ -10,6 +10,7 @@ import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
+import socket from '../../services/socket.service';
 
 export default class CreateNewEventComponent extends Component {
   constructor(props) {
@@ -21,7 +22,8 @@ export default class CreateNewEventComponent extends Component {
     this.state = {
       data: [],
       dataSource: this.ds.cloneWithRows([]),
-      error: null
+      error: null,
+      saving: false,
     }
   }
 
@@ -41,6 +43,11 @@ export default class CreateNewEventComponent extends Component {
   }
 
   complete = () => {
+    this.setState({
+      error: null,
+      saving: true
+    });
+
     const event = this.props.navigation.state.params.event;
     const formData = new FormData();
 
@@ -52,27 +59,29 @@ export default class CreateNewEventComponent extends Component {
     formData.append('media', { name: 'cover', uri: event.cover });
 
     // Append story if it exists:
-    if (event.story) formData.append('media', { uri: event.story });
+    if (event.story) formData.append('media', { name: 'story', uri: event.story });
 
     http.post('/api/events', formData)
       .then(() => {
-        // this.props.navigation.dispatch(NavigationActions.reset({
-        //   actions: [
-        //     NavigationActions.navigate({
-        //       params: {
-        //         event: event,
-        //         isNew: true
-        //       },
-        //       routeName: 'CreateCompleteComponent'
-        //     })
-        //   ],
-        //   index: 0
-        // }));
+        socket.emit('public');
+
+        this.props.navigation.dispatch(NavigationActions.reset({
+          actions: [
+            NavigationActions.navigate({
+              params: {
+                event: event,
+                isNew: true
+              },
+              routeName: 'CreateCompleteComponent'
+            })
+          ],
+          index: 0
+        }));
       })
       .catch(error => {
-        console.log(error)
         this.setState({
-          error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+          error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+          saving: false
         })
       });
   }
@@ -173,12 +182,15 @@ export default class CreateNewEventComponent extends Component {
           onPress={this.complete}
           underlayColor='transparent'>
           <View style={styles.footer}>
-            <Text style={{ fontSize: 20 }}>Complete Event  </Text>
-            <Icon
-              name='angle-right'
-              size={40}
-              type='font-awesome'
-              underlayColor='transparent' />
+            <Text style={{ fontSize: 20 }}>{this.state.saving ? 'Saving...' : 'Complete Event  '}</Text>
+            {
+              !this.state.saving &&
+              <Icon
+                name='angle-right'
+                size={40}
+                type='font-awesome'
+                underlayColor='transparent' />
+            }
           </View>
         </TouchableHighlight>
 

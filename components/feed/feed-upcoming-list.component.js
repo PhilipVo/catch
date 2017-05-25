@@ -1,6 +1,7 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Image,
   ListView,
   StyleSheet,
@@ -12,8 +13,7 @@ import { Icon } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
 import http from '../../services/http.service';
-
-import upcoming from '../../samples/upcoming';
+import socket from '../../services/socket.service';
 
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
@@ -21,71 +21,109 @@ export default class FeedUpcomingListComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      data: upcoming,
-      dataSource: this.ds.cloneWithRows(upcoming),
+      data: [],
+      dataSource: this.ds.cloneWithRows([]),
+      loading: true,
       now: Date.now()
     };
 
+    // Update timers every 60 seconds:
     this.interval = TimerMixin.setInterval(() => {
       this.setState({
-        data: upcoming,
-        dataSource: this.ds.cloneWithRows(upcoming),
+        dataSource: this.ds.cloneWithRows(this.state.data),
         now: Date.now()
-      });
+      })
     }, 60000);
+
+    // Socket events:
+    this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
   }
 
-  renderCountdowns = () => {
-    return (
-      <Text>{this.state.time}</Text>
-    );
+  componentDidMount() {
+    this.getEvents();
   }
 
   componentWillUnmount() {
+    console.log('unmounted upcomi')
     TimerMixin.clearInterval(this.interval);
+  }
+
+  getEvents = () => {
+    http.get('/api/events/get-public-upcoming-events')
+      .then(data => {
+        this.setState({
+          data: data,
+          dataSource: this.ds.cloneWithRows(data),
+          loading: false,
+          now: Date.now()
+        })
+      })
+      .catch();
   }
 
   render() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        removeClippedSubviews={false}
-        renderRow={(rowData, sectionID, rowID) => (
-          <TouchableHighlight
-            onPress={() => this.props.setSelected(rowData)}
-            underlayColor='transparent'>
-            <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
-              <Text style={styles.eventText}>{rowData.event}</Text>
-              {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
+      this.state.loading ?
+        <View style={{ marginTop: 20 }}>
+          <ActivityIndicator style={{ alignSelf: 'center' }} />
+        </View> :
+        this.state.data.length > 0 ?
+          <ListView
+            dataSource={this.state.dataSource}
+            removeClippedSubviews={false}
+            renderRow={(rowData, sectionID, rowID) => (
+              new Date(rowData.date).getTime() > this.state.now ?
+                <TouchableHighlight
+                  onPress={() => this.props.setSelected('upcoming', rowData)}
+                  underlayColor='transparent'>
+                  <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
+                    <Text style={styles.eventText}>{rowData.event}</Text>
+                    {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
 
-              {/* Timer */}
-              <View style={{ flexDirection: 'row' }}>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.timerText}>
-                    {moment(rowData.date).diff(this.state.now, 'days')}
-                  </Text>
-                  <Text style={styles.timerText}>Days</Text>
-                </View>
-                <Text style={styles.timerText}>:</Text>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.timerText}>
-                    {moment(rowData.date).diff(this.state.now, 'hours') % 24}
-                  </Text>
-                  <Text style={styles.timerText}>Hrs</Text>
-                </View>
-                <Text style={styles.timerText}>:</Text>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.timerText}>
-                    {moment(rowData.date).diff(this.state.now, 'minutes') % 60}
-                  </Text>
-                  <Text style={styles.timerText}>Mins</Text>
-                </View>
-              </View>
-            </Image>
-          </TouchableHighlight>)
-        }
-        style={this.props.style}
-      />
+                    {/* Timer */}
+                    <View style={{ flexDirection: 'row' }}>
+                      <View style={{ alignItems: 'center' }}>
+                        <Text style={styles.timerText}>
+                          {moment(rowData.date).diff(this.state.now, 'days')}
+                        </Text>
+                        <Text style={styles.timerText}>Days</Text>
+                      </View>
+                      <Text style={styles.timerText}>:</Text>
+                      <View style={{ alignItems: 'center' }}>
+                        <Text style={styles.timerText}>
+                          {moment(rowData.date).diff(this.state.now, 'hours') % 24}
+                        </Text>
+                        <Text style={styles.timerText}>Hrs</Text>
+                      </View>
+                      <Text style={styles.timerText}>:</Text>
+                      <View style={{ alignItems: 'center' }}>
+                        <Text style={styles.timerText}>
+                          {moment(rowData.date).diff(this.state.now, 'minutes') % 60}
+                        </Text>
+                        <Text style={styles.timerText}>Mins</Text>
+                      </View>
+                    </View>
+                  </Image>
+                </TouchableHighlight> :
+                <TouchableHighlight
+                  onPress={() => this.props.setSelected('past', rowData)}
+                  underlayColor='transparent'>
+                  <Image source={{ uri: rowData.cover }} style={styles.image}>
+                    <Text style={styles.timer}>
+                      {moment(rowData.date).fromNow().toString()}
+                    </Text>
+                    <View style={styles.view}>
+                      <Text style={styles.text}>{rowData.event}</Text>
+                      <Icon color='white' name='play-circle-outline' size={33} />
+                    </View>
+                  </Image>
+                </TouchableHighlight>
+            )}
+            style={{ flex: 1 }}
+          /> :
+          <View style={{ marginTop: 20 }}>
+            <Text style={styles.grayText}>No upcoming events found</Text>
+          </View>
     );
   }
 }
@@ -105,11 +143,40 @@ const styles = StyleSheet.create({
     textShadowColor: 'black',
     textShadowOffset: { width: 0.5, height: 0.5 }
   },
+  grayText: {
+    color: 'gray',
+    textAlign: 'center'
+  },
+  image: {
+    height: 120,
+    justifyContent: 'space-between'
+  },
+  text: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  timer: {
+    alignSelf: 'flex-end',
+    color: 'white',
+    fontWeight: 'bold',
+    paddingRight: 5,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
   timerText: {
     color: 'white',
     fontSize: 10,
     fontWeight: 'bold',
     textShadowColor: 'black',
     textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  view: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   }
 });

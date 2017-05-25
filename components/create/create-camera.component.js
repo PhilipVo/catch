@@ -23,7 +23,7 @@ export default class CreateCameraComponent extends Component {
 
   capture = () => {
     this.camera.capture()
-      .then(data => this.props.navigation.navigate('CreatePreviewComponent', { path: data.path }))
+      .then(data => this.props.navigation.navigate('CreatePreviewComponent', { story: data.path }))
       .catch(error => { });
   }
 

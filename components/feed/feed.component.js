@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { NavigationActions, TabNavigator } from 'react-navigation';
 
 import FeedUpcomingListComponent from './feed-upcoming-list.component';
 import PastListComponent from '../common/past-list.component';
@@ -25,17 +26,30 @@ export default class FeedComponent extends Component {
     this.state = {
       modal: null,
       selected: null,
-      tab: 'upcoming',
+      tab: 'FeedUpcomingListComponent',
     };
-  }
 
-  render() {
-    const tabBar = (
+    this.tabBar = (
       <TabComponent
         navigate={this.props.screenProps.navigate}
         tab='feed' />
     );
+  }
 
+  navigate = tab => {
+    this.navigator.dispatch(NavigationActions.navigate({ routeName: tab }));
+    this.setState({ tab: tab });
+  }
+
+  setSelected = (modal, selected) => {
+    console.log('setselected', modal)
+    this.setState({
+      modal: modal,
+      selected: selected
+    });
+  }
+
+  render() {
     return (
       <View style={{ flex: 1 }}>
         <StatusBar hidden={false} />
@@ -44,46 +58,35 @@ export default class FeedComponent extends Component {
 
             <Text style={styles.header}>Catch</Text>
 
-            {/* Tab bar */}
+            {/* Top tab bar */}
             <View style={styles.tabBar}>
               <TouchableHighlight
-                onPress={() => this.setState({ tab: 'upcoming' })}
-                style={this.state.tab === 'upcoming' ?
+                onPress={() => this.navigate('FeedUpcomingListComponent')}
+                style={this.state.tab === 'FeedUpcomingListComponent' ?
                   styles.activeTab : { flex: 1 }}
                 underlayColor='transparent'>
-                <Text style={this.state.tab === 'upcoming' ?
+                <Text style={this.state.tab === 'FeedUpcomingListComponent' ?
                   styles.activeTabText : { textAlign: 'center' }}>Upcoming</Text>
               </TouchableHighlight>
               <TouchableHighlight
-                onPress={() => this.setState({ tab: 'past' })}
-                style={this.state.tab === 'past' ? styles.activeTab : { flex: 1 }}
+                onPress={() => this.navigate('PastListComponent')}
+                style={this.state.tab === 'PastListComponent' ?
+                  styles.activeTab : { flex: 1 }}
                 underlayColor='transparent'>
-                <Text style={this.state.tab === 'past' ?
+                <Text style={this.state.tab === 'PastListComponent' ?
                   styles.activeTabText : { textAlign: 'center' }}>Past</Text>
               </TouchableHighlight>
             </View>
 
-            {/* Upcoming list */}
-            <FeedUpcomingListComponent
-              setSelected={selected => this.setState({
-                modal: 'upcoming',
-                selected: selected,
-              })}
-              style={this.state.tab === 'upcoming' ? null : { display: 'none' }} />
-
-            {/* Past list */}
-            <PastListComponent
-              setSelected={(modal, selected) => {
-                this.setState({
-                  modal: 'past',
-                  selected: selected,
-                })
+            <Navigator
+              onNavigationStateChange={(prevState, newState) => {
+                console.log('state changed', newState)
               }}
-              style={this.state.tab === 'past' ? null : { display: 'none' }} />
+              ref={navigator => this.navigator = navigator} />
 
           </View>
 
-          {tabBar}
+          {this.tabBar}
         </View>
 
         { // Modals
@@ -95,7 +98,7 @@ export default class FeedComponent extends Component {
               })}
               navigate={this.props.navigation.navigate}
               selected={this.state.selected}
-              tabBar={tabBar} /> :
+              tabBar={this.tabBar} /> :
             this.state.modal === 'upcoming' ?
               <UpcomingModalComponent
                 hideModal={() => this.setState({
@@ -104,13 +107,24 @@ export default class FeedComponent extends Component {
                 })}
                 navigate={this.props.navigation.navigate}
                 selected={this.state.selected}
-                tabBar={tabBar} /> :
+                tabBar={this.tabBar} /> :
               null
         }
       </View>
     );
   }
 }
+
+const Navigator = TabNavigator(
+  {
+    FeedUpcomingListComponent: { screen: FeedUpcomingListComponent },
+    PastListComponent: { screen: PastListComponent }
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'FeedUpcomingListComponent',
+    navigationOptions: { tabBarVisible: false }
+  });
 
 const styles = StyleSheet.create({
   activeTab: {

@@ -5,16 +5,16 @@ import IO from 'socket.io-client';
 import http from './http.service';
 
 class SocketService {
-  constructor() {
-    this.onSent;
-  }
-
   connect() {
     this.socket = IO(http.ip, { jsonp: false });
 
     //////////////////////////////////////////////////////
     //               SOCKET EVENT HANDLERS
     //////////////////////////////////////////////////////
+    this.onPublic = new Observable(observer => {
+      this.socket.on('public', () => observer.next());
+    });
+
     this.onSent = new Observable(observer => {
       this.socket.on('sent', data => {
         observer.next(data);
@@ -26,8 +26,6 @@ class SocketService {
     if (this.socket) {
       this.socket.emit('disconnect');
       this.socket.disconnect();
-      this.socket = null;
-      this.onSent = null;
     }
   }
 

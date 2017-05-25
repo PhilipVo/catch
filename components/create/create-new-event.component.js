@@ -26,7 +26,7 @@ export default class CreateNewEventComponent extends Component {
       audience: 0,
       cover: null,
       coverError: false,
-      date: Date.now(),
+      date: new Date(new Date().setDate(new Date().getDate() + 1)).getTime(),
       description: '',
       event: '',
       eventError: false,
@@ -53,6 +53,8 @@ export default class CreateNewEventComponent extends Component {
         date: this.state.date,
         description: this.state.description,
         event: this.state.event,
+        story: this.props.navigation.state.params ?
+          this.props.navigation.state.params.story : null
       }
     });
   }
@@ -106,7 +108,9 @@ export default class CreateNewEventComponent extends Component {
                       styles.coverError : { color: 'white' }}>
                       Add a cover photo
                       </Text>
-                    <Icon color='white' name='add-circle-outline' />
+                    <Icon
+                      color={this.state.coverError ? 'red' : 'white'}
+                      name='add-circle-outline' />
                   </View>
                 </Image>
               </TouchableHighlight>

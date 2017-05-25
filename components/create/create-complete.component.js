@@ -54,11 +54,20 @@ export default class CreateCompleteComponent extends Component {
           </View>
         </View>
 
-        <Text style={styles.text}>
-          until you can view the event.{'\n\n'}
-          Black Widow and Ironman also added to this event.{'\n\n'}
-          When the countdown is complete, you will be able to view {params.event.event}
-        </Text>
+        {
+          params.isNew ?
+            <Text style={styles.text}>
+              until you can view the event.{'\n\n'}
+              Others may request to add content or view your event.{'\n\n'}
+              Check your profile to approve/deny them!
+            </Text> :
+            <Text style={styles.text}>
+              until you can view the event.{'\n\n'}
+              Black Widow and Ironman also added to this event.{'\n\n'}
+              When the countdown is complete, you will be able to view {params.event.event}
+            </Text>
+        }
+
       </View >
     );
   }

@@ -39,15 +39,19 @@ class SessionService {
 
   setSession(catchToken) {
     return new Promise((resolve, reject) => {
-      // Set user:
-      payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
-      this.img = payload.img;
-      this.username = payload.username;
+      try {
+        // Set user:
+        payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
+        this.img = payload.img;
+        this.username = payload.username;
 
-      // Connect to sockets:
-      socket.connect();
+        // Connect to sockets:
+        socket.connect();
 
-      return resolve();
+        return resolve();
+      } catch (error) {
+        return reject('Error encountered while setting session.');
+      }
     })
   }
 }

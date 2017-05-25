@@ -42,6 +42,18 @@ export default class UpcomingModalComponent extends Component {
     }, 1000);
   }
 
+  getComments = () => {
+    http.get(`/api/comments/get-comments/${this.props.selected.id}`)
+      .then(comments => {
+        this.setState({
+          comments: comments,
+          modal: 'upcoming',
+          selected: selected,
+        });
+      })
+      .catch(error => { })
+  }
+
   render() {
     return (
       <Modal

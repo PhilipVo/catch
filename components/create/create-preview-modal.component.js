@@ -51,19 +51,18 @@ export default class CreatePreviewModalComponent extends Component {
             size={20}
             style={{ alignSelf: 'flex-start' }}
             underlayColor='transparent' />
-          <View style={styles.newEventView}>
-            <TouchableHighlight
-              onPress={() => this.props.navigate('CreateNewEventComponent')}
-              underlayColor='transparent'>
+          <TouchableHighlight
+            onPress={() => this.props.navigate('CreateNewEventComponent', { story: this.props.story })}
+            underlayColor='transparent'>
+            <View style={styles.newEventView}>
               <Text style={styles.newEventText}>Create New Event</Text>
-            </TouchableHighlight>
-            <Icon
-              color='white'
-              name='arrow-right'
-              onPress={() => this.props.navigate('CreateNewEventComponent')}
-              type='simple-line-icon'
-              underlayColor='transparent' />
-          </View>
+              <Icon
+                color='white'
+                name='arrow-right'
+                type='simple-line-icon'
+                underlayColor='transparent' />
+            </View>
+          </TouchableHighlight>
           <Text style={styles.existingEventText}>
             or add to existing event:
           </Text>

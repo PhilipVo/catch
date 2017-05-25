@@ -1,6 +1,7 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Image,
   ListView,
   Text,
@@ -20,37 +21,31 @@ export default class PastListComponent extends Component {
 
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
+      data: [],
       dataSource: ds.cloneWithRows(past),
+      loading: false
     };
+  }
+
+  componentDidMount() {
+    console.log('mounted past')
+  }
+  componentWillUnmount() {
+    console.log('unmounted past')
   }
 
   render() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        removeClippedSubviews={false}
-        renderRow={(rowData, sectionID, rowID) => (
-          <TouchableHighlight
-            onPress={() => this.props.setSelected('past', rowData)}
-            underlayColor='transparent'>
-            <Image source={{ uri: rowData.cover }} style={styles.image}>
-              <Text style={styles.timer}>
-                {moment(rowData.date).fromNow().toString()}
-              </Text>
-              <View style={styles.view}>
-                <Text style={styles.text}>{rowData.event}</Text>
-                <Icon color='white' name='play-circle-outline' size={33} />
-              </View>
-            </Image>
-          </TouchableHighlight>)
-        }
-        style={this.props.style}
-      />
+      <ActivityIndicator style={{ alignSelf: 'center' }} />
     );
   }
 }
 
 const styles = StyleSheet.create({
+  grayText: {
+    color: 'gray',
+    textAlign: 'center'
+  },
   image: {
     height: 120,
     justifyContent: 'space-between'

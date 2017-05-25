@@ -21,7 +21,7 @@ export default class CreatePreviewComponent extends Component {
   render() {
     const { params } = this.props.navigation.state;
     return (
-      <Image style={{ flex: 1 }} source={{ uri: params.path }}>
+      <Image style={{ flex: 1 }} source={{ uri: params.story }}>
         <StatusBar hidden={true} />
 
         {
@@ -30,6 +30,7 @@ export default class CreatePreviewComponent extends Component {
               dispatch={this.props.navigation.dispatch}
               hideModal={() => this.setState({ showModal: false })}
               navigate={this.props.navigation.navigate}
+              story={params.story}
             /> : (
               <View style={{ flex: 1, justifyContent: 'space-between' }}>
                 <Icon
