@@ -15,11 +15,11 @@ export default class Catch extends Component {
         if (catchToken) {
           session.setSession(catchToken)
             .then(() => this.setState({ isLoggedIn: true }))
-            .catch(error => { });
+            .catch(() => { });
         } else
           this.setState({ isLoggedIn: false });
       })
-      .catch(error => console.log(error));
+      .catch(() => { });
   }
 
   render() {
@@ -35,6 +35,7 @@ export default class Catch extends Component {
       const AccountNavigatorComponent = require('./components/account/account-navigator.component');
       const CreateNavigatorComponent = require('./components/create/create-navigator.component');
       const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
+      const TabComponent = require('./components/common/tab.component');
 
       Navigator = require('react-navigation').TabNavigator(
         {
@@ -46,7 +47,8 @@ export default class Catch extends Component {
           headerMode: 'none',
           initialRouteName: 'FeedNavigatorComponent',
           navigationOptions: { tabBarVisible: false }
-        });
+        }
+      );
     } else if (this.state.isLoggedIn === false) {
       const LoginComponent = require('./components/login.component');
 
@@ -57,7 +59,8 @@ export default class Catch extends Component {
         {
           cardStyle: { backgroundColor: 'white' },
           headerMode: 'none'
-        });
+        }
+      );
     }
 
     return (

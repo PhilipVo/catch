@@ -1,7 +1,6 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
-  Image,
   StatusBar,
   StyleSheet,
   Text,
@@ -18,15 +17,19 @@ import TabComponent from '../common/tab.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
+import socket from '../../services/socket.service';
 
 export default class FeedComponent extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: true,
       modal: null,
+      past: [],
       selected: null,
       tab: 'FeedUpcomingListComponent',
+      upcoming: [],
     };
 
     this.tabBar = (
@@ -34,6 +37,25 @@ export default class FeedComponent extends Component {
         navigate={this.props.screenProps.navigate}
         tab='feed' />
     );
+
+    // Socket events:
+    this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
+  }
+
+  componentDidMount() {
+    this.getEvents();
+  }
+
+  getEvents = () => {
+    http.get('/api/events/get-public-upcoming-events')
+      .then(events => {
+        this.setState({
+          loading: false,
+          past: events,
+          upcoming: events
+        });
+      })
+      .catch(error => { console.log(error) });
   }
 
   navigate = tab => {
@@ -42,7 +64,6 @@ export default class FeedComponent extends Component {
   }
 
   setSelected = (modal, selected) => {
-    console.log('setselected', modal)
     this.setState({
       modal: modal,
       selected: selected
@@ -79,13 +100,15 @@ export default class FeedComponent extends Component {
             </View>
 
             <Navigator
-              onNavigationStateChange={(prevState, newState) => {
-                console.log('state changed', newState)
-              }}
-              ref={navigator => this.navigator = navigator} />
+              ref={navigator => this.navigator = navigator}
+              screenProps={{
+                loading: this.state.loading,
+                past: this.state.past,
+                setSelected: this.setSelected,
+                upcoming: this.state.upcoming
+              }} />
 
           </View>
-
           {this.tabBar}
         </View>
 
@@ -110,6 +133,7 @@ export default class FeedComponent extends Component {
                 tabBar={this.tabBar} /> :
               null
         }
+
       </View>
     );
   }
@@ -124,7 +148,8 @@ const Navigator = TabNavigator(
     headerMode: 'none',
     initialRouteName: 'FeedUpcomingListComponent',
     navigationOptions: { tabBarVisible: false }
-  });
+  }
+);
 
 const styles = StyleSheet.create({
   activeTab: {
@@ -141,8 +166,10 @@ const styles = StyleSheet.create({
     paddingTop: 20
   },
   header: {
+    fontFamily: 'Palatino',
     fontSize: 16,
-    paddingBottom: 10,
+    fontWeight: 'bold',
+    paddingVertical: 5,
     textAlign: 'center'
   },
   tabBar: {

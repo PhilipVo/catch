@@ -31,8 +31,12 @@ export default class UpcomingListComponent extends Component {
       });
     }, 60000);
   }
+  componentDidMount() {
+    console.log('mounted')
+  }
 
   componentWillUnmount() {
+    console.log('unmounted')
     TimerMixin.clearInterval(this.interval);
   }
 

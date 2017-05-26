@@ -3072,10 +3072,6 @@ react-devtools-core@^2.0.8:
     cross-env "^3.1.4"
     ws "^2.0.3"
 
-react-native-animatable@^1.1.0:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.1.1.tgz#00ddc72985f62f62a11a505abb1a06e77a92cd8a"
-
 react-native-animatable@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.2.0.tgz#fd279c6ee4b49161c6cc3b951ed7765b35a73467"
@@ -3087,12 +3083,6 @@ react-native-camera@^0.6.0:
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-dismiss-keyboard/-/react-native-dismiss-keyboard-1.0.0.tgz#32886242b3f2317e121f3aeb9b0a585e2b879b49"
-
-react-native-display@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-display/-/react-native-display-1.0.8.tgz#e212d58faaafa75bd8a057d1e97381821c9bdafc"
-  dependencies:
-    react-native-animatable "^1.1.0"
 
 react-native-drawer-layout-polyfill@1.2.0:
   version "1.2.0"

@@ -12,73 +12,53 @@ import {
 import { Icon } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
-import http from '../../services/http.service';
-import socket from '../../services/socket.service';
-
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      data: [],
-      dataSource: this.ds.cloneWithRows([]),
-      loading: true,
+      dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
       now: Date.now()
     };
 
     // Update timers every 60 seconds:
     this.interval = TimerMixin.setInterval(() => {
       this.setState({
-        dataSource: this.ds.cloneWithRows(this.state.data),
+        dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
         now: Date.now()
       })
     }, 60000);
-
-    // Socket events:
-    this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
-  }
-
-  componentDidMount() {
-    this.getEvents();
   }
 
   componentWillUnmount() {
-    console.log('unmounted upcomi')
     TimerMixin.clearInterval(this.interval);
   }
 
-  getEvents = () => {
-    http.get('/api/events/get-public-upcoming-events')
-      .then(data => {
-        this.setState({
-          data: data,
-          dataSource: this.ds.cloneWithRows(data),
-          loading: false,
-          now: Date.now()
-        })
-      })
-      .catch();
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      dataSource: this.ds.cloneWithRows(nextProps.screenProps.upcoming),
+      now: Date.now()
+    })
   }
 
   render() {
     return (
-      this.state.loading ?
+      this.props.screenProps.loading ?
         <View style={{ marginTop: 20 }}>
           <ActivityIndicator style={{ alignSelf: 'center' }} />
         </View> :
-        this.state.data.length > 0 ?
+        this.props.screenProps.upcoming.length > 0 ?
           <ListView
             dataSource={this.state.dataSource}
             removeClippedSubviews={false}
             renderRow={(rowData, sectionID, rowID) => (
               new Date(rowData.date).getTime() > this.state.now ?
                 <TouchableHighlight
-                  onPress={() => this.props.setSelected('upcoming', rowData)}
+                  onPress={() => this.props.screenProps.setSelected('upcoming', rowData)}
                   underlayColor='transparent'>
                   <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
                     <Text style={styles.eventText}>{rowData.event}</Text>
-                    {/*<Icon color='white' name='play-circle-outline' size={33} />*/}
 
                     {/* Timer */}
                     <View style={{ flexDirection: 'row' }}>
@@ -106,7 +86,7 @@ export default class FeedUpcomingListComponent extends Component {
                   </Image>
                 </TouchableHighlight> :
                 <TouchableHighlight
-                  onPress={() => this.props.setSelected('past', rowData)}
+                  onPress={() => this.props.screenProps.setSelected('past', rowData)}
                   underlayColor='transparent'>
                   <Image source={{ uri: rowData.cover }} style={styles.image}>
                     <Text style={styles.timer}>

@@ -10,12 +10,16 @@
 
 import React, { Component } from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
-import Display from 'react-native-display';
+import { Icon } from 'react-native-elements';
+import { NavigationActions, TabNavigator } from 'react-navigation';
 
+import PastListComponent from '../common/past-list.component';
 import PastModalComponent from './past-modal.component';
-import ProfileListComponent from './profile-list.component';
 import ProfileDetailsComponent from './profile-details.component';
+import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
+
+import http from '../../services/http.service';
 
 import users from '../../samples/users';
 
@@ -23,9 +27,41 @@ export default class ProfileComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       modal: null,
-      selected: null
+      past: [],
+      selected: null,
+      tab: 'PastListComponent',
+      upcoming: []
     };
+  }
+
+  componentDidMount() {
+    this.getEvents();
+  }
+
+  getEvents = () => {
+    http.get('/api/events/get-public-upcoming-events')
+      .then(events => {
+        this.setState({
+          loading: false,
+          past: events,
+          upcoming: events
+        });
+      })
+      .catch(error => { console.log(error) });
+  }
+
+  navigate = tab => {
+    this.navigator.dispatch(NavigationActions.navigate({ routeName: tab }));
+    this.setState({ tab: tab });
+  }
+
+  setSelected = (modal, selected) => {
+    this.setState({
+      modal: modal,
+      selected: selected
+    });
   }
 
   render() {
@@ -35,15 +71,39 @@ export default class ProfileComponent extends Component {
         <StatusBar hidden={false} />
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
+
             <ProfileDetailsComponent
               goBack={this.props.navigation.goBack}
               user={users[params.username]} />
-            <ProfileListComponent
-              navigate={this.props.navigation.navigate}
-              setSelected={(modal, selected) => this.setState({
-                modal: modal,
-                selected: selected
-              })} />
+
+            {/* Top tab bar */}
+            <View style={styles.tabBar}>
+              <Icon
+                color={this.state.tab === 'PastListComponent' ? 'black' : 'gray'}
+                name='photo-camera'
+                onPress={() => this.navigate('PastListComponent')}
+                size={33}
+                underlayColor='transparent' />
+              <Icon
+                color={this.state.tab === 'UpcomingListComponent' ? 'black' : 'gray'}
+                name='card-giftcard'
+                onPress={() => this.setState({ tab: 'UpcomingListComponent' })}
+                size={33}
+                underlayColor='transparent' />
+            </View>
+
+            {/* List navigator */}
+            <View style={{ flex: 10 }}>
+              <Navigator
+                ref={navigator => this.navigator = navigator}
+                screenProps={{
+                  loading: this.state.loading,
+                  past: this.state.past,
+                  setSelected: this.setSelected,
+                  upcoming: this.state.upcoming
+                }} />
+            </View>
+
           </View>
           {params.tabBar}
         </View>
@@ -75,7 +135,28 @@ export default class ProfileComponent extends Component {
   }
 }
 
+const Navigator = TabNavigator(
+  {
+    PastListComponent: { screen: PastListComponent },
+    UpcomingListComponent: { screen: UpcomingListComponent }
+  },
+  {
+    headerMode: 'none',
+    initialRouteName: 'PastListComponent',
+    navigationOptions: { tabBarVisible: false }
+  }
+);
+
 const styles = StyleSheet.create({
+  tabBar: {
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
+    borderTopColor: 'gray',
+    borderTopWidth: 0.5,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
   view: {
     flex: 1,
     paddingTop: 20

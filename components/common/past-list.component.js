@@ -1,3 +1,13 @@
+////////////////////////////////////////////////////////////
+//                PastListComponent
+//  List of past events. Used in AccountComponent,
+//  FeedComponent, and ProfileComponent.
+// 
+//                Required screenProps
+//  loading: boolean for ActivityIndicator
+//  past: array of past events
+////////////////////////////////////////////////////////////
+
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
@@ -11,41 +21,56 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import http from '../../services/http.service';
-
-import past from '../../samples/past';
-
 export default class PastListComponent extends Component {
   constructor(props) {
     super(props);
 
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    this.state = {
-      data: [],
-      dataSource: ds.cloneWithRows(past),
-      loading: false
-    };
+    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    this.state = { dataSource: this.ds.cloneWithRows(this.props.screenProps.past) };
   }
 
-  componentDidMount() {
-    console.log('mounted past')
-  }
-  componentWillUnmount() {
-    console.log('unmounted past')
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      dataSource: this.ds.cloneWithRows(nextProps.screenProps.past),
+      now: Date.now()
+    })
   }
 
   render() {
     return (
-      <ActivityIndicator style={{ alignSelf: 'center' }} />
+      this.props.screenProps.loading ?
+        <View style={{ marginTop: 20 }}>
+          <ActivityIndicator style={{ alignSelf: 'center' }} />
+        </View> :
+        this.props.screenProps.past.length > 0 ?
+          <ListView
+            dataSource={this.state.dataSource}
+            removeClippedSubviews={false}
+            renderRow={(rowData, sectionID, rowID) => (
+              <TouchableHighlight
+                onPress={() => this.props.screenProps.setSelected('past', rowData)}
+                underlayColor='transparent'>
+                <Image source={{ uri: rowData.cover }} style={styles.image}>
+                  <Text style={styles.timer}>
+                    {moment(rowData.date).fromNow().toString()}
+                  </Text>
+                  <View style={styles.view}>
+                    <Text style={styles.text}>{rowData.event}</Text>
+                    <Icon color='white' name='play-circle-outline' size={33} />
+                  </View>
+                </Image>
+              </TouchableHighlight>
+            )}
+            style={{ flex: 1 }}
+          /> :
+          <View style={{ marginTop: 20 }}>
+            <Text style={styles.grayText}>No upcoming events found</Text>
+          </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  grayText: {
-    color: 'gray',
-    textAlign: 'center'
-  },
   image: {
     height: 120,
     justifyContent: 'space-between'
