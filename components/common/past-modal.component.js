@@ -1,3 +1,15 @@
+////////////////////////////////////////////////////////////
+//                PastModalComponent
+// Modal that shows the story of an event. Appears when a
+// past event is clicked on.
+// 
+//                Required props
+// hideModal (function): actions to take when modal closes
+// navigate (function): navigate to new screen
+// event (object): current event
+// tabComponent (component): bottom tab component
+////////////////////////////////////////////////////////////
+
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
@@ -16,19 +28,19 @@ import PastModalTimerComponent from './past-modal-timer.component.js';
 
 import http from '../../services/http.service';
 
-import story from '../../samples/story';
-
 export default class PastModalComponent extends Component {
   constructor(props) {
-    console.log('constructed')
     super(props);
     this.state = {
       index: 0,
-      item: story[0]
+      item: story[0],
+      loading: true
     };
   }
 
   componentDidMount() {
+
+    http.get(`/api/stories/get-story/${this.props.event.id}`)
     this.setItem();
   }
 
@@ -70,7 +82,7 @@ export default class PastModalComponent extends Component {
               duration={this.state.item.duration} />
 
             <Text style={styles.text}>
-              {this.props.selected.event}
+              {this.props.event.event}
             </Text>
           </View>
           <View style={styles.bottom}>

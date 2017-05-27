@@ -99,7 +99,7 @@ export default class UpcomingListComponent extends Component {
             <View style={styles.iconView}>
               <Icon
                 name='chat-bubble-outline'
-                onPress={() => this.props.setSelected('upcoming', rowData)}
+                onPress={() => this.props.setEvent('upcoming', rowData)}
                 size={25} />
               <Icon
                 name='people-outline'

@@ -16,14 +16,17 @@ import http from '../../services/http.service';
 export default class AccountComponent extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       loading: true,
       modal: null,
       past: [],
-      selected: null,
+      event: null,
       tab: 'PastListComponent',
       upcoming: []
     };
+
+    this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
   }
 
   componentDidMount() {
@@ -42,25 +45,24 @@ export default class AccountComponent extends Component {
       .catch(error => { console.log(error) });
   }
 
+  hideModal = () => this.setState({
+    event: null,
+    modal: null
+  })
+
   navigate = tab => {
     this.navigator.dispatch(NavigationActions.navigate({ routeName: tab }));
     this.setState({ tab: tab });
   }
 
-  setSelected = (modal, selected) => {
+  setEvent = (modal, event) => {
     this.setState({
-      modal: modal,
-      selected: selected
+      event: event,
+      modal: modal
     });
   }
 
   render() {
-    const tabBar = (
-      <TabComponent
-        navigate={this.props.screenProps.navigate}
-        tab='account' />
-    );
-
     return (
       <View style={{ flex: 1 }}>
         <StatusBar hidden={false} />
@@ -99,34 +101,28 @@ export default class AccountComponent extends Component {
                 screenProps={{
                   loading: this.state.loading,
                   past: this.state.past,
-                  setSelected: this.setSelected,
+                  setEvent: this.setEvent,
                   upcoming: this.state.upcoming
                 }} />
             </View>
 
           </View>
-          {tabBar}
+          {this.tabComponent}
         </View>
 
         { // Modals
           this.state.modal === 'upcoming' ?
             <UpcomingModalComponent
-              hideModal={() => this.setState({
-                modal: null,
-                selected: null
-              })}
+              event={this.state.event}
+              hideModal={this.hideModal}
               navigate={this.props.navigation.navigate}
-              selected={this.state.selected}
-              tabBar={tabBar} /> :
+              tabComponent={this.tabComponent} /> :
             this.state.modal === 'past' ?
               <PastModalComponent
-                hideModal={() => this.setState({
-                  modal: null,
-                  selected: null
-                })}
+                event={this.state.event}
+                hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
-                selected={this.state.selected}
-                tabBar={tabBar} /> :
+                tabComponent={this.tabComponent} /> :
               null
         }
 

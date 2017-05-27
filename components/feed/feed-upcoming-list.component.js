@@ -55,7 +55,7 @@ export default class FeedUpcomingListComponent extends Component {
             renderRow={(rowData, sectionID, rowID) => (
               new Date(rowData.date).getTime() > this.state.now ?
                 <TouchableHighlight
-                  onPress={() => this.props.screenProps.setSelected('upcoming', rowData)}
+                  onPress={() => this.props.screenProps.setEvent('upcoming', rowData)}
                   underlayColor='transparent'>
                   <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
                     <Text style={styles.eventText}>{rowData.event}</Text>
@@ -86,7 +86,7 @@ export default class FeedUpcomingListComponent extends Component {
                   </Image>
                 </TouchableHighlight> :
                 <TouchableHighlight
-                  onPress={() => this.props.screenProps.setSelected('past', rowData)}
+                  onPress={() => this.props.screenProps.setEvent('past', rowData)}
                   underlayColor='transparent'>
                   <Image source={{ uri: rowData.cover }} style={styles.image}>
                     <Text style={styles.timer}>

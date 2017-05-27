@@ -27,10 +27,10 @@ export default class ProfileComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      event: null,
       loading: true,
       modal: null,
       past: [],
-      selected: null,
       tab: 'PastListComponent',
       upcoming: []
     };
@@ -52,15 +52,20 @@ export default class ProfileComponent extends Component {
       .catch(error => { console.log(error) });
   }
 
+  hideModal = () => this.setState({
+    event: null,
+    modal: null
+  })
+
   navigate = tab => {
     this.navigator.dispatch(NavigationActions.navigate({ routeName: tab }));
     this.setState({ tab: tab });
   }
 
-  setSelected = (modal, selected) => {
+  setEvent = (modal, event) => {
     this.setState({
       modal: modal,
-      selected: selected
+      event: event
     });
   }
 
@@ -99,7 +104,7 @@ export default class ProfileComponent extends Component {
                 screenProps={{
                   loading: this.state.loading,
                   past: this.state.past,
-                  setSelected: this.setSelected,
+                  setEvent: this.setEvent,
                   upcoming: this.state.upcoming
                 }} />
             </View>
@@ -111,21 +116,15 @@ export default class ProfileComponent extends Component {
         { // Modals
           this.state.modal === 'past' ?
             <PastModalComponent
-              hideModal={() => this.setState({
-                modal: null,
-                selected: null
-              })}
+              event={this.state.event}
+              hideModal={this.hideModal}
               navigate={this.props.navigation.navigate}
-              selected={this.state.selected}
               tabBar={params.tabBar} /> :
             this.state.modal === 'upcoming' ?
               <UpcomingModalComponent
-                hideModal={() => this.setState({
-                  modal: null,
-                  selected: null
-                })}
+                event={this.state.event}
+                hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
-                selected={this.state.selected}
                 tabBar={params.tabBar} /> :
               null
         }

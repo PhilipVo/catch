@@ -80,10 +80,7 @@ export default class CreateCameraComponent extends Component {
           </View>
         </View>
 
-        <TabComponent
-          hideStatusBar={true}
-          navigate={this.props.screenProps.navigate}
-          tab='create' />
+        <TabComponent navigate={this.props.screenProps.navigate} tab='create' />
 
       </Camera>
     );

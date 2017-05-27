@@ -43,12 +43,12 @@ export default class UpcomingModalComponent extends Component {
   }
 
   getComments = () => {
-    http.get(`/api/comments/get-comments/${this.props.selected.id}`)
+    http.get(`/api/comments/get-comments/${this.props.event.id}`)
       .then(comments => {
         this.setState({
           comments: comments,
           modal: 'upcoming',
-          selected: selected,
+          event: event,
         });
       })
       .catch(error => { })
@@ -66,28 +66,28 @@ export default class UpcomingModalComponent extends Component {
         <KeyboardAvoidingView
           behavior={'padding'}
           style={{ flex: 1 }}>
-          <Image source={{ uri: this.props.selected.cover }} style={styles.mainImage}>
-            <Text style={styles.eventText}>{this.props.selected.event}</Text>
+          <Image source={{ uri: this.props.event.cover }} style={styles.mainImage}>
+            <Text style={styles.eventText}>{this.props.event.event}</Text>
 
             {/* Timer */}
             <View style={{ flexDirection: 'row' }}>
               <View style={{ alignItems: 'center' }}>
                 <Text style={styles.timerText}>
-                  {moment(this.props.selected.date).diff(Date.now(), 'days')}
+                  {moment(this.props.event.date).diff(Date.now(), 'days')}
                 </Text>
                 <Text style={styles.timerText}>Days</Text>
               </View>
               <Text style={styles.timerText}>:</Text>
               <View style={{ alignItems: 'center' }}>
                 <Text style={styles.timerText}>
-                  {moment(this.props.selected.date).diff(Date.now(), 'hours') % 24}
+                  {moment(this.props.event.date).diff(Date.now(), 'hours') % 24}
                 </Text>
                 <Text style={styles.timerText}>Hrs</Text>
               </View>
               <Text style={styles.timerText}>:</Text>
               <View style={{ alignItems: 'center' }}>
                 <Text style={styles.timerText}>
-                  {moment(this.props.selected.date).diff(Date.now(), 'minutes') % 60}
+                  {moment(this.props.event.date).diff(Date.now(), 'minutes') % 60}
                 </Text>
                 <Text style={styles.timerText}>Mins</Text>
               </View>
@@ -100,17 +100,17 @@ export default class UpcomingModalComponent extends Component {
               <View style={{ alignItems: 'center' }}>
                 <Switch
                   onValueChange={(value) => this.setState({
-                    selected: {
-                      ...this.props.selected,
+                    event: {
+                      ...this.props.event,
                       isFollowing: value
                     }
                   })}
-                  value={this.props.selected.isFollowing} />
+                  value={this.props.event.isFollowing} />
                 <Text style={styles.modalText2}> Notifications</Text>
               </View>
             </View>
 
-            <Text style={styles.modalText3}>{this.props.selected.detail}</Text>
+            <Text style={styles.modalText3}>{this.props.event.detail}</Text>
             <Text style={styles.modalText4}>Comments</Text>
 
             {/* Comments */}
@@ -122,7 +122,7 @@ export default class UpcomingModalComponent extends Component {
                 <View style={styles.commentView}>
                   <TouchableHighlight
                     onPress={() => this.props.navigate('ProfileComponent', {
-                      tabBar: this.props.tabBar,
+                      tabComponent: this.props.tabComponent,
                       username: rowData.username
                     })}>
                     <Image source={{ uri: rowData.img }} style={styles.commentImage} />

@@ -13,6 +13,7 @@ class HttpService {
           if (data.message) return Promise.reject(data.message);
           else return Promise.reject(response);
         })
+        .catch(error => Promise.reject(response));
     // Resolve on success:
     else
       return response.json()
