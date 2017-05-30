@@ -96,7 +96,6 @@ export default class AccountComponent extends Component {
             {/* List navigator */}
             <View style={{ flex: 10 }}>
               <Navigator
-                onNavigationStateChange={(a, b, c) => console.log('changed', a, b, c)}
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
                   loading: this.state.loading,

@@ -18,26 +18,27 @@ export default class UpcomingListComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      data: upcoming,
-      dataSource: this.ds.cloneWithRows(upcoming),
+      dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
       now: Date.now()
     }
 
     this.interval = TimerMixin.setInterval(() => {
       this.setState({
-        data: upcoming,
-        dataSource: this.ds.cloneWithRows(upcoming),
+        dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
         now: Date.now()
       });
     }, 60000);
   }
-  componentDidMount() {
-    console.log('mounted')
-  }
 
   componentWillUnmount() {
-    console.log('unmounted')
     TimerMixin.clearInterval(this.interval);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      dataSource: this.ds.cloneWithRows(nextProps.screenProps.upcoming),
+      now: Date.now()
+    });
   }
 
   render() {
@@ -48,7 +49,7 @@ export default class UpcomingListComponent extends Component {
         renderRow={(rowData, sectionID, rowID) => (
           <View style={{ marginBottom: 20 }}>
             <Image
-              source={{ uri: rowData.cover }}
+              source={{ uri: `https://s3-us-west-1.amazonaws.com/ronin.catch/events/${rowData.id}/cover` }}
               style={styles.image}>
               {/*{
                 rowData.isCreator ?

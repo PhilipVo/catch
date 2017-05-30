@@ -19,6 +19,8 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import http from '../../services/http.service';
+
 export default class ProfileDetailsComponent extends Component {
   render() {
     return (
@@ -31,7 +33,9 @@ export default class ProfileDetailsComponent extends Component {
             size={40}
             style={styles.angleLeft}
             underlayColor='transparent' />
-          <Image source={{ uri: this.props.user.img }} style={styles.avatarImage} />
+          <Image
+            source={{ uri: `${http.s3}/users/${this.props.user.username}` }}
+            style={styles.avatarImage} />
         </View>
 
         <View style={styles.view}>
@@ -46,11 +50,11 @@ export default class ProfileDetailsComponent extends Component {
           </TouchableHighlight>
           <View style={styles.count}>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 16 }}>{this.props.user.friends}</Text>
+              <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
               <Text style={{ fontSize: 10 }}>Friends</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 16 }}>{this.props.user.events}</Text>
+              <Text style={{ fontSize: 16 }}>{this.props.events}</Text>
               <Text style={{ fontSize: 10 }}>Events</Text>
             </View>
           </View>

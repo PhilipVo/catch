@@ -4,8 +4,8 @@
 //  and their list of catches. 
 //  
 //                Required params
-//  tabBar: instance of TabBarComponent
-//  username: 'username'
+//  data (object): contains user information
+//  tabBar (component): instance of TabBarComponent
 ////////////////////////////////////////////////////////////
 
 import React, { Component } from 'react';
@@ -21,35 +21,19 @@ import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
 
-import users from '../../samples/users';
-
 export default class ProfileComponent extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       event: null,
       loading: true,
       modal: null,
       past: [],
       tab: 'PastListComponent',
-      upcoming: []
+      upcoming: [],
+      user: {}
     };
-  }
-
-  componentDidMount() {
-    this.getEvents();
-  }
-
-  getEvents = () => {
-    http.get('/api/events/get-public-upcoming-events')
-      .then(events => {
-        this.setState({
-          loading: false,
-          past: events,
-          upcoming: events
-        });
-      })
-      .catch(error => { console.log(error) });
   }
 
   hideModal = () => this.setState({
@@ -71,6 +55,7 @@ export default class ProfileComponent extends Component {
 
   render() {
     const { params } = this.props.navigation.state;
+    console.log(params.tabComponent)
     return (
       <View style={{ flex: 1 }}>
         <StatusBar hidden={false} />
@@ -78,8 +63,9 @@ export default class ProfileComponent extends Component {
           <View style={{ flex: 11 }}>
 
             <ProfileDetailsComponent
+              events={params.data.past.length + params.data.upcoming.length}
               goBack={this.props.navigation.goBack}
-              user={users[params.username]} />
+              user={params.data.user} />
 
             {/* Top tab bar */}
             <View style={styles.tabBar}>
@@ -92,7 +78,7 @@ export default class ProfileComponent extends Component {
               <Icon
                 color={this.state.tab === 'UpcomingListComponent' ? 'black' : 'gray'}
                 name='card-giftcard'
-                onPress={() => this.setState({ tab: 'UpcomingListComponent' })}
+                onPress={() => this.navigate('UpcomingListComponent')}
                 size={33}
                 underlayColor='transparent' />
             </View>
@@ -100,17 +86,18 @@ export default class ProfileComponent extends Component {
             {/* List navigator */}
             <View style={{ flex: 10 }}>
               <Navigator
+                onNavigationStateChange={(a, b, c) => console.log('changed', a, b, c)}
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
-                  loading: this.state.loading,
-                  past: this.state.past,
+                  loading: false,
+                  past: params.data.past,
                   setEvent: this.setEvent,
-                  upcoming: this.state.upcoming
+                  upcoming: params.data.upcoming
                 }} />
             </View>
 
           </View>
-          {params.tabBar}
+          {params.tabComponent}
         </View>
 
         { // Modals

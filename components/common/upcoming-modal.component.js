@@ -1,6 +1,7 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   Keyboard,
@@ -21,8 +22,7 @@ import TimerMixin from 'react-timer-mixin';
 import TabComponent from '../common/tab.component';
 
 import http from '../../services/http.service';
-
-import chat from '../../samples/chat';
+import session from '../../services/session.service';
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
@@ -30,28 +30,64 @@ export default class UpcomingModalComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      data: chat,
-      dataSource: this.ds.cloneWithRows(chat),
-      comment: ''
+      comment: '',
+      comments: [],
+      dataSource: this.ds.cloneWithRows([]),
+      loading: true
     };
   }
 
   componentDidMount() {
-    TimerMixin.setTimeout(() => {
-      _listView.scrollToEnd();
-    }, 1000);
-  }
-
-  getComments = () => {
-    http.get(`/api/comments/get-comments/${this.props.event.id}`)
+    http.get(`/api/comments/get-comments-for-event/${this.props.event.id}`)
       .then(comments => {
         this.setState({
           comments: comments,
-          modal: 'upcoming',
-          event: event,
+          dataSource: this.ds.cloneWithRows(comments),
+          loading: false
         });
       })
-      .catch(error => { })
+      .catch(() => { })
+  }
+
+  componentDidUpdate() {
+    setTimeout(() => _listView.scrollToEnd(), 1000);
+  }
+
+  comment = () => {
+    if (this.state.comment.length > 0) {
+      const data = {
+        comment: this.state.comment,
+        eventId: this.props.event.id
+      };
+
+      http.post('/api/comments', JSON.stringify(data))
+        .then(() => {
+          const _comments = this.state.comments.slice();
+          _comments.push({
+            comment: this.state.comment,
+            username: session.username
+          });
+
+          this.setState({
+            comment: '',
+            comments: _comments,
+            dataSource: this.ds.cloneWithRows(_comments)
+          });
+
+        })
+        .catch(() => { });
+    }
+  }
+
+  viewUser = username => {
+    http.get(`/api/users/${username}`)
+      .then(data => {
+        this.props.navigate('ProfileComponent', {
+          data: data,
+          tabComponent: this.props.tabComponent
+        });
+      })
+      .catch(error => console.log(error));
   }
 
   render() {
@@ -66,33 +102,38 @@ export default class UpcomingModalComponent extends Component {
         <KeyboardAvoidingView
           behavior={'padding'}
           style={{ flex: 1 }}>
-          <Image source={{ uri: this.props.event.cover }} style={styles.mainImage}>
-            <Text style={styles.eventText}>{this.props.event.event}</Text>
 
-            {/* Timer */}
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.timerText}>
-                  {moment(this.props.event.date).diff(Date.now(), 'days')}
-                </Text>
-                <Text style={styles.timerText}>Days</Text>
+          <TouchableHighlight
+            onPress={() => this.viewUser(this.props.event.username)}
+            underlayColor='transparent'>
+            <Image source={{ uri: `${http.s3}/events/${this.props.event.id}/cover` }} style={styles.mainImage}>
+              <Text style={styles.eventText}>{this.props.event.title}</Text>
+
+              {/* Timer */}
+              <View style={{ flexDirection: 'row' }}>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={styles.timerText}>
+                    {moment(this.props.event.date).diff(Date.now(), 'days')}
+                  </Text>
+                  <Text style={styles.timerText}>Days</Text>
+                </View>
+                <Text style={styles.timerText}>:</Text>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={styles.timerText}>
+                    {moment(this.props.event.date).diff(Date.now(), 'hours') % 24}
+                  </Text>
+                  <Text style={styles.timerText}>Hrs</Text>
+                </View>
+                <Text style={styles.timerText}>:</Text>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={styles.timerText}>
+                    {moment(this.props.event.date).diff(Date.now(), 'minutes') % 60}
+                  </Text>
+                  <Text style={styles.timerText}>Mins</Text>
+                </View>
               </View>
-              <Text style={styles.timerText}>:</Text>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.timerText}>
-                  {moment(this.props.event.date).diff(Date.now(), 'hours') % 24}
-                </Text>
-                <Text style={styles.timerText}>Hrs</Text>
-              </View>
-              <Text style={styles.timerText}>:</Text>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={styles.timerText}>
-                  {moment(this.props.event.date).diff(Date.now(), 'minutes') % 60}
-                </Text>
-                <Text style={styles.timerText}>Mins</Text>
-              </View>
-            </View>
-          </Image>
+            </Image>
+          </TouchableHighlight>
 
           <View style={styles.modalView0}>
             <View style={styles.modalView1}>
@@ -114,34 +155,35 @@ export default class UpcomingModalComponent extends Component {
             <Text style={styles.modalText4}>Comments</Text>
 
             {/* Comments */}
-            <ListView
-              dataSource={this.state.dataSource}
-              ref={listView => _listView = listView}
-              removeClippedSubviews={false}
-              renderRow={(rowData, sectionID, rowID) => (
-                <View style={styles.commentView}>
-                  <TouchableHighlight
-                    onPress={() => this.props.navigate('ProfileComponent', {
-                      tabComponent: this.props.tabComponent,
-                      username: rowData.username
-                    })}>
-                    <Image source={{ uri: rowData.img }} style={styles.commentImage} />
-                  </TouchableHighlight>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.comment}>{rowData.comment}</Text>
-                  </View>
-                </View>
-              )} />
+            {
+              this.state.loading ?
+                <ActivityIndicator style={{ alignSelf: 'center' }} /> :
+                <ListView
+                  dataSource={this.state.dataSource}
+                  enableEmptySections={true}
+                  ref={listView => _listView = listView}
+                  removeClippedSubviews={false}
+                  renderRow={(rowData, sectionID, rowID) => (
+                    <View style={styles.commentView}>
+                      <TouchableHighlight
+                        onPress={() => this.viewUser(rowData.username)}>
+                        <Image
+                          source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                          style={styles.commentImage} />
+                      </TouchableHighlight>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.comment}>{rowData.comment}</Text>
+                      </View>
+                    </View>
+                  )} />
+            }
 
             <TextInput
               autoCapitalize='sentences'
               autoCorrect={true}
               maxLength={120}
               onChangeText={(comment) => this.setState({ comment: comment })}
-              onSubmitEditing={() => {
-                _listView.scrollToEnd();
-                this.setState({ comment: '' })
-              }}
+              onSubmitEditing={this.comment}
               placeholder='comment'
               returnKeyType='send'
               style={styles.modalTextInput}
@@ -179,8 +221,8 @@ const styles = StyleSheet.create({
   },
   mainImage: {
     alignItems: 'flex-end',
-    flex: 2,
     flexDirection: 'row',
+    height: 120,
     justifyContent: 'space-between'
   },
   modalText1: {

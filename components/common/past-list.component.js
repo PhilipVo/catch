@@ -50,12 +50,14 @@ export default class PastListComponent extends Component {
               <TouchableHighlight
                 onPress={() => this.props.screenProps.setEvent('past', rowData)}
                 underlayColor='transparent'>
-                <Image source={{ uri: rowData.cover }} style={styles.image}>
+                <Image
+                  source={{ uri: `https://s3-us-west-1.amazonaws.com/ronin.catch/events/${rowData.id}/cover` }}
+                  style={styles.image}>
                   <Text style={styles.timer}>
                     {moment(rowData.date).fromNow().toString()}
                   </Text>
                   <View style={styles.view}>
-                    <Text style={styles.text}>{rowData.event}</Text>
+                    <Text style={styles.text}>{rowData.title}</Text>
                     <Icon color='white' name='play-circle-outline' size={33} />
                   </View>
                 </Image>

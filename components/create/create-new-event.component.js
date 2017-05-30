@@ -28,23 +28,23 @@ export default class CreateNewEventComponent extends Component {
       coverError: false,
       date: new Date(new Date().setDate(new Date().getDate() + 1)).getTime(),
       description: '',
-      event: '',
-      eventError: false,
       isVisible: false,
+      title: '',
+      titleError: false,
     };
   }
 
   invite = () => {
     this.setState({
       coverError: false,
-      eventError: false
+      titleError: false
     });
 
     if (!this.state.cover)
       return this.setState({ coverError: true });
 
-    if (this.state.event.length === 0)
-      return this.setState({ eventError: true });
+    if (this.state.title.length === 0)
+      return this.setState({ titleError: true });
 
     this.props.navigation.navigate('CreateInviteComponent', {
       event: {
@@ -52,9 +52,9 @@ export default class CreateNewEventComponent extends Component {
         cover: this.state.cover,
         date: this.state.date,
         description: this.state.description,
-        event: this.state.event,
         story: this.props.navigation.state.params ?
-          this.props.navigation.state.params.story : null
+          this.props.navigation.state.params.story : null,
+        title: this.state.title
       }
     });
   }
@@ -117,16 +117,16 @@ export default class CreateNewEventComponent extends Component {
 
               {/* Form */}
               <View style={{ padding: 20 }}>
-                {/* Event */}
-                <Text style={this.state.eventError ?
-                  styles.eventError : { fontSize: 16 }}>
+                {/* Title */}
+                <Text style={this.state.titleError ?
+                  styles.titleError : { fontSize: 16 }}>
                   Event
                   </Text>
                 <TextInput
                   autoCapitalize='words'
                   autoCorrect={true}
                   maxLength={32}
-                  onChangeText={event => this.setState({ event: event })}
+                  onChangeText={title => this.setState({ title: title })}
                   style={styles.textInput}
                 />
 
@@ -232,11 +232,6 @@ const styles = StyleSheet.create({
     height: 100,
     padding: 5
   },
-  eventError: {
-    color: 'red',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
   header: {
     alignItems: 'center',
     flex: 1,
@@ -282,4 +277,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 10
   },
+  titleError: {
+    color: 'red',
+    fontSize: 16,
+    fontWeight: 'bold'
+  }
 });

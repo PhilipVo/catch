@@ -9,6 +9,8 @@ import {
 import { h3, Icon, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
+import http from '../../services/http.service';
+
 export default class CreateCompleteComponent extends Component {
   render() {
     const { params } = this.props.navigation.state;
@@ -28,7 +30,9 @@ export default class CreateCompleteComponent extends Component {
           size={33}
           style={{ alignSelf: 'flex-start' }} />
         <Text h3 style={{ textAlign: 'center' }}>Congratulations!</Text>
-        <Image source={{ uri: params.event.cover }} style={{ height: 120 }} />
+        <Image
+          source={{ uri: `${http.s3}/events/${params.event.id}/cover` }}
+          style={{ height: 120 }} />
 
         {/* Timer */}
         <View style={styles.timerView}>
@@ -64,7 +68,7 @@ export default class CreateCompleteComponent extends Component {
             <Text style={styles.text}>
               until you can view the event.{'\n\n'}
               Black Widow and Ironman also added to this event.{'\n\n'}
-              When the countdown is complete, you will be able to view {params.event.event}
+              When the countdown is complete, you will be able to view {params.event.title}
             </Text>
         }
 

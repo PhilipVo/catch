@@ -15,7 +15,16 @@ import http from '../../services/http.service';
 export default class CreatePreviewComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { showModal: false };
+    this.state = {
+      events: [],
+      showModal: false
+    };
+  }
+
+  componentDidMount() {
+    http.get('/api/events/get-upcoming-associated-events')
+      .then(events => this.setState({ events: events }))
+      .catch(() => { })
   }
 
   render() {
@@ -28,6 +37,7 @@ export default class CreatePreviewComponent extends Component {
           this.state.showModal ?
             <CreatePreviewModalComponent
               dispatch={this.props.navigation.dispatch}
+              events={this.state.events}
               hideModal={() => this.setState({ showModal: false })}
               navigate={this.props.navigation.navigate}
               story={params.story}
