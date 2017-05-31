@@ -77,8 +77,7 @@ export default class CreateNewEventComponent extends Component {
           ],
           index: 0
         }));
-      })
-      .catch(error => {
+      }).catch(error => {
         this.setState({
           error: typeof error === 'string' ? error : 'Oops, something went wrong.',
           saving: false
@@ -129,7 +128,7 @@ export default class CreateNewEventComponent extends Component {
               underlayColor='transparent' />
           </View>
           <View style={{ flex: 10 }}>
-            <Text style={styles.headerText}>Add to {event.event}</Text>
+            <Text style={styles.headerText}>Add to {event.title}</Text>
           </View>
           <View style={{ flex: 1 }}>
           </View>

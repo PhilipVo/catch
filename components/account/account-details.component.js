@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { h4, Icon, Text } from 'react-native-elements';
 
+import http from '../../services/http.service';
 import session from '../../services/session.service';
-
-import user from '../../samples/user';
 
 export default class AccountDetailsComponent extends Component {
   render() {
@@ -14,7 +13,12 @@ export default class AccountDetailsComponent extends Component {
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => this.props.navigate('AccountPictureComponent')}>
-            <Image source={{ uri: user.img }} style={styles.avatarImage} />
+            <Image
+              source={{
+                cache: 'reload',
+                uri: `${http.s3}/users/${session.username}`
+              }}
+              style={styles.avatarImage} />
           </TouchableHighlight>
         </View>
         <View style={styles.view}>
@@ -22,16 +26,16 @@ export default class AccountDetailsComponent extends Component {
           <View style={{ paddingVertical: 10 }} >
             <View style={styles.count}>
               <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 16 }}>{user.friends}</Text>
+                <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
                 <Text style={{ fontSize: 10 }}>Friends</Text>
               </View>
               <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 16 }}>{user.events}</Text>
+                <Text style={{ fontSize: 16 }}>{this.props.events}</Text>
                 <Text style={{ fontSize: 10 }}>Events</Text>
               </View>
             </View>
           </View>
-          <Text style={styles.tag}>{user.tag}</Text>
+          <Text style={styles.tag}>{this.props.user.tag}</Text>
         </View>
         <View style={{ flex: 1 }}>
           <Icon

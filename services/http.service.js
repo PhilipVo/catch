@@ -3,6 +3,7 @@ import { AsyncStorage } from 'react-native';
 class HttpService {
   constructor() {
     this.ip = 'http://10.0.0.44:8000';
+    this.s3 = 'https://s3-us-west-1.amazonaws.com/ronin.catch';
   }
 
   handleResponse(response) {
@@ -14,10 +15,9 @@ class HttpService {
           else return Promise.reject(response);
         })
     // Resolve on success:
-    else
-      return response.json()
-        .then(data => Promise.resolve(data))
-        .catch(error => Promise.resolve(response));
+    else return response.json()
+      .then(data => Promise.resolve(data))
+      .catch(error => Promise.resolve(response));
   }
 
   /////////////////////////////////////////////////

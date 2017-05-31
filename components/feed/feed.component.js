@@ -24,19 +24,16 @@ export default class FeedComponent extends Component {
     super(props);
 
     this.state = {
+      event: null,
       loading: true,
       modal: null,
       past: [],
-      selected: null,
       tab: 'FeedUpcomingListComponent',
       upcoming: [],
     };
 
-    this.tabBar = (
-      <TabComponent
-        navigate={this.props.screenProps.navigate}
-        tab='feed' />
-    );
+    // Tab component:
+    this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='feed' />
 
     // Socket events:
     this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
@@ -47,15 +44,22 @@ export default class FeedComponent extends Component {
   }
 
   getEvents = () => {
-    http.get('/api/events/get-public-upcoming-events')
+    http.get('/api/events/get-public-events')
       .then(events => {
         this.setState({
           loading: false,
-          past: events,
-          upcoming: events
+          past: events.past,
+          upcoming: events.upcoming
         });
       })
       .catch(error => { console.log(error) });
+  }
+
+  hideModal = () => {
+    this.setState({
+      event: null,
+      modal: null
+    });
   }
 
   navigate = tab => {
@@ -63,10 +67,10 @@ export default class FeedComponent extends Component {
     this.setState({ tab: tab });
   }
 
-  setSelected = (modal, selected) => {
+  setEvent = (modal, event) => {
     this.setState({
-      modal: modal,
-      selected: selected
+      event: event,
+      modal: modal
     });
   }
 
@@ -104,33 +108,27 @@ export default class FeedComponent extends Component {
               screenProps={{
                 loading: this.state.loading,
                 past: this.state.past,
-                setSelected: this.setSelected,
+                setEvent: this.setEvent,
                 upcoming: this.state.upcoming
               }} />
 
           </View>
-          {this.tabBar}
+          {this.tabComponent}
         </View>
 
         { // Modals
           this.state.modal === 'past' ?
             <PastModalComponent
-              hideModal={() => this.setState({
-                modal: null,
-                selected: null
-              })}
+              event={this.state.event}
+              hideModal={this.hideModal}
               navigate={this.props.navigation.navigate}
-              selected={this.state.selected}
-              tabBar={this.tabBar} /> :
+              tabComponent={this.tabComponent} /> :
             this.state.modal === 'upcoming' ?
               <UpcomingModalComponent
-                hideModal={() => this.setState({
-                  modal: null,
-                  selected: null
-                })}
+                event={this.state.event}
+                hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
-                selected={this.state.selected}
-                tabBar={this.tabBar} /> :
+                tabComponent={this.tabComponent} /> :
               null
         }
 

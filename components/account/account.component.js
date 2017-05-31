@@ -16,14 +16,18 @@ import http from '../../services/http.service';
 export default class AccountComponent extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
+      event: null,
       loading: true,
       modal: null,
       past: [],
-      selected: null,
       tab: 'PastListComponent',
-      upcoming: []
+      upcoming: [],
+      user: {}
     };
+
+    this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
   }
 
   componentDidMount() {
@@ -31,43 +35,46 @@ export default class AccountComponent extends Component {
   }
 
   getEvents = () => {
-    http.get('/api/events/get-public-upcoming-events')
-      .then(events => {
+    http.get('/api/users/get-my-info')
+      .then(data => {
+        console.log(data)
         this.setState({
           loading: false,
-          past: events,
-          upcoming: events
+          past: data.past,
+          upcoming: data.upcoming,
+          user: data.user
         });
-      })
-      .catch(error => { console.log(error) });
+      }).catch(() => { });
   }
+
+  hideModal = () => this.setState({
+    event: null,
+    modal: null
+  })
 
   navigate = tab => {
     this.navigator.dispatch(NavigationActions.navigate({ routeName: tab }));
     this.setState({ tab: tab });
   }
 
-  setSelected = (modal, selected) => {
+  setEvent = (modal, event) => {
     this.setState({
-      modal: modal,
-      selected: selected
+      event: event,
+      modal: modal
     });
   }
 
   render() {
-    const tabBar = (
-      <TabComponent
-        navigate={this.props.screenProps.navigate}
-        tab='account' />
-    );
-
     return (
       <View style={{ flex: 1 }}>
         <StatusBar hidden={false} />
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
 
-            <AccountDetailsComponent navigate={this.props.navigation.navigate} />
+            <AccountDetailsComponent
+              events={this.state.past.length + this.state.upcoming.length}
+              navigate={this.props.navigation.navigate}
+              user={this.state.user} />
 
             {/* Top tab bar */}
             <View style={styles.tabBar}>
@@ -94,39 +101,32 @@ export default class AccountComponent extends Component {
             {/* List navigator */}
             <View style={{ flex: 10 }}>
               <Navigator
-                onNavigationStateChange={(a, b, c) => console.log('changed', a, b, c)}
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
                   loading: this.state.loading,
                   past: this.state.past,
-                  setSelected: this.setSelected,
+                  setEvent: this.setEvent,
                   upcoming: this.state.upcoming
                 }} />
             </View>
 
           </View>
-          {tabBar}
+          {this.tabComponent}
         </View>
 
         { // Modals
           this.state.modal === 'upcoming' ?
             <UpcomingModalComponent
-              hideModal={() => this.setState({
-                modal: null,
-                selected: null
-              })}
+              event={this.state.event}
+              hideModal={this.hideModal}
               navigate={this.props.navigation.navigate}
-              selected={this.state.selected}
-              tabBar={tabBar} /> :
+              tabComponent={this.tabComponent} /> :
             this.state.modal === 'past' ?
               <PastModalComponent
-                hideModal={() => this.setState({
-                  modal: null,
-                  selected: null
-                })}
+                event={this.state.event}
+                hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
-                selected={this.state.selected}
-                tabBar={tabBar} /> :
+                tabComponent={this.tabComponent} /> :
               null
         }
 

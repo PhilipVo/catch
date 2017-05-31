@@ -1,6 +1,19 @@
+////////////////////////////////////////////////////////////
+//                PastModalComponent
+// Modal that shows the story of an event. Appears when a
+// past event is clicked on.
+// 
+//                Required props
+// hideModal (function): actions to take when modal closes
+// navigate (function): navigate to new screen
+// event (object): current event
+// tabComponent (component): bottom tab component
+////////////////////////////////////////////////////////////
+
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Image,
   ListView,
   Text,
@@ -16,20 +29,30 @@ import PastModalTimerComponent from './past-modal-timer.component.js';
 
 import http from '../../services/http.service';
 
-import story from '../../samples/story';
-
 export default class PastModalComponent extends Component {
   constructor(props) {
-    console.log('constructed')
     super(props);
     this.state = {
       index: 0,
-      item: story[0]
+      item: null,
+      loading: true,
+      story: []
     };
   }
 
   componentDidMount() {
-    this.setItem();
+    http.get(`/api/stories/get-stories-for-event/${this.props.event.id}`)
+      .then(story => {
+        console.log('story', story)
+        if (story.length > 0)
+          this.setState({
+            item: story[0],
+            loading: false,
+            story: story
+          });
+        else this.setState({ loading: false });
+      })
+      .catch(() => { })
   }
 
   componentDidUpdate() {
@@ -38,7 +61,7 @@ export default class PastModalComponent extends Component {
 
   setItem = () => {
     const currentItem = this.state.item;
-    const nextItem = story[this.state.index + 1];
+    const nextItem = this.state.story[this.state.index + 1];
 
     if (nextItem) {
       this.interval = TimerMixin.setTimeout(() => {
@@ -46,10 +69,10 @@ export default class PastModalComponent extends Component {
           index: this.state.index + 1,
           item: nextItem,
         });
-      }, currentItem.duration);
+      }, 4000);
     }
     else
-      this.interval = TimerMixin.setTimeout(this.props.hideModal, currentItem.duration);
+      this.interval = TimerMixin.setTimeout(this.props.hideModal, 4000);
   }
 
   render() {
@@ -62,21 +85,36 @@ export default class PastModalComponent extends Component {
         }}
         swipeToClose={true}>
         <StatusBar hidden={true} />
-        <Image source={{ uri: this.state.item.uri }} style={styles.image}>
-          <View style={styles.top}>
-            <PastModalTimerComponent
-              index={this.state.index}
-              length={story.length}
-              duration={this.state.item.duration} />
 
-            <Text style={styles.text}>
-              {this.props.selected.event}
-            </Text>
-          </View>
-          <View style={styles.bottom}>
-            <Text style={{ backgroundColor: 'transparent' }}>comments</Text>
-          </View>
-        </Image>
+        {
+          this.state.loading ?
+            <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+              <ActivityIndicator />
+              <Text>Loading...</Text>
+            </View> :
+            this.state.story.length > 0 ?
+              <Image
+                source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
+                style={styles.image}>
+                <View style={styles.top}>
+                  <PastModalTimerComponent
+                    index={this.state.index}
+                    length={this.state.story.length}
+                    duration={4000} />
+
+                  <Text style={styles.text}>
+                    {this.props.event.title}
+                  </Text>
+                </View>
+                <View style={styles.bottom}>
+                  <Text style={{ backgroundColor: 'transparent' }}>comments</Text>
+                </View>
+              </Image> :
+              <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+                <Text>No posts were added to this event</Text>
+              </View>
+        }
+
       </Modal>
     );
   }

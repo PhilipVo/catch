@@ -15,10 +15,13 @@ module.exports = class AccountNavigatorComponent extends Component {
         AccountPictureComponent: { screen: AccountPictureComponent },
         AccountSettingsComponent: { screen: AccountSettingsComponent },
         ProfileComponent: { screen: ProfileComponent }
-      }, {
+      },
+      {
         cardStyle: { backgroundColor: 'white' },
-        headerMode: 'none'
-      });
+        headerMode: 'none',
+        initialRouteName: 'AccountComponent'
+      }
+    );
 
     return (
       <AccountNavigator screenProps={{

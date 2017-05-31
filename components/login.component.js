@@ -75,6 +75,7 @@ module.exports = class LoginComponent extends Component {
         <Image
           source={require('../images/Background.png')}
           style={styles.backgroundImage}>
+          <StatusBar barStyle='light-content' hidden={false} />
           <KeyboardAvoidingView
             behavior={'padding'}
             style={styles.keyboardAvoidingView}>

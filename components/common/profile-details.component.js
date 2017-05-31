@@ -19,6 +19,9 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import http from '../../services/http.service';
+import session from '../../services/session.service';
+
 export default class ProfileDetailsComponent extends Component {
   render() {
     return (
@@ -31,26 +34,38 @@ export default class ProfileDetailsComponent extends Component {
             size={40}
             style={styles.angleLeft}
             underlayColor='transparent' />
-          <Image source={{ uri: this.props.user.img }} style={styles.avatarImage} />
+          <Image
+            source={{ uri: `${http.s3}/users/${this.props.user.username}` }}
+            style={styles.avatarImage} />
         </View>
 
         <View style={styles.view}>
           <Text style={styles.username} > {this.props.user.username}</Text>
-          <TouchableHighlight style={styles.addContact}
-            onPress={() => { }}
-            underlayColor='transparent' >
-            <View style={styles.addContactView}>
-              <Text style={{ fontSize: 12 }}>Add Contact</Text>
-              <Icon name='add' size={15} />
-            </View>
-          </TouchableHighlight>
+          {
+            this.props.user.username === session.username ? null :
+              <TouchableHighlight
+                onPress={() => { }}
+                style={styles.addContact}
+                underlayColor='transparent' >
+                {
+                  this.props.user.isContact ?
+                    <View style={styles.addContactView}>
+                      <Text style={{ fontSize: 12 }}>Following</Text>
+                    </View> :
+                    <View style={styles.addContactView}>
+                      <Text style={{ fontSize: 12 }}>Add Contact</Text>
+                      <Icon name='add' size={15} />
+                    </View>
+                }
+              </TouchableHighlight>
+          }
           <View style={styles.count}>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 16 }}>{this.props.user.friends}</Text>
+              <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
               <Text style={{ fontSize: 10 }}>Friends</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 16 }}>{this.props.user.events}</Text>
+              <Text style={{ fontSize: 16 }}>{this.props.events}</Text>
               <Text style={{ fontSize: 10 }}>Events</Text>
             </View>
           </View>

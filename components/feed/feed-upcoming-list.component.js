@@ -12,10 +12,11 @@ import {
 import { Icon } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
+import http from '../../services/http.service';
+
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
     super(props);
-
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
@@ -39,7 +40,7 @@ export default class FeedUpcomingListComponent extends Component {
     this.setState({
       dataSource: this.ds.cloneWithRows(nextProps.screenProps.upcoming),
       now: Date.now()
-    })
+    });
   }
 
   render() {
@@ -55,10 +56,12 @@ export default class FeedUpcomingListComponent extends Component {
             renderRow={(rowData, sectionID, rowID) => (
               new Date(rowData.date).getTime() > this.state.now ?
                 <TouchableHighlight
-                  onPress={() => this.props.screenProps.setSelected('upcoming', rowData)}
+                  onPress={() => this.props.screenProps.setEvent('upcoming', rowData)}
                   underlayColor='transparent'>
-                  <Image source={{ uri: rowData.cover }} style={styles.coverImage}>
-                    <Text style={styles.eventText}>{rowData.event}</Text>
+                  <Image
+                    source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
+                    style={styles.coverImage}>
+                    <Text style={styles.eventText}>{rowData.title}</Text>
 
                     {/* Timer */}
                     <View style={{ flexDirection: 'row' }}>
@@ -86,14 +89,16 @@ export default class FeedUpcomingListComponent extends Component {
                   </Image>
                 </TouchableHighlight> :
                 <TouchableHighlight
-                  onPress={() => this.props.screenProps.setSelected('past', rowData)}
+                  onPress={() => this.props.screenProps.setEvent('past', rowData)}
                   underlayColor='transparent'>
-                  <Image source={{ uri: rowData.cover }} style={styles.image}>
+                  <Image
+                    source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
+                    style={styles.image}>
                     <Text style={styles.timer}>
                       {moment(rowData.date).fromNow().toString()}
                     </Text>
                     <View style={styles.view}>
-                      <Text style={styles.text}>{rowData.event}</Text>
+                      <Text style={styles.text}>{rowData.title}</Text>
                       <Icon color='white' name='play-circle-outline' size={33} />
                     </View>
                   </Image>

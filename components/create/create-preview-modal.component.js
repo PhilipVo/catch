@@ -6,35 +6,48 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
-import { CheckBox, Icon } from 'react-native-elements';
+import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
 
-import upcoming from '../../samples/upcoming';
-
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
     super(props);
-
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      data: upcoming,
-      dataSource: this.ds.cloneWithRows(upcoming)
+      dataSource: this.ds.cloneWithRows(this.props.events),
+      saving: false
     };
   }
 
-  complete = (event) => {
-    this.props.dispatch(NavigationActions.reset({
-      actions: [
-        NavigationActions.navigate({
-          routeName: 'CreateCompleteComponent',
-          params: { event: event }
+  componentWillReceiveProps(nextProps) {
+    this.setState({ dataSource: this.ds.cloneWithRows(nextProps.events) });
+  }
+
+  complete = event => {
+    if (!this.state.saving) {
+      this.setState({ saving: true });
+
+      const formData = new FormData();
+      formData.append('eventId', event.id);
+      formData.append('media', { name: 'story', uri: this.props.story });
+
+      http.post('/api/stories/', formData)
+        .then(() => {
+          this.props.dispatch(NavigationActions.reset({
+            actions: [
+              NavigationActions.navigate({
+                routeName: 'CreateCompleteComponent',
+                params: { event: event }
+              })
+            ],
+            index: 0
+          }));
         })
-      ],
-      index: 0
-    }))
+        .catch((error) => this.setState({ saving: false }))
+    }
   }
 
   render() {
@@ -68,23 +81,37 @@ export default class CreatePreviewModalComponent extends Component {
           </Text>
         </View>
         <View style={styles.bottomView}>
-          <ListView
-            dataSource={this.state.dataSource}
-            removeClippedSubviews={false}
-            renderRow={(rowData, sectionID, rowID) => (
-              <View style={styles.eventView}>
-                <TouchableHighlight
-                  onPress={() => this.complete(rowData)}
-                  underlayColor='transparent'>
-                  <Text style={styles.eventText}>{rowData.event}</Text>
-                </TouchableHighlight>
-                <Icon
-                  color='white'
-                  name='add-circle-outline'
-                  onPress={() => this.complete(rowData)}
-                  underlayColor='transparent' />
-              </View>
-            )} />
+
+          {
+            this.state.saving &&
+            <Text style={styles.noEvents}>Saving...</Text>
+          }
+
+          {
+            this.props.events.length > 0 ?
+              <ListView
+                dataSource={this.state.dataSource}
+                removeClippedSubviews={false}
+                renderRow={(rowData, sectionID, rowID) => (
+                  rowData.isBreak && rowID != 0 && rowID != this.props.events.length - 1 ?
+                    <Divider style={styles.divider} /> :
+                    rowData.isBreak ? null :
+                      <View style={styles.eventView}>
+                        <TouchableHighlight
+                          onPress={() => this.complete(rowData)}
+                          underlayColor='transparent'>
+                          <Text style={styles.eventText}>{rowData.title}</Text>
+                        </TouchableHighlight>
+                        <Icon
+                          color='white'
+                          name='add-circle-outline'
+                          onPress={() => this.complete(rowData)}
+                          underlayColor='transparent' />
+                      </View>
+                )} /> :
+              <Text style={styles.noEvents}>No existing events found</Text>
+          }
+
         </View>
       </Modal>
     );
@@ -95,6 +122,11 @@ const styles = StyleSheet.create({
   bottomView: {
     flex: 11,
     padding: 20
+  },
+  divider: {
+    backgroundColor: 'white',
+    height: 0.5,
+    marginVertical: 10
   },
   eventText: {
     color: 'white',
@@ -121,6 +153,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold'
+  },
+  noEvents: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center'
   },
   topView: {
     flex: 1,

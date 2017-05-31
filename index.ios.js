@@ -3,13 +3,19 @@ import { AppRegistry, AsyncStorage, Image } from 'react-native';
 
 import session from './services/session.service';
 
+console.ignoredYellowBox = [
+  'Warning: BackAndroid',
+  'Warning: View.propTypes',
+  'Warning: Invalid argument supplied to oneOf'
+];
+
 export default class Catch extends Component {
   constructor(props) {
     super(props);
     this.state = { isLoggedIn: undefined };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         if (catchToken) {
@@ -22,22 +28,14 @@ export default class Catch extends Component {
       .catch(() => { });
   }
 
-  render() {
-    console.ignoredYellowBox = [
-      'Warning: BackAndroid',
-      'Warning: View.propTypes',
-      'Warning: Invalid argument supplied to oneOf'
-    ];
-
-    let Navigator;
+  componentWillUpdate(nextProps, nextState) {
     // Conditionally load components ('lazy loading'):
-    if (this.state.isLoggedIn === true) {
+    if (nextState.isLoggedIn === true) {
       const AccountNavigatorComponent = require('./components/account/account-navigator.component');
       const CreateNavigatorComponent = require('./components/create/create-navigator.component');
       const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
-      const TabComponent = require('./components/common/tab.component');
 
-      Navigator = require('react-navigation').TabNavigator(
+      this.Navigator = require('react-navigation').TabNavigator(
         {
           AccountNavigatorComponent: { screen: AccountNavigatorComponent },
           CreateNavigatorComponent: { screen: CreateNavigatorComponent },
@@ -49,10 +47,12 @@ export default class Catch extends Component {
           navigationOptions: { tabBarVisible: false }
         }
       );
-    } else if (this.state.isLoggedIn === false) {
+
+      this.screenProps = { logout: () => this.setState({ isLoggedIn: false }) };
+    } else if (nextState.isLoggedIn === false) {
       const LoginComponent = require('./components/login.component');
 
-      Navigator = require('react-navigation').StackNavigator(
+      this.Navigator = require('react-navigation').StackNavigator(
         {
           LoginComponent: { screen: LoginComponent },
         },
@@ -61,13 +61,19 @@ export default class Catch extends Component {
           headerMode: 'none'
         }
       );
-    }
 
+      this.screenProps = { login: () => this.setState({ isLoggedIn: true }) };
+    }
+  }
+
+  render() {
     return (
       this.state.isLoggedIn === true ?
-        <Navigator screenProps={{ logout: () => this.setState({ isLoggedIn: false }) }} /> :
+        <this.Navigator
+          ref={navigator => this.navigator = navigator}
+          screenProps={this.screenProps} /> :
         this.state.isLoggedIn === false ?
-          <Navigator screenProps={{ login: () => this.setState({ isLoggedIn: true }) }} /> :
+          <this.Navigator screenProps={this.screenProps} /> :
           <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} />
     );
   }

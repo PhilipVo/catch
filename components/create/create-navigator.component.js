@@ -9,23 +9,21 @@ import CreateNewEventComponent from './create-new-event.component';
 import CreatePreviewComponent from './create-preview.component';
 
 module.exports = class CreateNavigatorComponent extends Component {
-  constructor(props) {
-    super(props);
-    console.log('constructed create navigator')
-  }
-
   render() {
-    const CreateNavigator = StackNavigator({
-      CreateCameraComponent: { screen: CreateCameraComponent },
-      CreateCompleteComponent: { screen: CreateCompleteComponent },
-      CreateInviteComponent: { screen: CreateInviteComponent },
-      CreateNewEventComponent: { screen: CreateNewEventComponent },
-      CreatePreviewComponent: { screen: CreatePreviewComponent, key: 'preview' }
-    }, {
+    const CreateNavigator = StackNavigator(
+      {
+        CreateCameraComponent: { screen: CreateCameraComponent },
+        CreateCompleteComponent: { screen: CreateCompleteComponent },
+        CreateInviteComponent: { screen: CreateInviteComponent },
+        CreateNewEventComponent: { screen: CreateNewEventComponent },
+        CreatePreviewComponent: { screen: CreatePreviewComponent, key: 'preview' }
+      },
+      {
         cardStyle: { backgroundColor: 'white' },
         headerMode: 'none',
         initialRouteName: 'CreateCameraComponent',
-      });
+      }
+    );
 
     return (
       <CreateNavigator screenProps={{ navigate: this.props.navigation.navigate }} />

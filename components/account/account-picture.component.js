@@ -2,15 +2,49 @@ import React, { Component } from 'react';
 import {
   Image,
   StyleSheet,
+  Text,
   TouchableHighlight,
   View
 } from 'react-native';
-import { Icon, Text } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
+import ImagePicker from 'react-native-image-crop-picker';
+import { NavigationActions } from 'react-navigation';
+
+import http from '../../services/http.service';
+import session from '../../services/session.service';
 
 export default class AccountPictureComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { avatar: 'https://www.sideshowtoy.com/photo_902657_thumb.jpg' };
+    this.state = { path: null };
+  }
+
+  openPicker = () => {
+    ImagePicker.openPicker({
+      cropperCircleOverlay: true,
+      cropping: true,
+      height: 200,
+      width: 200,
+    })
+      .then(image => this.setState({ path: image.path }))
+      .catch(() => { });
+  }
+
+  save = () => {
+    const formData = new FormData();
+    formData.append('media', { name: 'profile', uri: this.state.path });
+
+    http.put('/api/users/update-picture', formData)
+      .then(() => {
+        this.props.navigation.dispatch(NavigationActions.reset({
+          actions: [
+            NavigationActions.navigate({
+              routeName: 'AccountComponent'
+            })
+          ],
+          index: 0
+        }));
+      }).catch(error => { console.log(error) });
   }
 
   render() {
@@ -33,93 +67,58 @@ export default class AccountPictureComponent extends Component {
         </View>
 
         {/* Main image */}
-        <View style={styles.image}>
-          <Image style={{ flex: 1 }} source={{ uri: this.state.avatar }}>
-          </Image>
+        <View style={styles.imageView}>
+          <TouchableHighlight
+            onPress={this.openPicker}
+            underlayColor='transparent'>
+            <Image
+              style={{ height: 200, width: 200, borderRadius: 100 }}
+              source={{ uri: this.state.path ? this.state.path : `${http.s3}/users/${session.username}` }}>
+            </Image>
+          </TouchableHighlight>
+          <Text onPress={this.openPicker} style={styles.blueText} underlayColor='transparent'>
+            Choose from camera roll
+          </Text>
+
+          {this.state.path && <Text onPress={this.save} style={styles.save}>Save</Text>}
+
         </View>
 
-        {/* Camera roll */}
-        <View style={{ flex: 4 }}>
-          <View style={styles.row}>
-            <TouchableHighlight
-              style={{ flex: 1 }}
-              onPress={
-                () => this.setState({ avatar: 'https://vignette2.wikia.nocookie.net/marvelcinematicuniverse/images/d/d2/CACW_Steve_Textless_Poster.jpg/revision/latest/scale-to-width-down/350?cb=20160527050609' })}>
-              <Image
-                style={{ flex: 1 }}
-                source={{ uri: 'https://vignette2.wikia.nocookie.net/marvelcinematicuniverse/images/d/d2/CACW_Steve_Textless_Poster.jpg/revision/latest/scale-to-width-down/350?cb=20160527050609' }} />
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={{ flex: 1 }}
-              onPress={
-                () => this.setState({ avatar: 'http://cdn.bgr.com/2014/04/captain-america.jpg?quality=98&strip=all' })}>
-              <Image
-                style={{ flex: 1 }}
-                source={{ uri: 'http://cdn.bgr.com/2014/04/captain-america.jpg?quality=98&strip=all' }} />
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={{ flex: 1 }}
-              onPress={
-                () => this.setState({ avatar: 'http://cdn.playbuzz.com/cdn/a95e173d-78cc-41cf-8439-352fe28c36f8/a76d3eaf-159d-467d-90ab-d37b40eb7678.jpg' })}>
-              <Image
-                style={{ flex: 1 }}
-                source={{ uri: 'http://cdn.playbuzz.com/cdn/a95e173d-78cc-41cf-8439-352fe28c36f8/a76d3eaf-159d-467d-90ab-d37b40eb7678.jpg' }} />
-            </TouchableHighlight>
-          </View>
-
-          <View style={styles.row}>
-            <TouchableHighlight
-              style={{ flex: 1 }}
-              onPress={
-                () => this.setState({ avatar: 'http://115.imagebam.com/download/IL2fKxg0D0JmWPyleGF3-g/47900/478995554/Captain%20America%201.jpg' })}>
-              <Image
-                style={{ flex: 1 }}
-                source={{ uri: 'http://115.imagebam.com/download/IL2fKxg0D0JmWPyleGF3-g/47900/478995554/Captain%20America%201.jpg' }} />
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={{ flex: 1 }}
-              onPress={
-                () => this.setState({ avatar: 'http://screenrant.com/wp-content/uploads/Chris-Evans-Captain-America-Trilogy.jpg' })}>
-              <Image
-                style={{ flex: 1 }}
-                source={{ uri: 'http://screenrant.com/wp-content/uploads/Chris-Evans-Captain-America-Trilogy.jpg' }} />
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={{ flex: 1 }}
-              onPress={
-                () => this.setState({ avatar: 'http://www.silverpetticoatreview.com/wp-content/uploads/2015/09/captain-america.jpg' })}>
-              <Image
-                style={{ flex: 1 }}
-                source={{ uri: 'http://www.silverpetticoatreview.com/wp-content/uploads/2015/09/captain-america.jpg' }} />
-            </TouchableHighlight>
-          </View>
-        </View>
-
-      </View>
+      </View >
     );
   }
 }
 
 const styles = StyleSheet.create({
+  blueText: {
+    color: 'blue',
+    marginTop: 20
+  },
   header: {
-    alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
     paddingTop: 20
   },
   headerText: {
+    flex: 1,
     fontSize: 16,
+    marginTop: 10,
     textAlign: 'center'
   },
-  image: {
-    borderTopColor: 'gray',
-    borderTopWidth: 1,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
-    flex: 7
+  imageView: {
+    alignItems: 'center',
+    flex: 10,
+    paddingTop: 50
   },
   row: {
     flex: 1,
     flexDirection: 'row'
+  },
+  save: {
+    borderColor: 'black',
+    borderWidth: 0.5,
+    borderRadius: 5,
+    fontWeight: 'bold',
+    marginTop: 20, padding: 10
   }
 });
