@@ -77,8 +77,7 @@ export default class CreateNewEventComponent extends Component {
           ],
           index: 0
         }));
-      })
-      .catch(error => {
+      }).catch(error => {
         this.setState({
           error: typeof error === 'string' ? error : 'Oops, something went wrong.',
           saving: false

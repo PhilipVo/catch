@@ -80,7 +80,7 @@ export default class UpcomingModalComponent extends Component {
   }
 
   viewUser = username => {
-    http.get(`/api/users/${username}`)
+    http.get(`/api/users/get-info-for-user/${username}`)
       .then(data => {
         this.props.navigate('ProfileComponent', {
           data: data,

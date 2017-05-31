@@ -18,12 +18,13 @@ export default class AccountComponent extends Component {
     super(props);
 
     this.state = {
+      event: null,
       loading: true,
       modal: null,
       past: [],
-      event: null,
       tab: 'PastListComponent',
-      upcoming: []
+      upcoming: [],
+      user: {}
     };
 
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
@@ -34,15 +35,16 @@ export default class AccountComponent extends Component {
   }
 
   getEvents = () => {
-    http.get('/api/events/get-public-upcoming-events')
-      .then(events => {
+    http.get('/api/users/get-my-info')
+      .then(data => {
+        console.log(data)
         this.setState({
           loading: false,
-          past: events,
-          upcoming: events
+          past: data.past,
+          upcoming: data.upcoming,
+          user: data.user
         });
-      })
-      .catch(error => { console.log(error) });
+      }).catch(() => { });
   }
 
   hideModal = () => this.setState({
@@ -69,7 +71,10 @@ export default class AccountComponent extends Component {
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
 
-            <AccountDetailsComponent navigate={this.props.navigation.navigate} />
+            <AccountDetailsComponent
+              events={this.state.past.length + this.state.upcoming.length}
+              navigate={this.props.navigation.navigate}
+              user={this.state.user} />
 
             {/* Top tab bar */}
             <View style={styles.tabBar}>

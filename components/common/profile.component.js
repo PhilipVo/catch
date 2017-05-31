@@ -4,7 +4,7 @@
 //  and their list of catches. 
 //  
 //                Required params
-//  data (object): contains user information
+//  data (object): contains a user's information
 //  tabBar (component): instance of TabBarComponent
 ////////////////////////////////////////////////////////////
 
@@ -55,7 +55,6 @@ export default class ProfileComponent extends Component {
 
   render() {
     const { params } = this.props.navigation.state;
-    console.log(params.tabComponent)
     return (
       <View style={{ flex: 1 }}>
         <StatusBar hidden={false} />

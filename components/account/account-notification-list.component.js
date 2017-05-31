@@ -61,7 +61,10 @@ export default class AccountNotificationListComponent extends Component {
 }
 
 const styles = StyleSheet.create({
-  image: {
+  grayText: {
+    color: 'gray',
+    textAlign: 'center'
+  }, image: {
     height: 120,
     justifyContent: 'space-between'
   },
