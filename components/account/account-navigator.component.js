@@ -24,10 +24,14 @@ module.exports = class AccountNavigatorComponent extends Component {
     );
 
     return (
-      <AccountNavigator screenProps={{
-        logout: this.props.screenProps.logout,
-        navigate: this.props.navigation.navigate
-      }} />
+      <AccountNavigator
+        onNavigationStateChange={(prevState, newState, action) => {
+          console.log(prevState, newState, action)
+        }}
+        screenProps={{
+          logout: this.props.screenProps.logout,
+          navigate: this.props.navigation.navigate
+        }} />
     );
   }
 }
