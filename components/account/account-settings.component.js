@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Image,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -141,3 +142,11 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
 });
+
+if (Platform.OS === 'android'){
+  styles.inputText = {
+    fontSize: 16,
+    textAlign: 'center'
+  };
+  styles.inputView = undefined;
+}
