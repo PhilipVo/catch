@@ -16,6 +16,7 @@ import http from '../../services/http.service';
 export default class AccountComponent extends Component {
   constructor(props) {
     super(props);
+    console.log('constructed')
 
     this.state = {
       event: null,
@@ -24,7 +25,7 @@ export default class AccountComponent extends Component {
       past: [],
       tab: 'PastListComponent',
       upcoming: [],
-      user: {}
+      user: {},
     };
 
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
@@ -37,7 +38,6 @@ export default class AccountComponent extends Component {
   getEvents = () => {
     http.get('/api/users/get-my-info')
       .then(data => {
-        console.log(data)
         this.setState({
           loading: false,
           past: data.past,
@@ -47,10 +47,12 @@ export default class AccountComponent extends Component {
       }).catch(() => { });
   }
 
-  hideModal = () => this.setState({
-    event: null,
-    modal: null
-  })
+  hideModal = () => {
+    this.setState({
+      event: null,
+      modal: null
+    });
+  }
 
   navigate = tab => {
     this.navigator.dispatch(NavigationActions.navigate({ routeName: tab }));
@@ -103,6 +105,7 @@ export default class AccountComponent extends Component {
               <Navigator
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
+                  forceUpdate: this.forceUpdate,
                   loading: this.state.loading,
                   past: this.state.past,
                   setEvent: this.setEvent,

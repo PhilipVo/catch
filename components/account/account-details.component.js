@@ -6,20 +6,34 @@ import http from '../../services/http.service';
 import session from '../../services/session.service';
 
 export default class AccountDetailsComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { uri: `${http.s3}/users/${session.username}` };
+  }
+
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
         <View style={styles.avatarView}>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => this.props.navigate('AccountPictureComponent')}>
-            <Image
-              source={{
-                cache: 'reload',
-                uri: `${http.s3}/users/${session.username}`
-              }}
-              style={styles.avatarImage} />
-          </TouchableHighlight>
+          {
+            this.state.uri &&
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => this.props.navigate('AccountPictureComponent',
+                {
+                  setUri: () => {
+                    this.setState({ uri: null })
+                    this.setState({ uri: `${http.s3}/users/${session.username}` })
+                  }
+                })}>
+              <Image
+                source={{
+                  cache: 'reload',
+                  uri: this.state.uri
+                }}
+                style={styles.avatarImage} />
+            </TouchableHighlight>
+          }
         </View>
         <View style={styles.view}>
           <Text style={styles.username}>{session.username}</Text>

@@ -10,11 +10,39 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import http from '../../services/http.service';
 import session from '../../services/session.service';
 
-import user from '../../samples/user';
-
 export default class AccountSettingsComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      passwordError: null,
+      passwords: {
+        confirm: '',
+        new: '',
+        old: ''
+      },
+      saving: false,
+      user: {
+        email: '',
+        tag: ''
+      }
+    }
+  }
+
+  changePassword = () => {
+
+  }
+
+  save = () => {
+
+  }
+
+  componentDidMount() {
+    http.get('/api/get-my-settings')
+  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -43,7 +71,7 @@ export default class AccountSettingsComponent extends Component {
             onPress={() => { }}
             style={styles.pictureContainer}
             underlayColor='transparent'>
-            <Image source={{ uri: user.img }} style={styles.picture} />
+            <Image source={{ uri: `${http.s3}/users/${session.username}` }} style={styles.picture} />
           </TouchableHighlight>
           <Text style={{ textAlign: 'center' }}>{session.username}</Text>
 
@@ -55,9 +83,9 @@ export default class AccountSettingsComponent extends Component {
                 autoCapitalize='none'
                 autoCorrect={false}
                 keyboardType='email-address'
-                onChangeText={email => this.user.email = email}
+                onChangeText={email => this.state.user.email = email}
                 style={styles.inputText}
-                value={user.email} />
+                value={this.state.user.email} />
             </View>
 
           </View>
@@ -69,9 +97,9 @@ export default class AccountSettingsComponent extends Component {
               <TextInput
                 autoCapitalize='sentences'
                 autoCorrect={true}
-                onChangeText={tag => this.user.tag = tag}
+                onChangeText={tag => this.state.user.tag = tag}
                 style={styles.inputText}
-                value={user.tag} />
+                value={this.state.user.tag} />
             </View>
           </View>
 

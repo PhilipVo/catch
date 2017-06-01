@@ -16,7 +16,10 @@ import session from '../../services/session.service';
 export default class AccountPictureComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { path: null };
+    this.state = {
+      path: null,
+      saving: false
+    };
   }
 
   openPicker = () => {
@@ -25,26 +28,30 @@ export default class AccountPictureComponent extends Component {
       cropping: true,
       height: 200,
       width: 200,
-    })
-      .then(image => this.setState({ path: image.path }))
+    }).then(image => this.setState({ path: image.path }))
       .catch(() => { });
   }
 
   save = () => {
-    const formData = new FormData();
-    formData.append('media', { name: 'profile', uri: this.state.path });
+    if (!this.state.saving) {
+      this.setState({ saving: true });
 
-    http.put('/api/users/update-picture', formData)
-      .then(() => {
-        this.props.navigation.dispatch(NavigationActions.reset({
-          actions: [
-            NavigationActions.navigate({
-              routeName: 'AccountComponent'
-            })
-          ],
-          index: 0
-        }));
-      }).catch(error => { console.log(error) });
+      const formData = new FormData();
+      formData.append('media', { name: 'profile', uri: this.state.path });
+
+      http.put('/api/users/update-picture', formData)
+        .then(() => {
+          this.props.navigation.state.params.setUri();
+          this.props.navigation.dispatch(NavigationActions.reset({
+            actions: [
+              NavigationActions.navigate({
+                routeName: 'AccountComponent'
+              })
+            ],
+            index: 0
+          }));
+        }).catch(() => { this.setState({ saving: false }) });
+    }
   }
 
   render() {
@@ -55,9 +62,10 @@ export default class AccountPictureComponent extends Component {
         <View style={styles.header}>
           <View style={{ flex: 1 }}>
             <Icon
-              name='keyboard-arrow-left'
+              name='angle-left'
               onPress={() => this.props.navigation.goBack()}
               size={40}
+              type='font-awesome'
               underlayColor='transparent' />
           </View>
           <View style={{ flex: 10 }}>
@@ -80,7 +88,12 @@ export default class AccountPictureComponent extends Component {
             Choose from camera roll
           </Text>
 
-          {this.state.path && <Text onPress={this.save} style={styles.save}>Save</Text>}
+          {
+            this.state.path &&
+            <Text onPress={this.save} style={this.state.saving ? styles.saving : styles.save}>
+              {this.state.saving ? 'Saving...' : 'Save'}
+            </Text>
+          }
 
         </View>
 
@@ -95,14 +108,13 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   header: {
+    alignItems: 'center',
     flex: 1,
     flexDirection: 'row',
-    paddingTop: 20
+    marginTop: 20
   },
   headerText: {
-    flex: 1,
     fontSize: 16,
-    marginTop: 10,
     textAlign: 'center'
   },
   imageView: {
@@ -119,6 +131,12 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 5,
     fontWeight: 'bold',
-    marginTop: 20, padding: 10
+    marginTop: 20,
+    padding: 10
+  },
+  saving: {
+    fontWeight: 'bold',
+    marginTop: 20,
+    padding: 10
   }
 });
