@@ -1,4 +1,4 @@
-package com.catch;
+package com.catchx;
 
 import android.app.Application;
 
