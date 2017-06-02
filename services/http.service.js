@@ -1,4 +1,4 @@
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Platform } from 'react-native';
 
 class HttpService {
   constructor() {
@@ -58,7 +58,7 @@ class HttpService {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': 'application/json'
+            'Content-Type': Platform.OS === 'ios' ? 'application/json' : 'multipart/form-data'
           },
           body: body
         });
@@ -74,7 +74,7 @@ class HttpService {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': 'application/json'
+            'Content-Type': Platform.OS === 'ios' ? 'application/json' : 'multipart/form-data'
           },
           body: body
         });
