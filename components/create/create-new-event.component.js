@@ -4,6 +4,7 @@ import {
   Dimensions,
   Image,
   Keyboard,
+  Platform,
   SegmentedControlIOS,
   StatusBar,
   StyleSheet,
@@ -17,6 +18,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import { Icon } from 'react-native-elements';
 import ImagePicker from 'react-native-image-crop-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import SegmentedControlTab from 'react-native-segmented-control-tab';
 
 export default class CreateNewEventComponent extends Component {
   constructor(props) {
@@ -32,6 +34,25 @@ export default class CreateNewEventComponent extends Component {
       title: '',
       titleError: false,
     };
+  }
+
+  componentWillMount(){
+    if (Platform.OS === 'android'){
+      this.segment = <SegmentedControlTab
+        onTabPress={index => this.state.audience = index}
+        selectedIndex={this.state.audience}
+        style={{ marginBottom: 20 }}
+        tintColor='#f74434'
+        values={['Public', 'Private']}
+        />;
+    } else if (Platform.OS === 'ios') {
+      this.segment = <SegmentedControlIOS
+        onChange={event => this.state.audience = event.nativeEvent.selectedSegmentIndex}
+        selectedIndex={this.state.audience}
+        style={{ marginBottom: 20 }}
+        tintColor='#f74434'
+        values={['Public', 'Private']} />;
+    }
   }
 
   invite = () => {
@@ -156,12 +177,7 @@ export default class CreateNewEventComponent extends Component {
 
                 {/* Who */}
                 <Text style={{ fontSize: 16 }}>Who will view this?</Text>
-                <SegmentedControlIOS
-                  onChange={event => this.state.audience = event.nativeEvent.selectedSegmentIndex}
-                  selectedIndex={this.state.audience}
-                  style={{ marginBottom: 20 }}
-                  tintColor='#f74434'
-                  values={['Public', 'Private']} />
+                {this.segment}
 
 
                 {/* Description */}
