@@ -16,30 +16,77 @@ export default class AccountSettingsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      logoutModal: false,
       passwordError: null,
       passwords: {
         confirm: '',
-        new: '',
-        old: ''
+        current: '',
+        password: ''
       },
+      passwordModal: false,
       saving: false,
-      user: {
+      settings: {
         email: '',
         tag: ''
-      }
+      },
+      settingsError: null
     }
   }
 
-  changePassword = () => {
+  updatePassword = () => {
+    if (!this.state.saving) {
+      this.setState({
+        passwordsError: null,
+        saving: true
+      });
 
+      http.put('/api/users/update-password', JSON.stringify(this.state.passwords))
+        .then(() => {
+          this.setState({
+            passwords: {
+              confirm: '',
+              current: '',
+              new: ''
+            },
+            saving: false,
+          });
+        }).catch(error => {
+          this.setState({
+            passwordError: typeof error === 'string' ? error : 'Oops, something went wrong.',
+            saving: false
+          });
+        });
+    }
   }
 
-  save = () => {
+  updateSettings = () => {
+    if (!this.state.saving) {
+      this.setState({
+        saving: true,
+        settingsError: null
+      });
 
+      http.put('/api/users/update-settings', JSON.stringify(this.state.settings))
+      then(() => this.setState({ saving: false }))
+        .catch(error => {
+          this.setState({
+            saving: false,
+            settingsError: typeof error === 'string' ? error : 'Oops, something went wrong.'
+          });
+        });
+    }
   }
 
   componentDidMount() {
     http.get('/api/get-my-settings')
+      .then(data => {
+        this.setState({
+          settings: {
+            email: data.email,
+            tag: data.tag
+          }
+        });
+      }).catch(() => { })
   }
 
   render() {
@@ -82,9 +129,9 @@ export default class AccountSettingsComponent extends Component {
                 autoCapitalize='none'
                 autoCorrect={false}
                 keyboardType='email-address'
-                onChangeText={email => this.state.user.email = email}
+                onChangeText={email => this.state.settings.email = email}
                 style={styles.inputText}
-                value={this.state.user.email} />
+                value={this.state.settings.email} />
             </View>
 
           </View>
@@ -96,17 +143,54 @@ export default class AccountSettingsComponent extends Component {
               <TextInput
                 autoCapitalize='sentences'
                 autoCorrect={true}
-                onChangeText={tag => this.state.user.tag = tag}
+                onChangeText={tag => this.state.settings.tag = tag}
                 style={styles.inputText}
-                value={this.state.user.tag} />
+                value={this.state.settings.tag} />
             </View>
           </View>
+
+          {/* Save button */}
+          <Text
+            onPress={this.save}
+            style={this.state.saving ? styles.saving : styles.save}>
+            {this.state.saving ? 'Saving...' : 'Save'}
+          </Text>
 
           {/* Picture */}
           <Text style={styles.text0}>Change Profile Picture</Text>
 
           {/* Password */}
-          <Text style={styles.text1}>Change Password</Text>
+          <Text
+            onPress={() => this.setState({ passwordModal: true })}
+            style={styles.text1}>Change Password</Text>
+
+          <Modal
+            transparent={true}
+            visible={this.state.passwordModal}
+            onRequestClose={() => { alert("Modal has been closed.") }}>
+            <View>
+              <TextInput
+                autoCapitalize='none'
+                autoCorrect={false}
+                onChangeText={current => this.state.passwords.current = current}
+                style={styles.inputText}
+                value={this.state.passwords.current} />
+
+              <TextInput
+                autoCapitalize='none'
+                autoCorrect={false}
+                onChangeText={password => this.state.passwords.password = password}
+                style={styles.inputText}
+                value={this.state.passwords.password} />
+
+              <TextInput
+                autoCapitalize='none'
+                autoCorrect={false}
+                onChangeText={confirm => this.state.passwords.confirm = confirm}
+                style={styles.inputText}
+                value={this.state.passwords.confirm} />
+            </View>
+          </Modal>
 
           {/* Logout */}
           <Text
@@ -115,6 +199,26 @@ export default class AccountSettingsComponent extends Component {
               this.props.screenProps.logout();
             }}
             style={styles.text1}>Logout</Text>
+
+          <Modal
+            animationType={'slide'}
+            onRequestClose={() => { alert('Modal has been closed.') }}
+            transparent={false}
+            visible={this.state.modalVisible}
+          >
+            <View style={{ marginTop: 22 }}>
+              <View>
+                <Text>Hello World!</Text>
+
+                <TouchableHighlight onPress={() => {
+                  this.setModalVisible(!this.state.modalVisible)
+                }}>
+                  <Text>Hide Modal</Text>
+                </TouchableHighlight>
+
+              </View>
+            </View>
+          </Modal>
 
         </View>
       </View>
@@ -155,6 +259,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: 60,
     width: 60
+  },
+  save: {
+    borderColor: 'black',
+    borderWidth: 0.5,
+    borderRadius: 5,
+    fontWeight: 'bold',
+    marginTop: 20,
+    padding: 10
+  },
+  saving: {
+    fontWeight: 'bold',
+    marginTop: 20,
+    padding: 10
   },
   text: {
     fontSize: 16,
