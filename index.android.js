@@ -1,53 +1,82 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { AppRegistry, AsyncStorage, Image } from 'react-native';
 
-export default class Catch extends Component {
+import session from './services/session.service';
+
+console.ignoredYellowBox = [
+  'Warning: BackAndroid',
+  'Warning: View.propTypes',
+  'Warning: Invalid argument supplied to oneOf'
+];
+
+export default class Catchx extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isLoggedIn: undefined };
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem('catchToken')
+      .then(catchToken => {
+        if (catchToken) {
+          session.setSession(catchToken)
+            .then(() => this.setState({ isLoggedIn: true }))
+            .catch(() => { });
+        } else
+          this.setState({ isLoggedIn: false });
+      })
+      .catch(() => { });
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    // Conditionally load components ('lazy loading'):
+    if (nextState.isLoggedIn === true) {
+      const AccountNavigatorComponent = require('./components/account/account-navigator.component');
+      const CreateNavigatorComponent = require('./components/create/create-navigator.component');
+      const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
+
+      this.Navigator = require('react-navigation').TabNavigator(
+        {
+          AccountNavigatorComponent: { screen: AccountNavigatorComponent },
+          CreateNavigatorComponent: { screen: CreateNavigatorComponent },
+          FeedNavigatorComponent: { screen: FeedNavigatorComponent },
+        },
+        {
+          headerMode: 'none',
+          initialRouteName: 'FeedNavigatorComponent',
+          navigationOptions: { tabBarVisible: false }
+        }
+      );
+
+      this.screenProps = { logout: () => this.setState({ isLoggedIn: false }) };
+    } else if (nextState.isLoggedIn === false) {
+      const LoginComponent = require('./components/loginA.component');
+
+      this.Navigator = require('react-navigation').StackNavigator(
+        {
+          LoginComponent: { screen: LoginComponent },
+        },
+        {
+          cardStyle: { backgroundColor: 'white' },
+          headerMode: 'none'
+        }
+      );
+
+      this.screenProps = { login: () => this.setState({ isLoggedIn: true }) };
+    }
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+      this.state.isLoggedIn === true ?
+        <this.Navigator
+          ref={navigator => this.navigator = navigator}
+          screenProps={this.screenProps} /> :
+        this.state.isLoggedIn === false ?
+          <this.Navigator screenProps={this.screenProps} /> :
+          <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
-
-AppRegistry.registerComponent('Catch', () => Catch);
+AppRegistry.registerComponent('Catchx', () => Catchx);
