@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import {
+  Alert,
+  Keyboard,
   Image,
   Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import Modal from 'react-native-modalbox';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
@@ -18,68 +22,72 @@ export default class AccountSettingsComponent extends Component {
     super(props);
     this.state = {
       logoutModal: false,
-      passwordError: null,
-      passwords: {
-        confirm: '',
-        current: '',
-        password: ''
-      },
       passwordModal: false,
       saving: false,
       settings: {
         email: '',
         tag: ''
       },
-      settingsError: null
+      uri: `${http.s3}/users/${session.username}`
+    };
+
+    this.passwords = {
+      confirm: '',
+      current: '',
+      password: ''
     }
   }
 
-  updatePassword = () => {
-    if (!this.state.saving) {
-      this.setState({
-        passwordsError: null,
-        saving: true
-      });
+  refreshImage = () => {
+    this.setState({ uri: null });
+    this.setState({ uri: `${http.s3}/users/${session.username}` });
+    this.props.navigation.state.params.refreshImage();
+  }
 
-      http.put('/api/users/update-password', JSON.stringify(this.state.passwords))
+  updatePassword = () => {
+    Keyboard.dismiss();
+    if (this.passwords.password !== this.passwords.confirm)
+      Alert.alert('Error', 'Passwords do not match.');
+
+    if (!this.state.saving) {
+      this.setState({ saving: true });
+
+      http.put('/api/users/update-password', JSON.stringify(this.passwords))
         .then(() => {
+          this.passwords = {
+            confirm: '',
+            current: '',
+            password: ''
+          };
+
           this.setState({
-            passwords: {
-              confirm: '',
-              current: '',
-              new: ''
-            },
-            saving: false,
-          });
-        }).catch(error => {
-          this.setState({
-            passwordError: typeof error === 'string' ? error : 'Oops, something went wrong.',
+            passwordModal: false,
             saving: false
           });
+        }).catch(error => {
+          this.setState({ saving: false });
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
   }
 
   updateSettings = () => {
+    Keyboard.dismiss();
+
     if (!this.state.saving) {
-      this.setState({
-        saving: true,
-        settingsError: null
-      });
+      this.setState({ saving: true });
 
       http.put('/api/users/update-settings', JSON.stringify(this.state.settings))
-      then(() => this.setState({ saving: false }))
+        .then(() => this.setState({ saving: false }))
         .catch(error => {
-          this.setState({
-            saving: false,
-            settingsError: typeof error === 'string' ? error : 'Oops, something went wrong.'
-          });
+          this.setState({ saving: false });
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
   }
 
   componentDidMount() {
-    http.get('/api/get-my-settings')
+    http.get('/api/users/get-my-settings')
       .then(data => {
         this.setState({
           settings: {
@@ -87,142 +95,220 @@ export default class AccountSettingsComponent extends Component {
             tag: data.tag
           }
         });
-      }).catch(() => { })
+      }).catch(error => {
+        Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+      });
   }
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
 
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={{ flex: 1 }}>
-            <Icon
-              name='angle-left'
-              onPress={() => this.props.navigation.goBack()}
-              size={40}
-              type='font-awesome'
-              undelayColor='transparent' />
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={{ flex: 1 }}>
+              <Icon
+                name='angle-left'
+                onPress={() => this.props.navigation.goBack()}
+                size={40}
+                type='font-awesome'
+                undelayColor='transparent' />
+            </View>
+            <View style={{ flex: 10 }}>
+              <Text style={styles.text}>Settings</Text>
+            </View>
+            <View style={{ flex: 1 }} />
           </View>
-          <View style={{ flex: 10 }}>
-            <Text style={styles.text}>Settings</Text>
-          </View>
-          <View style={{ flex: 1 }} />
-        </View>
 
-        {/* Body */}
-        <View style={styles.body}>
+          {/* Body */}
+          <View style={styles.body}>
 
-          {/* Picture */}
-          <TouchableHighlight
-            onPress={() => { }}
-            style={styles.pictureContainer}
-            underlayColor='transparent'>
-            <Image source={{ uri: `${http.s3}/users/${session.username}` }} style={styles.picture} />
-          </TouchableHighlight>
-          <Text style={{ textAlign: 'center' }}>{session.username}</Text>
+            {/* Picture */}
+            {
+              this.state.uri &&
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate('AccountPictureComponent',
+                  { refreshImage: this.refreshImage })}
+                style={styles.pictureContainer}
+                underlayColor='transparent'>
+                <Image source={{
+                  cache: 'reload',
+                  uri: this.state.uri
+                }} style={styles.picture} />
+              </TouchableHighlight>
+            }
+            <Text style={{ textAlign: 'center' }}>{session.username}</Text>
 
-          {/* Email */}
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ fontWeight: 'bold' }}>Email</Text>
-            <View style={styles.inputView}>
-              <TextInput
-                autoCapitalize='none'
-                autoCorrect={false}
-                keyboardType='email-address'
-                onChangeText={email => this.state.settings.email = email}
-                style={styles.inputText}
-                value={this.state.settings.email} />
+            {/* Email */}
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ fontWeight: 'bold' }}>Email</Text>
+              <View style={styles.inputView}>
+                <TextInput
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  keyboardType='email-address'
+                  onChangeText={email => this.state.settings.email = email}
+                  style={styles.inputText}
+                  value={this.state.settings.email} />
+              </View>
+
             </View>
 
-          </View>
-
-          {/* Tag */}
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ fontWeight: 'bold' }}>Tagline</Text>
-            <View style={styles.inputView}>
-              <TextInput
-                autoCapitalize='sentences'
-                autoCorrect={true}
-                onChangeText={tag => this.state.settings.tag = tag}
-                style={styles.inputText}
-                value={this.state.settings.tag} />
-            </View>
-          </View>
-
-          {/* Save button */}
-          <Text
-            onPress={this.save}
-            style={this.state.saving ? styles.saving : styles.save}>
-            {this.state.saving ? 'Saving...' : 'Save'}
-          </Text>
-
-          {/* Picture */}
-          <Text style={styles.text0}>Change Profile Picture</Text>
-
-          {/* Password */}
-          <Text
-            onPress={() => this.setState({ passwordModal: true })}
-            style={styles.text1}>Change Password</Text>
-
-          <Modal
-            transparent={true}
-            visible={this.state.passwordModal}
-            onRequestClose={() => { alert("Modal has been closed.") }}>
-            <View>
-              <TextInput
-                autoCapitalize='none'
-                autoCorrect={false}
-                onChangeText={current => this.state.passwords.current = current}
-                style={styles.inputText}
-                value={this.state.passwords.current} />
-
-              <TextInput
-                autoCapitalize='none'
-                autoCorrect={false}
-                onChangeText={password => this.state.passwords.password = password}
-                style={styles.inputText}
-                value={this.state.passwords.password} />
-
-              <TextInput
-                autoCapitalize='none'
-                autoCorrect={false}
-                onChangeText={confirm => this.state.passwords.confirm = confirm}
-                style={styles.inputText}
-                value={this.state.passwords.confirm} />
-            </View>
-          </Modal>
-
-          {/* Logout */}
-          <Text
-            onPress={() => {
-              session.logout();
-              this.props.screenProps.logout();
-            }}
-            style={styles.text1}>Logout</Text>
-
-          <Modal
-            animationType={'slide'}
-            onRequestClose={() => { alert('Modal has been closed.') }}
-            transparent={false}
-            visible={this.state.modalVisible}
-          >
-            <View style={{ marginTop: 22 }}>
-              <View>
-                <Text>Hello World!</Text>
-
-                <TouchableHighlight onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible)
-                }}>
-                  <Text>Hide Modal</Text>
-                </TouchableHighlight>
-
+            {/* Tag */}
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ fontWeight: 'bold' }}>Tagline</Text>
+              <View style={styles.inputView}>
+                <TextInput
+                  autoCapitalize='sentences'
+                  autoCorrect={true}
+                  onChangeText={tag => this.state.settings.tag = tag}
+                  style={styles.inputText}
+                  value={this.state.settings.tag} />
               </View>
             </View>
+
+            {/* Save button */}
+            <Text
+              onPress={this.updateSettings}
+              style={this.state.saving ? styles.saving : styles.save}>
+              {this.state.saving && !this.state.passwordModal ? 'Saving...' : 'Save'}
+            </Text>
+
+            {/* Picture */}
+            <Text
+              onPress={() => this.props.navigation.navigate('AccountPictureComponent',
+                { refreshImage: this.refreshImage })}
+              undelayColor='transparent'
+              style={styles.text0}>
+              Change Profile Picture
+            </Text>
+
+            {/* Password */}
+            <Text
+              onPress={() => this.setState({ passwordModal: true })}
+              style={styles.text1}
+              underlayColor='transparent'>
+              Change Password</Text>
+
+            {/* Logout */}
+            <Text
+              onPress={() => this.setState({ logoutModal: true })}
+              style={styles.text1}
+              underlayColor='transparent'>
+              Logout</Text>
+
+          </View>
+
+          {/* Change password modal */}
+          <Modal
+            animationType={"slide"}
+            isOpen={this.state.passwordModal}
+            onClosed={() => {
+              this.passwords = {
+                confirm: '',
+                current: '',
+                password: ''
+              };
+              this.setState({
+                passwordError: null,
+                passwordModal: false
+              });
+            }}
+            style={styles.passwordModal}>
+
+            <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>Change Password</Text>
+
+            <View style={{ marginTop: 20 }}>
+              <View style={styles.inputView}>
+                <TextInput
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  onChangeText={current => this.passwords.current = current}
+                  placeholder='current password'
+                  placeholderTextColor='gray'
+                  style={styles.inputText}
+                  secureTextEntry={true} />
+              </View>
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <View style={styles.inputView}>
+                <TextInput
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  onChangeText={password => this.passwords.password = password}
+                  placeholder='new password'
+                  placeholderTextColor='gray'
+                  style={styles.inputText}
+                  secureTextEntry={true} />
+              </View>
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <View style={styles.inputView}>
+                <TextInput
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  onChangeText={confirm => this.passwords.confirm = confirm}
+                  placeholder='confirm new password'
+                  placeholderTextColor='gray'
+                  style={styles.inputText}
+                  secureTextEntry={true} />
+              </View>
+            </View>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
+              <Text
+                onPress={this.updatePassword}
+                style={this.state.saving ? styles.saving : styles.save}
+                underlayColor='transparent'>
+                {this.state.saving ? 'Saving...' : 'Save'}
+              </Text>
+              <Text
+                onPress={() => this.setState({ passwordModal: false })}
+                style={styles.save}
+                underlayColor='transparent'>
+                Cancel
+            </Text>
+            </View>
+
           </Modal>
 
+          {/* Logout modal */}
+          <Modal
+            animationType={"slide"}
+            isOpen={this.state.logoutModal}
+            onClosed={() => this.passwords = {
+              confirm: '',
+              current: '',
+              password: ''
+            }}
+            style={{ borderRadius: 10, height: 150, padding: 20, width: 300 }}>
+
+            <Text style={{ textAlign: 'center' }}>Are you sure you want to logout?</Text>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
+              <Text
+                onPress={() => {
+                  session.logout();
+                  this.props.screenProps.logout();
+                }}
+                style={styles.save}
+                underlayColor='transparent'>
+                Logout
+            </Text>
+              <Text
+                onPress={() => this.setState({ logoutModal: false })}
+                style={styles.save}
+                underlayColor='transparent'>
+                Cancel
+            </Text>
+            </View>
+
+          </Modal>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -252,6 +338,12 @@ const styles = StyleSheet.create({
     borderBottomColor: 'gray',
     borderBottomWidth: 0.5
   },
+  passwordModal: {
+    borderRadius: 10,
+    height: 300,
+    padding: 20,
+    width: 300
+  },
   picture: {
     borderRadius: 30,
     flex: 1
@@ -262,17 +354,19 @@ const styles = StyleSheet.create({
     width: 60
   },
   save: {
+    alignSelf: 'center',
     borderColor: 'black',
     borderWidth: 0.5,
     borderRadius: 5,
     fontWeight: 'bold',
     marginTop: 20,
-    padding: 10
+    padding: 7
   },
   saving: {
+    alignSelf: 'center',
     fontWeight: 'bold',
     marginTop: 20,
-    padding: 10
+    padding: 7
   },
   text: {
     fontSize: 16,
@@ -288,7 +382,7 @@ const styles = StyleSheet.create({
   },
 });
 
-if (Platform.OS === 'android'){
+if (Platform.OS === 'android') {
   styles.inputText = {
     fontSize: 16,
     textAlign: 'center'

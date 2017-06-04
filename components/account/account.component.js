@@ -16,7 +16,6 @@ import http from '../../services/http.service';
 export default class AccountComponent extends Component {
   constructor(props) {
     super(props);
-    console.log('constructed')
 
     this.state = {
       event: null,
@@ -82,21 +81,24 @@ export default class AccountComponent extends Component {
             <View style={styles.tabBar}>
               <Icon
                 color={this.state.tab === 'PastListComponent' ? 'black' : 'gray'}
-                name='photo-camera'
+                name='camrecorder'
                 onPress={() => this.navigate('PastListComponent')}
-                size={33}
+                size={30}
+                type='simple-line-icon'
                 underlayColor='transparent' />
               <Icon
                 color={this.state.tab === 'UpcomingListComponent' ? 'black' : 'gray'}
-                name='card-giftcard'
+                name='present'
                 onPress={() => this.navigate('UpcomingListComponent')}
-                size={33}
+                size={30}
+                type='simple-line-icon'
                 underlayColor='transparent' />
               <Icon
                 color={this.state.tab === 'AccountNotificationListComponent' ? 'black' : 'gray'}
-                name='mail-outline'
+                name='envelope'
                 onPress={() => this.navigate('AccountNotificationListComponent')}
-                size={33}
+                size={30}
+                type='simple-line-icon'
                 underlayColor='transparent' />
             </View>
 

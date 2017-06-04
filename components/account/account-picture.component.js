@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -41,16 +42,12 @@ export default class AccountPictureComponent extends Component {
 
       http.put('/api/users/update-picture', formData)
         .then(() => {
-          this.props.navigation.state.params.setUri();
-          this.props.navigation.dispatch(NavigationActions.reset({
-            actions: [
-              NavigationActions.navigate({
-                routeName: 'AccountComponent'
-              })
-            ],
-            index: 0
-          }));
-        }).catch(() => { this.setState({ saving: false }) });
+          this.props.navigation.state.params.refreshImage();
+          this.props.navigation.goBack();
+        }).catch(error => {
+          this.setState({ saving: false });
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
     }
   }
 
@@ -132,11 +129,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontWeight: 'bold',
     marginTop: 20,
-    padding: 10
+    padding: 7
   },
   saving: {
     fontWeight: 'bold',
     marginTop: 20,
-    padding: 10
+    padding: 7
   }
 });

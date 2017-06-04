@@ -54,7 +54,7 @@ export default class AccountNotificationListComponent extends Component {
             style={{ flex: 1 }}
           /> :
           <View style={{ marginTop: 20 }}>
-            <Text style={styles.grayText}>No upcoming events found</Text>
+            <Text style={styles.grayText}>No notifications</Text>
           </View>
     );
   }

@@ -11,6 +11,11 @@ export default class AccountDetailsComponent extends Component {
     this.state = { uri: `${http.s3}/users/${session.username}` };
   }
 
+  refreshImage = () => {
+    this.setState({ uri: null });
+    this.setState({ uri: `${http.s3}/users/${session.username}` });
+  }
+
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -20,12 +25,7 @@ export default class AccountDetailsComponent extends Component {
             <TouchableHighlight
               underlayColor='transparent'
               onPress={() => this.props.navigate('AccountPictureComponent',
-                {
-                  setUri: () => {
-                    this.setState({ uri: null })
-                    this.setState({ uri: `${http.s3}/users/${session.username}` })
-                  }
-                })}>
+                { refreshImage: this.refreshImage })}>
               <Image
                 source={{
                   cache: 'reload',
@@ -55,8 +55,11 @@ export default class AccountDetailsComponent extends Component {
           <Icon
             color='gray'
             name='settings'
-            onPress={() => this.props.navigate('AccountSettingsComponent')}
+            onPress={() => this.props.navigate('AccountSettingsComponent',
+              { refreshImage: this.refreshImage })
+            }
             size={30}
+            type='simple-line-icon'
             underlayColor='transparent' />
         </View>
       </View >

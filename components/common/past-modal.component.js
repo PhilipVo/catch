@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////
 //                PastModalComponent
-// Modal that shows the story of an event. Appears when a
+// Modal that shows the stories of an event. Appears when a
 // past event is clicked on.
 // 
 //                Required props
@@ -14,14 +14,18 @@ const moment = require('moment');
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
+  KeyboardAvoidingView,
   ListView,
   Text,
   TextInput,
+  TouchableHighlight,
   StatusBar,
   StyleSheet,
   View
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
 
@@ -32,36 +36,84 @@ import http from '../../services/http.service';
 export default class PastModalComponent extends Component {
   constructor(props) {
     super(props);
+
+    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
+      comment: '',
+      comments: [],
+      dataSource: this.ds.cloneWithRows([]),
       index: 0,
       item: null,
       loading: true,
-      story: []
+      showComments: false,
+      stories: []
     };
   }
 
   componentDidMount() {
-    http.get(`/api/stories/get-stories-for-event/${this.props.event.id}`)
-      .then(story => {
-        console.log('story', story)
-        if (story.length > 0)
+    http.get(`/api/events/get-contributions-for-event/${this.props.event.id}`)
+      .then(data => {
+        console.log(data)
+        if (data.stories.length > 0)
           this.setState({
-            item: story[0],
+            comments: data.comments,
+            dataSource: this.ds.cloneWithRows(data.comments),
+            item: data.stories[0],
             loading: false,
-            story: story
+            stories: data.stories
           });
-        else this.setState({ loading: false });
+        else this.setState({
+          comments: data.comments,
+          dataSource: this.ds.cloneWithRows(data.comments),
+          loading: false
+        });
       })
-      .catch(() => { })
+      .catch(error => {
+        console.log(error)
+        this.props.hideModal();
+        Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+      })
   }
 
   componentDidUpdate() {
+    if (this.state.showComments)
+      _listView.scrollToEnd();
+
     this.setItem();
   }
 
+  comment = () => {
+    if (this.state.comment.length > 0) {
+      const data = {
+        comment: this.state.comment,
+        eventId: this.props.event.id
+      };
+
+      http.post('/api/comments', JSON.stringify(data))
+        .then(() => {
+          const _comments = this.state.comments.slice();
+          _comments.push({
+            comment: this.state.comment,
+            username: session.username
+          });
+
+          this.setState({
+            comment: '',
+            comments: _comments,
+            dataSource: this.ds.cloneWithRows(_comments)
+          });
+
+        })
+        .catch(error => {
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
+    }
+  }
+
+
   setItem = () => {
     const currentItem = this.state.item;
-    const nextItem = this.state.story[this.state.index + 1];
+    const nextItem = this.state.stories[this.state.index + 1];
 
     if (nextItem) {
       this.interval = TimerMixin.setTimeout(() => {
@@ -92,25 +144,70 @@ export default class PastModalComponent extends Component {
               <ActivityIndicator />
               <Text>Loading...</Text>
             </View> :
-            this.state.story.length > 0 ?
+            this.state.stories.length > 0 ?
               <Image
                 source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                 style={styles.image}>
                 <View style={styles.top}>
                   <PastModalTimerComponent
+                    duration={4000}
                     index={this.state.index}
-                    length={this.state.story.length}
-                    duration={4000} />
+                    length={this.state.stories.length}
+                    showComments={this.state.showComments} />
 
-                  <Text style={styles.text}>
-                    {this.props.event.title}
-                  </Text>
+                  <Text style={styles.title}>{this.props.event.title}</Text>
+                  <Text style={styles.username}>{this.props.event.username}</Text>
                 </View>
-                <View style={styles.bottom}>
-                  <Text style={{ backgroundColor: 'transparent' }}>comments</Text>
-                </View>
+                {
+                  this.state.showComments ?
+                    <KeyboardAvoidingView
+                      behavior='padding'
+                      style={{ flex: 1 }}>
+                      <ListView
+                        dataSource={this.state.dataSource}
+                        enableEmptySections={true}
+                        ref={listView => _listView = listView}
+                        removeClippedSubviews={false}
+                        renderRow={(rowData, sectionID, rowID) => (
+                          <View style={styles.commentView}>
+                            <TouchableHighlight
+                              onPress={() => this.viewUser(rowData.username)}>
+                              <Image
+                                source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                                style={styles.commentImage} />
+                            </TouchableHighlight>
+                            <View style={{ flex: 1 }}>
+                              <Text style={styles.comment}>{rowData.comment}</Text>
+                            </View>
+                          </View>
+                        )} />
+                      <TextInput
+                        autoCapitalize='sentences'
+                        autoCorrect={true}
+                        maxLength={120}
+                        onChangeText={(comment) => this.setState({ comment: comment })}
+                        onSubmitEditing={this.comment}
+                        placeholder='comment'
+                        returnKeyType='send'
+                        style={styles.modalTextInput}
+                        value={this.state.comment} />
+                    </KeyboardAvoidingView> :
+                    <View style={styles.bottom}>
+                      <Icon
+                        color='white'
+                        name='arrow-up'
+                        onPress={() => this.setState({ showComments: true })}
+                        size={30}
+                        type='simple-line-icon' />
+                      <Text
+                        onPress={() => this.setState({ showComments: true })}
+                        style={styles.username}>
+                        comments
+                      </Text>
+                    </View>
+                }
               </Image> :
-              <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+              <View style={styles.empty}>
                 <Text>No posts were added to this event</Text>
               </View>
         }
@@ -124,7 +221,29 @@ const styles = StyleSheet.create({
   bottom: {
     alignSelf: 'center',
     flex: 1,
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    marginBottom: 10
+  },
+  comment: {
+    backgroundColor: 'white',
+    flex: 1,
+    minHeight: 50,
+    padding: 10
+  },
+  commentImage: {
+    height: 50,
+    width: 50
+  },
+  commentView: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 2
+  },
+  empty: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    flex: 1,
+    justifyContent: 'center'
   },
   image: {
     flex: 1,
@@ -132,14 +251,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: null
   },
+  modalTextInput: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderRadius: 5,
+    borderWidth: 1,
+    height: 40,
+    marginTop: 5,
+    padding: 10
+  },
   top: {
     flex: 1,
     paddingTop: 20
   },
-  text: {
+  title: {
     backgroundColor: 'transparent',
     color: 'white',
     fontSize: 20,
+    textAlign: 'right',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  username: {
+    backgroundColor: 'transparent',
+    color: 'white',
+    fontSize: 16,
     textAlign: 'right',
     textShadowColor: 'black',
     textShadowOffset: { width: 0.5, height: 0.5 }
