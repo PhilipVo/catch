@@ -27,24 +27,34 @@ export default class PastModalTimerComponent extends Component {
     ]).start();
   }
 
-  componentWillReceiveProps() {
-    this.setState({
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.showComments && this.animation) {
+      console.log('stopping')
+      this.animation.stop();
+    }
+    else this.setState({
       timerDownAnimation: new Animated.Value(1),
       timerUpAnimation: new Animated.Value(0)
     });
   }
 
-  componentDidUpdate() {
-    Animated.parallel([
-      Animated.timing(this.state.timerDownAnimation, {
-        duration: this.props.duration,
-        toValue: 0
-      }),
-      Animated.timing(this.state.timerUpAnimation, {
-        duration: this.props.duration,
-        toValue: 1
-      })
-    ]).start();
+  componentDidUpdate(prevProps) {
+    if (prevProps.showComments && !this.props.showComments && this.animation)
+      this.animation.start();
+    else {
+      this.animation = Animated.parallel([
+        Animated.timing(this.state.timerDownAnimation, {
+          duration: this.props.duration,
+          toValue: 0
+        }),
+        Animated.timing(this.state.timerUpAnimation, {
+          duration: this.props.duration,
+          toValue: 1
+        })
+      ]);
+
+      this.animation.start();
+    }
   }
 
   render() {

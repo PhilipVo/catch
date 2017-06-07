@@ -70,15 +70,17 @@ export default class ProfileComponent extends Component {
             <View style={styles.tabBar}>
               <Icon
                 color={this.state.tab === 'PastListComponent' ? 'black' : 'gray'}
-                name='photo-camera'
+                name='camrecorder'
                 onPress={() => this.navigate('PastListComponent')}
-                size={33}
+                size={30}
+                type='simple-line-icon'
                 underlayColor='transparent' />
               <Icon
                 color={this.state.tab === 'UpcomingListComponent' ? 'black' : 'gray'}
-                name='card-giftcard'
+                name='present'
                 onPress={() => this.navigate('UpcomingListComponent')}
-                size={33}
+                size={30}
+                type='simple-line-icon'
                 underlayColor='transparent' />
             </View>
 

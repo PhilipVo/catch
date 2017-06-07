@@ -1,34 +1,36 @@
 import React from 'react';
-import { StatusBar, StyleSheet, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 const TabComponent = props => {
   return (
     <View style={props.tab === 'create' ? styles.tab1 : styles.tab2}>
-      {/*<StatusBar hidden={props.hideStatusBar} />*/}
       <Icon
         color={props.tab === 'feed' ? 'black' : 'gray'}
-        name='list'
+        name='calendar'
         onPress={() => { props.navigate('FeedNavigatorComponent') }}
-        size={33}
+        size={30}
+        type='simple-line-icon'
         underlayColor='transparent' />
       <Icon
         color={props.tab === 'create' ? 'transparent' : 'gray'}
-        name='add-circle-outline'
+        name='plus'
         onPress={() => { props.navigate('CreateNavigatorComponent') }}
-        size={33}
+        size={30}
+        type='simple-line-icon'
         underlayColor='transparent' />
       <Icon
         color={props.tab === 'account' ? 'black' : 'gray'}
-        name='person'
+        name='user'
         onPress={() => { props.navigate('AccountNavigatorComponent') }}
-        size={33}
+        size={30}
+        type='simple-line-icon'
         underlayColor='transparent' />
     </View>
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   tab1: {
     flex: 1,
     flexDirection: 'row',
@@ -42,6 +44,6 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-around'
   }
-};
+});
 
 export default TabComponent;
