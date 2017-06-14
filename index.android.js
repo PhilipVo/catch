@@ -57,8 +57,8 @@ export default class Catchx extends Component {
           LoginComponent: { screen: LoginComponent },
         },
         {
-          cardStyle: { backgroundColor: 'white' },
-          headerMode: 'none'
+            cardStyle: { backgroundColor: 'white' },
+            headerMode: 'none'
         }
       );
 
