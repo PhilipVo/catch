@@ -12,6 +12,7 @@ import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
+import socket from '../../services/socket.service';
 
 export default class AccountComponent extends Component {
   constructor(props) {
@@ -27,7 +28,11 @@ export default class AccountComponent extends Component {
       user: {},
     };
 
+    // Tab component:    
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
+
+    // Socket events:
+    this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
   }
 
   componentDidMount() {

@@ -29,6 +29,7 @@ import {
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
+import Video from 'react-native-video';
 
 import PastModalTimerComponent from './past-modal-timer.component.js';
 
@@ -46,6 +47,7 @@ export default class PastModalComponent extends Component {
       index: 0,
       item: null,
       loading: true,
+      rate: 1.0,
       showComments: false,
       stories: [],
       timerDownAnimation: new Animated.Value(1),
@@ -127,7 +129,7 @@ export default class PastModalComponent extends Component {
   setItem = () => {
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
-
+    console.log('current item:', `${http.s3}/events/${this.props.event.id}/${this.state.item.id}`)
     if (nextItem) {
       this.interval = TimerMixin.setTimeout(() => {
         this.setState({
@@ -192,11 +194,37 @@ export default class PastModalComponent extends Component {
             <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
               <ActivityIndicator />
               <Text>Loading...</Text>
-            </View> :
-            this.state.stories.length > 0 ?
-              <Image
-                source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
-                style={styles.image}>
+            </View> : this.state.stories.length > 0 ?
+              <View style={{ flex: 1 }}>
+                {
+                  this.state.item.type === 1 ?
+                    <Video source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
+                      ref={(ref) => {
+                        this.player = ref
+                      }}                                      // Store reference
+                      rate={this.state.rate}                              // 0 is paused, 1 is normal.
+                      volume={this.state.rate}                            // 0 is muted, 1 is normal.
+                      muted={false}                           // Mutes the audio entirely.
+                      paused={false}                          // Pauses playback entirely.
+                      resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
+                      repeat={true}                           // Repeat forever.
+                      playInBackground={false}                // Audio continues to play when app entering background.
+                      playWhenInactive={true}                // [iOS] Video continues to play when control or notification center are shown.
+                      ignoreSilentSwitch={"obey"}           // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
+                      progressUpdateInterval={250.0}          // [iOS] Interval to fire onProgress (default to ~250ms)
+                      onLoadStart={this.loadStart}            // Callback when video starts to load
+                      onLoad={this.setDuration}               // Callback when video loads
+                      onProgress={this.setTime}               // Callback every ~250ms with currentTime
+                      onEnd={this.onEnd}                      // Callback when playback finishes
+                      onError={this.videoError}               // Callback when video cannot be loaded
+                      onBuffer={this.onBuffer}                // Callback when remote video is buffering
+                      onTimedMetadata={data => console.log(data)}  // Callback when the stream receive some metadata
+                      style={styles.background} /> :
+                    <Image
+                      source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
+                      style={styles.background} />
+                }
+
                 <View style={styles.top}>
                   {/* Timer bars */}
                   <View style={{ flexDirection: 'row' }}>{bars}</View>
@@ -230,6 +258,7 @@ export default class PastModalComponent extends Component {
                         </View>
                       </View>
                     )} />
+
                   <TextInput
                     autoCapitalize='sentences'
                     autoCorrect={true}
@@ -241,6 +270,7 @@ export default class PastModalComponent extends Component {
                     style={styles.modalTextInput}
                     value={this.state.comment} />
                 </KeyboardAvoidingView>
+
                 <View style={this.state.showComments ? { display: 'none' } : styles.bottom}>
                   <Icon
                     color='white'
@@ -254,7 +284,9 @@ export default class PastModalComponent extends Component {
                     comments
                       </Text>
                 </View>
-              </Image> :
+
+              </View> :
+
               <View style={styles.empty}>
                 <Text>No posts were added to this event</Text>
               </View>
@@ -266,6 +298,13 @@ export default class PastModalComponent extends Component {
 }
 
 const styles = StyleSheet.create({
+  background: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0
+  },
   bar: {
     flex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',

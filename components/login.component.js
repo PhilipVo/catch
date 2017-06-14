@@ -45,6 +45,7 @@ module.exports = class LoginComponent extends Component {
         session.login(this.user)
           .then(() => this.props.screenProps.login())
           .catch(error => {
+            console.log('error', error)
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.'
@@ -54,6 +55,7 @@ module.exports = class LoginComponent extends Component {
         session.register(this.user)
           .then(() => this.props.screenProps.login())
           .catch(error => {
+            console.log('error', error)
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.'

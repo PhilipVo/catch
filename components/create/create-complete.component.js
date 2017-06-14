@@ -31,7 +31,7 @@ export default class CreateCompleteComponent extends Component {
           style={{ alignSelf: 'flex-start' }} />
         <Text h3 style={{ textAlign: 'center' }}>Congratulations!</Text>
         <Image
-          source={{ uri: `${params.event.cover}` }}
+          source={{ uri: params.event.cover ? `${params.event.cover}` : `${http.s3}/events/${params.event.id}/cover` }}
           style={{ height: 120 }} />
 
         {/* Timer */}

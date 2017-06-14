@@ -151,7 +151,7 @@ export default class UpcomingModalComponent extends Component {
               </View>
             </View>
 
-            <Text style={styles.modalText3}>{this.props.event.detail}</Text>
+            <Text style={styles.modalText3}>{this.props.event.description}</Text>
             <Text style={styles.modalText4}>Comments</Text>
 
             {/* Comments */}

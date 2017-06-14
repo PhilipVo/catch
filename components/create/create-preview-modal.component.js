@@ -51,7 +51,6 @@ export default class CreatePreviewModalComponent extends Component {
   }
 
   next = () => {
-    console.log('next')
     this.props.pause();
     this.props.navigate('CreateNewEventComponent', {
       play: this.props.play,

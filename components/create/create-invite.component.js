@@ -30,6 +30,7 @@ export default class CreateNewEventComponent extends Component {
   componentDidMount() {
     http.get('/api/contacts')
       .then(contacts => {
+        console.log(contacts)
         this.setState({
           data: contacts,
           dataSource: this.ds.cloneWithRows(contacts)
@@ -144,7 +145,7 @@ export default class CreateNewEventComponent extends Component {
                 removeClippedSubviews={false}
                 renderRow={(rowData, sectionID, rowID) => (
                   <View style={styles.row}>
-                    <Text style={{ fontSize: 16 }}>{rowData.username}</Text>
+                    <Text style={{ fontSize: 16 }}>{rowData.contact}</Text>
                     <TouchableHighlight
                       onPress={() => this.invite(rowData, rowID)}
                       underlayColor='transparent'>
