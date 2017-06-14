@@ -5,7 +5,7 @@
 //  
 //                Required params
 //  data (object): contains a user's information
-//  tabBar (component): instance of TabBarComponent
+//  tabComponent (component): instance of TabBarComponent
 ////////////////////////////////////////////////////////////
 
 import React, { Component } from 'react';
@@ -87,7 +87,6 @@ export default class ProfileComponent extends Component {
             {/* List navigator */}
             <View style={{ flex: 10 }}>
               <Navigator
-                onNavigationStateChange={(a, b, c) => console.log('changed', a, b, c)}
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
                   loading: false,
@@ -107,13 +106,13 @@ export default class ProfileComponent extends Component {
               event={this.state.event}
               hideModal={this.hideModal}
               navigate={this.props.navigation.navigate}
-              tabBar={params.tabBar} /> :
+              tabComponent={params.tabComponent} /> :
             this.state.modal === 'upcoming' ?
               <UpcomingModalComponent
                 event={this.state.event}
                 hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
-                tabBar={params.tabBar} /> :
+                tabComponent={params.tabComponent} /> :
               null
         }
 

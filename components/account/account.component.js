@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
 
@@ -68,7 +68,6 @@ export default class AccountComponent extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <StatusBar hidden={false} />
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
 

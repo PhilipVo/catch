@@ -50,12 +50,12 @@ export default class CreateNewEventComponent extends Component {
 
     const event = this.props.navigation.state.params.event;
     const formData = new FormData();
-
+    console.log(event)
     formData.append('audience', event.audience);
     formData.append('contributors', JSON.stringify(this.contributors));
     formData.append('date', event.date);
     formData.append('description', event.description);
-    formData.append('event', event.event);
+    formData.append('title', event.title);
     formData.append('media', { name: 'cover', uri: event.cover });
 
     // Append story if it exists:

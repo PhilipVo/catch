@@ -36,15 +36,15 @@ export default class CreateNewEventComponent extends Component {
     };
   }
 
-  componentWillMount(){
-    if (Platform.OS === 'android'){
+  componentWillMount() {
+    if (Platform.OS === 'android') {
       this.segment = <SegmentedControlTab
         onTabPress={index => this.state.audience = index}
-        selectedIndex={this.state.audience}
+        selectedIndex={this.state.audience}
         style={{ marginBottom: 20 }}
         tintColor='#f74434'
-        values={['Public', 'Private']}
-        />;
+        values={['Public', 'Private']}
+      />;
     } else if (Platform.OS === 'ios') {
       this.segment = <SegmentedControlIOS
         onChange={event => this.state.audience = event.nativeEvent.selectedSegmentIndex}
@@ -53,6 +53,11 @@ export default class CreateNewEventComponent extends Component {
         tintColor='#f74434'
         values={['Public', 'Private']} />;
     }
+  }
+
+  goBack = () => {
+    this.props.navigation.state.params.play();
+    this.props.navigation.goBack();
   }
 
   invite = () => {
@@ -102,7 +107,7 @@ export default class CreateNewEventComponent extends Component {
               <View style={{ flex: 1 }}>
                 <Icon
                   name='angle-left'
-                  onPress={() => this.props.navigation.goBack()}
+                  onPress={this.goBack}
                   size={40}
                   style={{ marginLeft: 10 }}
                   type='font-awesome'
@@ -197,11 +202,12 @@ export default class CreateNewEventComponent extends Component {
 
             </View>
 
-            {/*Footer*/}
+            {/* Footer */}
             <View style={styles.footer}>
               <Text
                 onPress={this.invite}
-                style={{ fontSize: 20 }}>
+                style={{ fontSize: 20 }}
+                underlayColor='transparent' >
                 {'Invite Contributors  '}
               </Text>
               <Icon
