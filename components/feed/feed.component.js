@@ -1,7 +1,6 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
-  StatusBar,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -77,7 +76,6 @@ export default class FeedComponent extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <StatusBar hidden={false} />
         <View style={styles.avoidTop}>
           <View style={{ flex: 11 }}>
 

@@ -87,7 +87,7 @@ export default class UpcomingModalComponent extends Component {
           tabComponent: this.props.tabComponent
         });
       })
-      .catch(error => console.log(error));
+      .catch(() => { });
   }
 
   render() {

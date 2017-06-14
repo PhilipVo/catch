@@ -2389,6 +2389,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.3.6"
 
+keymirror@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/keymirror/-/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
+
 kind-of@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-3.1.0.tgz#475d698a5e49ff5e53d14e3e732429dc8bf4cf47"
@@ -3103,9 +3107,9 @@ react-native-elements@^0.11.1:
     react-native-side-menu "^0.20.1"
     react-native-tab-navigator "^0.3.3"
 
-react-native-image-crop-picker@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.13.0.tgz#946b31d2e50c8b658fd2e2488c3f2875b5896a66"
+react-native-image-crop-picker@^0.13.1:
+  version "0.13.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.13.1.tgz#8699dff4bcca8684db5f1db9a8fa6c362050076a"
 
 react-native-keyboard-aware-scroll-view@^0.2.8:
   version "0.2.8"
@@ -3131,6 +3135,12 @@ react-native-modal@^2.4.0:
 react-native-modalbox@^1.3.9:
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/react-native-modalbox/-/react-native-modalbox-1.3.9.tgz#9991c51ebc69c720d8a778aaa47c89137ddea111"
+
+react-native-progress@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-3.2.1.tgz#9f2353045c49f06803ae04d86a2cd5baa83cd465"
+  dependencies:
+    prop-types "^15.5.8"
 
 react-native-segmented-control-tab@^3.0.2:
   version "3.0.2"
@@ -3158,6 +3168,12 @@ react-native-vector-icons@^4.0.1:
   dependencies:
     lodash "^4.0.0"
     yargs "^6.3.0"
+
+react-native-video@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-1.0.0.tgz#ba92b9e1a114c2c1f3a6144b0639ca3f69a0cc74"
+  dependencies:
+    keymirror "0.1.1"
 
 react-native@0.44.0:
   version "0.44.0"

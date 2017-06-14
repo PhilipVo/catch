@@ -15,6 +15,7 @@ import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   Image,
   KeyboardAvoidingView,
   ListView,
@@ -46,7 +47,9 @@ export default class PastModalComponent extends Component {
       item: null,
       loading: true,
       showComments: false,
-      stories: []
+      stories: [],
+      timerDownAnimation: new Animated.Value(1),
+      timerUpAnimation: new Animated.Value(0)
     };
   }
 
@@ -67,19 +70,30 @@ export default class PastModalComponent extends Component {
           dataSource: this.ds.cloneWithRows(data.comments),
           loading: false
         });
-      })
-      .catch(error => {
+      }).catch(error => {
         console.log(error)
         this.props.hideModal();
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       })
   }
 
-  componentDidUpdate() {
-    if (this.state.showComments)
+  componentWillUpdate(nextProps, nextState) {
+    if (!this.state.showComments && nextState.showComments)
       _listView.scrollToEnd();
+  }
 
+  componentDidUpdate() {
     this.setItem();
+    Animated.parallel([
+      Animated.timing(this.state.timerDownAnimation, {
+        duration: 4000,
+        toValue: 0
+      }),
+      Animated.timing(this.state.timerUpAnimation, {
+        duration: 4000,
+        toValue: 1
+      })
+    ]).start();
   }
 
   comment = () => {
@@ -102,9 +116,8 @@ export default class PastModalComponent extends Component {
             comments: _comments,
             dataSource: this.ds.cloneWithRows(_comments)
           });
-
-        })
-        .catch(error => {
+        }).catch(error => {
+          console.log(error)
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
@@ -120,6 +133,8 @@ export default class PastModalComponent extends Component {
         this.setState({
           index: this.state.index + 1,
           item: nextItem,
+          timerDownAnimation: new Animated.Value(1),
+          timerUpAnimation: new Animated.Value(0)
         });
       }, 4000);
     }
@@ -127,7 +142,41 @@ export default class PastModalComponent extends Component {
       this.interval = TimerMixin.setTimeout(this.props.hideModal, 4000);
   }
 
+  viewUser = username => {
+    http.get(`/api/users/get-info-for-user/${username}`)
+      .then(data => {
+        TimerMixin.clearInterval(this.interval);
+        this.props.hideModal();
+        this.props.navigate('ProfileComponent', {
+          data: data,
+          tabComponent: this.props.tabComponent
+        });
+      })
+      .catch(() => { });
+  }
+
   render() {
+    let bars = [];
+    for (let i = 0; i < this.state.stories.length; i++) {
+      bars.push(
+        <View
+          key={i}
+          style={styles.bar}>
+          {
+            i === this.state.index ?
+              <View style={styles.barView}>
+                <Animated.View style={{
+                  backgroundColor: 'white',
+                  borderRadius: 5,
+                  flex: this.state.timerUpAnimation
+                }} />
+                <Animated.View style={{ flex: this.state.timerDownAnimation }} />
+              </View> : null
+          }
+        </View>
+      );
+    }
+
     return (
       <Modal
         isOpen={true}
@@ -149,63 +198,62 @@ export default class PastModalComponent extends Component {
                 source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                 style={styles.image}>
                 <View style={styles.top}>
-                  <PastModalTimerComponent
-                    duration={4000}
-                    index={this.state.index}
-                    length={this.state.stories.length}
-                    showComments={this.state.showComments} />
+                  {/* Timer bars */}
+                  <View style={{ flexDirection: 'row' }}>{bars}</View>
 
                   <Text style={styles.title}>{this.props.event.title}</Text>
-                  <Text style={styles.username}>{this.props.event.username}</Text>
+                  <Text
+                    onPress={() => this.viewUser(this.props.event.username)}
+                    style={styles.username}>
+                    {this.props.event.username}
+                  </Text>
                 </View>
-                {
-                  this.state.showComments ?
-                    <KeyboardAvoidingView
-                      behavior='padding'
-                      style={{ flex: 1 }}>
-                      <ListView
-                        dataSource={this.state.dataSource}
-                        enableEmptySections={true}
-                        ref={listView => _listView = listView}
-                        removeClippedSubviews={false}
-                        renderRow={(rowData, sectionID, rowID) => (
-                          <View style={styles.commentView}>
-                            <TouchableHighlight
-                              onPress={() => this.viewUser(rowData.username)}>
-                              <Image
-                                source={{ uri: `${http.s3}/users/${rowData.username}` }}
-                                style={styles.commentImage} />
-                            </TouchableHighlight>
-                            <View style={{ flex: 1 }}>
-                              <Text style={styles.comment}>{rowData.comment}</Text>
-                            </View>
-                          </View>
-                        )} />
-                      <TextInput
-                        autoCapitalize='sentences'
-                        autoCorrect={true}
-                        maxLength={120}
-                        onChangeText={(comment) => this.setState({ comment: comment })}
-                        onSubmitEditing={this.comment}
-                        placeholder='comment'
-                        returnKeyType='send'
-                        style={styles.modalTextInput}
-                        value={this.state.comment} />
-                    </KeyboardAvoidingView> :
-                    <View style={styles.bottom}>
-                      <Icon
-                        color='white'
-                        name='arrow-up'
-                        onPress={() => this.setState({ showComments: true })}
-                        size={30}
-                        type='simple-line-icon' />
-                      <Text
-                        onPress={() => this.setState({ showComments: true })}
-                        style={styles.username}>
-                        comments
+
+                <KeyboardAvoidingView
+                  behavior='padding'
+                  style={this.state.showComments ? { flex: 1 } : { display: 'none' }}>
+                  <ListView
+                    dataSource={this.state.dataSource}
+                    enableEmptySections={true}
+                    ref={listView => _listView = listView}
+                    removeClippedSubviews={false}
+                    renderRow={(rowData, sectionID, rowID) => (
+                      <View style={styles.commentView}>
+                        <TouchableHighlight
+                          onPress={() => this.viewUser(rowData.username)}>
+                          <Image
+                            source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                            style={styles.commentImage} />
+                        </TouchableHighlight>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.comment}>{rowData.comment}</Text>
+                        </View>
+                      </View>
+                    )} />
+                  <TextInput
+                    autoCapitalize='sentences'
+                    autoCorrect={true}
+                    maxLength={120}
+                    onChangeText={(comment) => this.setState({ comment: comment })}
+                    onSubmitEditing={this.comment}
+                    placeholder='comment'
+                    returnKeyType='send'
+                    style={styles.modalTextInput}
+                    value={this.state.comment} />
+                </KeyboardAvoidingView>
+                <View style={this.state.showComments ? { display: 'none' } : styles.bottom}>
+                  <Icon
+                    color='white'
+                    name='arrow-up'
+                    onPress={() => this.setState({ showComments: true })}
+                    size={30}
+                    type='simple-line-icon' />
+                  <Text
+                    onPress={() => this.setState({ showComments: true })}
+                    style={styles.username}>
+                    comments
                       </Text>
-                    </View>
-                }
+                </View>
               </Image> :
               <View style={styles.empty}>
                 <Text>No posts were added to this event</Text>
@@ -218,6 +266,18 @@ export default class PastModalComponent extends Component {
 }
 
 const styles = StyleSheet.create({
+  bar: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 5,
+    height: 2,
+    marginHorizontal: 1
+  },
+  barView: {
+    borderRadius: 5,
+    flex: 1,
+    flexDirection: 'row'
+  },
   bottom: {
     alignSelf: 'center',
     flex: 1,

@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -38,16 +39,16 @@
 		5AFD124921AF4C6A866F5D9A /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DFC1AF45B13042E195A0B953 /* libRCTCamera.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		6A4001025CCB4E588DEB5ACE /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E558AECB2C6946A3B11B46E2 /* EvilIcons.ttf */; };
+		77A6025A1EF04AF592A5E29D /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D9F7EA7206E4473687846F1D /* libRCTVideo.a */; };
 		7841E698AD7549639CA68A08 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 13D60BC586D94585A20E6139 /* FontAwesome.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		8414CE621ECEB56900F3254A /* ImageCropPickerSDK in Resources */ = {isa = PBXBuildFile; fileRef = 8414CE611ECEB56900F3254A /* ImageCropPickerSDK */; };
-		8414CE641ECEB59900F3254A /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8414CE631ECEB59900F3254A /* RSKImageCropper.framework */; };
-		8414CE651ECEB59900F3254A /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8414CE631ECEB59900F3254A /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8414CE671ECEB59900F3254A /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8414CE661ECEB59900F3254A /* QBImagePicker.framework */; };
-		8414CE681ECEB59900F3254A /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8414CE661ECEB59900F3254A /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9664CF74EAB74787A4211B0E /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F6A5E24067D4EE6926F3831 /* libimageCropPicker.a */; };
+		84F68C3B1EEB5E440081C86A /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F68C3A1EEB5E440081C86A /* RSKImageCropper.framework */; };
+		84F68C3C1EEB5E440081C86A /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84F68C3A1EEB5E440081C86A /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		84F68C3E1EEB5E440081C86A /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84F68C3D1EEB5E440081C86A /* QBImagePicker.framework */; };
+		84F68C3F1EEB5E440081C86A /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84F68C3D1EEB5E440081C86A /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9CD3326253254DBAB18B2783 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A98F8E9F4A3C4A75BFED6ABF /* MaterialCommunityIcons.ttf */; };
 		A641B85F60424C9AA8E8EFFD /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE6D6E12398D4A2AB1707ED7 /* Foundation.ttf */; };
+		B96793B507B24E79AC827937 /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DB80D298EFC4BB0A26C8A50 /* libimageCropPicker.a */; };
 		CBF4D1B88D88410488609A23 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 24AFE53D086642F1B58C9194 /* Zocial.ttf */; };
 		CDC2B62560E14A21971A4E3C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 434C79B28C1149E4B5DFA841 /* Ionicons.ttf */; };
 		CDE9BA28C2544FBFB21C3A3C /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FA523DB13A043C395D78191 /* Entypo.ttf */; };
@@ -245,13 +246,6 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
-		8414CE441ECEB4F500F3254A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 686CC84E8B284A9397EAAEA7 /* imageCropPicker.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3400A8081CEB54A6008A0BC7;
-			remoteInfo = imageCropPicker;
-		};
 		844C29F51EAAA8750075E843 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7228674F4A36497498B6988C /* RCTCamera.xcodeproj */;
@@ -266,17 +260,31 @@
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
 		};
+		84F68C1C1EEB5CDD0081C86A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 63FF9E0612144EE2AE546FB5 /* imageCropPicker.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3400A8081CEB54A6008A0BC7;
+			remoteInfo = imageCropPicker;
+		};
+		84F820C91EE761CF00FAE12A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E6F4048C6884932A2244F10 /* RCTVideo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTVideo;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8414CE691ECEB59900F3254A /* Embed Frameworks */ = {
+		84F68C401EEB5E440081C86A /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8414CE651ECEB59900F3254A /* RSKImageCropper.framework in Embed Frameworks */,
-				8414CE681ECEB59900F3254A /* QBImagePicker.framework in Embed Frameworks */,
+				84F68C3C1EEB5E440081C86A /* RSKImageCropper.framework in Embed Frameworks */,
+				84F68C3F1EEB5E440081C86A /* QBImagePicker.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,21 +315,22 @@
 		24AFE53D086642F1B58C9194 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Catch-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Catch-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Catch-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Catch-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DB80D298EFC4BB0A26C8A50 /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		434C79B28C1149E4B5DFA841 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		4E05B15FF2AF4C848791E619 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
-		4F6A5E24067D4EE6926F3831 /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		686CC84E8B284A9397EAAEA7 /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
+		63FF9E0612144EE2AE546FB5 /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		7228674F4A36497498B6988C /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RCTCamera.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7978128B70504DF485399941 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		7E6F4048C6884932A2244F10 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTVideo.xcodeproj; path = "../node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		8414CE611ECEB56900F3254A /* ImageCropPickerSDK */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ImageCropPickerSDK; sourceTree = "<group>"; };
-		8414CE631ECEB59900F3254A /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8414CE661ECEB59900F3254A /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		84F68C3A1EEB5E440081C86A /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		84F68C3D1EEB5E440081C86A /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FA523DB13A043C395D78191 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		A98F8E9F4A3C4A75BFED6ABF /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		B5C78690C31F460F8D95A1A3 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
+		D9F7EA7206E4473687846F1D /* libRCTVideo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTVideo.a; sourceTree = "<group>"; };
 		DFC1AF45B13042E195A0B953 /* libRCTCamera.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTCamera.a; sourceTree = "<group>"; };
 		E558AECB2C6946A3B11B46E2 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		E65EB62C4BF1466D9F8564B8 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -343,13 +352,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
-				8414CE641ECEB59900F3254A /* RSKImageCropper.framework in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
+				84F68C3B1EEB5E440081C86A /* RSKImageCropper.framework in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
-				8414CE671ECEB59900F3254A /* QBImagePicker.framework in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
@@ -357,7 +365,9 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				5AFD124921AF4C6A866F5D9A /* libRCTCamera.a in Frameworks */,
 				F2A5B7DFE98C47BB943854F5 /* libRNVectorIcons.a in Frameworks */,
-				9664CF74EAB74787A4211B0E /* libimageCropPicker.a in Frameworks */,
+				77A6025A1EF04AF592A5E29D /* libRCTVideo.a in Frameworks */,
+				84F68C3E1EEB5E440081C86A /* QBImagePicker.framework in Frameworks */,
+				B96793B507B24E79AC827937 /* libimageCropPicker.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,7 +553,8 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				7228674F4A36497498B6988C /* RCTCamera.xcodeproj */,
 				F49785E2A84247B69CF527A3 /* RNVectorIcons.xcodeproj */,
-				686CC84E8B284A9397EAAEA7 /* imageCropPicker.xcodeproj */,
+				7E6F4048C6884932A2244F10 /* RCTVideo.xcodeproj */,
+				63FF9E0612144EE2AE546FB5 /* imageCropPicker.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -560,9 +571,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				8414CE661ECEB59900F3254A /* QBImagePicker.framework */,
-				8414CE631ECEB59900F3254A /* RSKImageCropper.framework */,
-				8414CE611ECEB56900F3254A /* ImageCropPickerSDK */,
+				84F68C3D1EEB5E440081C86A /* QBImagePicker.framework */,
+				84F68C3A1EEB5E440081C86A /* RSKImageCropper.framework */,
 				13B07FAE1A68108700A75B9A /* Catch */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* CatchTests */,
@@ -584,14 +594,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8414CE411ECEB4F500F3254A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8414CE451ECEB4F500F3254A /* libimageCropPicker.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		844C29ED1EAAA8750075E843 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,6 +606,22 @@
 			isa = PBXGroup;
 			children = (
 				844C29F61EAAA8750075E843 /* libRCTCamera.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84F68C191EEB5CDD0081C86A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84F68C1D1EEB5CDD0081C86A /* libimageCropPicker.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		84F820B51EE761CF00FAE12A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				84F820CA1EE761CF00FAE12A /* libRCTVideo.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -637,7 +655,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				8414CE691ECEB59900F3254A /* Embed Frameworks */,
+				84F68C401EEB5E440081C86A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -695,10 +713,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = ADVQHQYRE2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 3ATD58X5U7;
+						DevelopmentTeam = 2H53L3FV23;
 						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -725,8 +744,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 8414CE411ECEB4F500F3254A /* Products */;
-					ProjectRef = 686CC84E8B284A9397EAAEA7 /* imageCropPicker.xcodeproj */;
+					ProductGroup = 84F68C191EEB5CDD0081C86A /* Products */;
+					ProjectRef = 63FF9E0612144EE2AE546FB5 /* imageCropPicker.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -767,6 +786,10 @@
 				{
 					ProductGroup = 00C302E01ABCB9EE00DB3ED1 /* Products */;
 					ProjectRef = 00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */;
+				},
+				{
+					ProductGroup = 84F820B51EE761CF00FAE12A /* Products */;
+					ProjectRef = 7E6F4048C6884932A2244F10 /* RCTVideo.xcodeproj */;
 				},
 				{
 					ProductGroup = 139FDEE71B06529A00C62182 /* Products */;
@@ -967,13 +990,6 @@
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		8414CE451ECEB4F500F3254A /* libimageCropPicker.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libimageCropPicker.a;
-			remoteRef = 8414CE441ECEB4F500F3254A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		844C29F61EAAA8750075E843 /* libRCTCamera.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -986,6 +1002,20 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = 844C2A0E1EAAA8750075E843 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84F68C1D1EEB5CDD0081C86A /* libimageCropPicker.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libimageCropPicker.a;
+			remoteRef = 84F68C1C1EEB5CDD0081C86A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84F820CA1EE761CF00FAE12A /* libRCTVideo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTVideo.a;
+			remoteRef = 84F820C91EE761CF00FAE12A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1003,7 +1033,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				8414CE621ECEB56900F3254A /* ImageCropPickerSDK in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				CDE9BA28C2544FBFB21C3A3C /* Entypo.ttf in Resources */,
 				6A4001025CCB4E588DEB5ACE /* EvilIcons.ttf in Resources */,
@@ -1133,6 +1162,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = ADVQHQYRE2;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1141,7 +1171,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-video/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = CatchTests/Info.plist;
@@ -1150,13 +1180,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rd.catch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Catch.app/Catch";
 			};
@@ -1167,11 +1196,12 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = ADVQHQYRE2;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-video/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = CatchTests/Info.plist;
@@ -1180,13 +1210,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.rd.catch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Catch.app/Catch";
 			};
@@ -1196,15 +1225,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 3ATD58X5U7;
+				DEVELOPMENT_TEAM = 2H53L3FV23;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-video/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = Catch/Info.plist;
@@ -1215,7 +1245,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ronin.catch;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rd.catch;
 				PRODUCT_NAME = Catch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1226,14 +1256,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3ATD58X5U7;
+				DEVELOPMENT_TEAM = 2H53L3FV23;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-video/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = Catch/Info.plist;
@@ -1244,7 +1275,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ronin.catch;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rd.catch;
 				PRODUCT_NAME = Catch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1267,15 +1298,13 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-video/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = "Catch-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1306,15 +1335,13 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
-					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-video/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = "Catch-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1345,8 +1372,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Catch-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1371,8 +1396,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Catch-tvOSTests";
@@ -1400,6 +1423,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1441,6 +1465,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;

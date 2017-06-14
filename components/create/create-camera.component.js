@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Animated,
   Dimensions,
   Image,
   StyleSheet,
@@ -9,6 +10,7 @@ import {
 } from 'react-native';
 import Camera from 'react-native-camera';
 import { Icon } from 'react-native-elements';
+import ProgressCircle from 'react-native-progress/Circle';
 
 import TabComponent from '../common/tab.component';
 
@@ -16,15 +18,51 @@ export default class CreateCameraComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      d: 0,
+      recordAnimation: new Animated.Value(0),
       mirror: false,
       type: 1
     };
   }
 
   capture = () => {
-    this.camera.capture()
+    const options = {
+      target: Camera.constants.CaptureTarget.temp,
+      mode: Camera.constants.CaptureMode.still
+    };
+
+    console.log('capturing')
+    this.camera.capture(options)
       .then(data => this.props.navigation.navigate('CreatePreviewComponent', { story: data.path }))
-      .catch(error => { });
+      .catch(error => console.log(error));
+  }
+
+  record = () => {
+    console.log('recording')
+    const options = {
+      audio: true,
+      mode: Camera.constants.CaptureMode.video,
+      target: Camera.constants.CaptureTarget.temp,
+      totalSeconds: 8
+    };
+
+    Animated.timing(this.state.recordAnimation, {
+      duration: 8000,
+      toValue: 1
+    }).start();
+
+    this.camera.capture(options)
+      .then(data => {
+        console.log('data is', data)
+        this.props.navigation.navigate('CreatePreviewComponent', { isVideo: true, story: data.path })
+      })
+      .catch(error => console.log('error:', error));
+  }
+
+  stop = () => {
+    console.log('stopping')
+    this.setState({ recordAnimation: new Animated.Value(0) });
+    this.camera.stopCapture();
   }
 
   toggle = () => {
@@ -37,7 +75,6 @@ export default class CreateCameraComponent extends Component {
   render() {
     return (
       <Camera
-        captureTarget={Camera.constants.CaptureTarget.temp}
         mirrorImage={this.state.mirror}
         ref={cam => this.camera = cam}
         style={styles.camera}
@@ -63,10 +100,19 @@ export default class CreateCameraComponent extends Component {
           <View style={{ flex: 1 }} />
           <View style={styles.buttonView}>
             <TouchableHighlight
+              onLongPress={this.record}
               onPress={this.capture}
+              onPressOut={this.stop}
               style={{ alignSelf: 'center' }}
               underlayColor='transparent'>
-              <View style={styles.button} />
+              <View style={styles.button}>
+                <View style={{
+                  backgroundColor: 'red',
+                  borderRadius: 45 * this.state.d,
+                  height: 90 * this.state.d,
+                  width: 90 * this.state.d,
+                }} />
+              </View>
             </TouchableHighlight>
           </View>
           <View style={styles.flip}>

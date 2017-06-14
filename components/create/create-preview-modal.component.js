@@ -50,6 +50,15 @@ export default class CreatePreviewModalComponent extends Component {
     }
   }
 
+  next = () => {
+    console.log('next')
+    this.props.pause();
+    this.props.navigate('CreateNewEventComponent', {
+      play: this.props.play,
+      story: this.props.story
+    });
+  }
+
   render() {
     return (
       <Modal
@@ -65,7 +74,7 @@ export default class CreatePreviewModalComponent extends Component {
             style={{ alignSelf: 'flex-start' }}
             underlayColor='transparent' />
           <TouchableHighlight
-            onPress={() => this.props.navigate('CreateNewEventComponent', { story: this.props.story })}
+            onPress={this.next}
             underlayColor='transparent'>
             <View style={styles.newEventView}>
               <Text style={styles.newEventText}>Create New Event</Text>

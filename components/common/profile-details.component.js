@@ -11,6 +11,7 @@
 
 import React, { Component } from 'react';
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -23,6 +24,38 @@ import http from '../../services/http.service';
 import session from '../../services/session.service';
 
 export default class ProfileDetailsComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loading: false };
+  }
+
+  toggleContact = () => {
+    if (this.state.loading) return;
+
+    this.setState({ loading: true });
+    if (this.props.user.isContact) {
+      http.delete(`/api/contacts/${this.props.user.username}`)
+        .then(() => {
+          this.props.user.isContact = false;
+          this.setState({ loading: false });
+        }).catch(error => {
+          this.setState({ loading: false });
+          console.log(error)
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
+    } else {
+      http.post('/api/contacts', JSON.stringify({ contact: this.props.user.username }))
+        .then(() => {
+          this.props.user.isContact = true;
+          this.setState({ loading: false });
+        }).catch(error => {
+          console.log(error)
+          this.setState({ loading: false });
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
+    }
+  }
+
   render() {
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -44,7 +77,7 @@ export default class ProfileDetailsComponent extends Component {
           {
             this.props.user.username === session.username ? null :
               <TouchableHighlight
-                onPress={() => { }}
+                onPress={this.toggleContact}
                 style={styles.addContact}
                 underlayColor='transparent' >
                 {
