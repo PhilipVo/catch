@@ -6,8 +6,33 @@ import socket from './socket.service';
 
 class SessionService {
   constructor() {
-    this.img;
+    this.isFacebookUser = false;
     this.username;
+  }
+
+  facebookLogin(data) {
+    return http.post('/users/facebook-login', JSON.stringify(data))
+      .then(catchToken => {
+        if (catchToken.isNew) throw { isNew: true };
+        AsyncStorage.setItem('catchToken', catchToken);
+      }).then(() => AsyncStorage.getItem('catchToken'))
+      .then(catchToken => {
+        this.setSession(catchToken);
+        this.isFacebookUser = true;
+      }).catch(error => {
+        if (error.isNew === true) return Promise.resolve(true);
+        return Promise.reject(error);
+      });
+  }
+
+  facebookRegister(data) {
+    return http.post('/users/facebook-register', JSON.stringify(data))
+      .then(catchToken => AsyncStorage.setItem('catchToken', catchToken))
+      .then(() => AsyncStorage.getItem('catchToken'))
+      .then(catchToken => {
+        this.setSession(catchToken);
+        this.isFacebookUser = true;
+      }).catch(error => Promise.reject(error));
   }
 
   login(data) {
@@ -42,7 +67,6 @@ class SessionService {
       try {
         // Set user:
         payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
-        this.img = payload.img;
         this.username = payload.username;
 
         // Connect to sockets:

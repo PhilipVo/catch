@@ -11,7 +11,7 @@ import {
 import { Button, Icon, Text } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
-import upcoming from '../../samples/upcoming-contributions';
+import session from '../../services/session.service';
 
 export default class UpcomingListComponent extends Component {
   constructor(props) {
@@ -61,9 +61,9 @@ export default class UpcomingListComponent extends Component {
                 {/* Header */}
                 <View style={styles.header}>
                   <View>
-                    <Text style={{ fontSize: 16 }}>{rowData.event}</Text>
+                    <Text style={{ fontSize: 16 }}>{rowData.title}</Text>
                     {
-                      rowData.isCreator ?
+                      rowData.username === session.username ?
                         <View style={{ flexDirection: 'row' }}>
                           <Icon color='purple' name='star' size={15} />
                           <Text style={{ fontSize: 12 }}>You created this event</Text>
@@ -97,7 +97,8 @@ export default class UpcomingListComponent extends Component {
                   </View>
                 </View>
 
-                <Text style={styles.detailText}>{rowData.detail}</Text>
+                <Text style={styles.description}>{rowData.description}</Text>
+
                 <View style={styles.iconView}>
                   <Icon
                     name='chat-bubble-outline'
@@ -124,7 +125,7 @@ export default class UpcomingListComponent extends Component {
 }
 
 const styles = StyleSheet.create({
-  detailText: {
+  description: {
     paddingHorizontal: 30,
     marginTop: 10,
     textAlign: 'justify'

@@ -64,7 +64,7 @@ export default class CreateNewEventComponent extends Component {
 
     http.post('/api/events', formData)
       .then(() => {
-        socket.emit('public');
+        socket.emit('event');
 
         this.props.navigation.dispatch(NavigationActions.reset({
           actions: [

@@ -32,7 +32,7 @@ export default class AccountComponent extends Component {
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
 
     // Socket events:
-    this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
+    this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
   }
 
   componentDidMount() {
@@ -159,10 +159,10 @@ const Navigator = TabNavigator(
 
 const styles = StyleSheet.create({
   tabBar: {
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
-    borderTopColor: 'gray',
-    borderTopWidth: 0.5,
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    borderTopColor: 'black',
+    borderTopWidth: 1,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around'

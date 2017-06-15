@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around'
   },
   tab2: {
-    backgroundColor: 'floralwhite',
-    borderTopColor: 'gray',
-    borderTopWidth: 0.5,
+    backgroundColor: '#F9F9F9',
+    borderTopColor: 'black',
+    borderTopWidth: 1,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around'

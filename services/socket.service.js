@@ -11,14 +11,8 @@ class SocketService {
     //////////////////////////////////////////////////////
     //               SOCKET EVENT HANDLERS
     //////////////////////////////////////////////////////
-    this.onPublic = new Observable(observer => {
-      this.socket.on('public', () => observer.next());
-    });
-
-    this.onSent = new Observable(observer => {
-      this.socket.on('sent', data => {
-        observer.next(data);
-      });
+    this.onEvent = new Observable(observer => {
+      this.socket.on('event', () => observer.next());
     });
   }
 
