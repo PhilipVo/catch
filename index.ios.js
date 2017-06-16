@@ -50,15 +50,18 @@ export default class Catch extends Component {
 
       this.screenProps = { logout: () => this.setState({ isLoggedIn: false }) };
     } else if (nextState.isLoggedIn === false) {
+      const FacebookRegisterComponent = require('./components/facebook-register.component');
       const LoginComponent = require('./components/login.component');
 
       this.Navigator = require('react-navigation').StackNavigator(
         {
-          LoginComponent: { screen: LoginComponent },
+          FacebookRegisterComponent: { screen: FacebookRegisterComponent },
+          LoginComponent: { screen: LoginComponent }
         },
         {
           cardStyle: { backgroundColor: 'white' },
-          headerMode: 'none'
+          headerMode: 'none',
+          initialRouteName: 'LoginComponent'
         }
       );
 

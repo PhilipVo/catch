@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {
   Button,
-  Dimensions,
   TextInput,
   Keyboard,
   KeyboardAvoidingView,
@@ -60,6 +59,7 @@ module.exports = class LoginComponent extends Component {
                   }))
                 } else return this.props.screenProps.login();
               }).catch(error => {
+                console.log(error)
                 this.setState({
                   disabled: false,
                   error: typeof error === 'string' ? error : 'Oops, something went wrong.'

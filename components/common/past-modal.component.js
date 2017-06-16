@@ -129,7 +129,6 @@ export default class PastModalComponent extends Component {
   setItem = () => {
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
-    console.log('current item:', `${http.s3}/events/${this.props.event.id}/${this.state.item.id}`)
     if (nextItem) {
       this.interval = TimerMixin.setTimeout(() => {
         this.setState({
