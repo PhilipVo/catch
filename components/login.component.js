@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Button,
   TextInput,
   Keyboard,
@@ -24,7 +25,9 @@ module.exports = class LoginComponent extends Component {
     this.state = {
       disabled: false,
       error: null,
+      facebookLoading: false,
       isNew: false,
+      loading: false,
       mode: 'login'
     };
 
@@ -39,11 +42,12 @@ module.exports = class LoginComponent extends Component {
     if (!this.state.disabled) {
       this.setState({
         disbaled: true,
-        error: null
+        error: null,
+        facebookLoading: true
       });
 
       LoginManager.logInWithReadPermissions(['public_profile']).then(result => {
-        if (result.isCancelled) this.setState({ disbaled: false });
+        if (result.isCancelled) this.setState({ disabled: false, facebookLoading: false });
         else {
           const infoRequest = new GraphRequest('/me', null, (error, result) => {
             if (error) throw error.toString();
@@ -56,13 +60,13 @@ module.exports = class LoginComponent extends Component {
                       routeName: 'FacebookRegisterComponent'
                     })],
                     index: 0
-                  }))
+                  }));
                 } else return this.props.screenProps.login();
               }).catch(error => {
-                console.log(error)
                 this.setState({
                   disabled: false,
-                  error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+                  error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+                  facebookLoading: false
                 });
               });
           });
@@ -72,7 +76,8 @@ module.exports = class LoginComponent extends Component {
       }).catch(error => {
         this.setState({
           disabled: false,
-          error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+          error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+          facebookLoading: false
         });
       });
     }
@@ -82,7 +87,8 @@ module.exports = class LoginComponent extends Component {
     if (!this.state.disabled) {
       this.setState({
         disbaled: true,
-        error: null
+        error: null,
+        loading: true
       });
 
       if (this.state.mode === 'login') {
@@ -91,7 +97,8 @@ module.exports = class LoginComponent extends Component {
           .catch(error => {
             this.setState({
               disabled: false,
-              error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+              error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+              loading: true
             });
           });
       } else {
@@ -100,7 +107,8 @@ module.exports = class LoginComponent extends Component {
           .catch(error => {
             this.setState({
               disabled: false,
-              error: typeof error === 'string' ? error : 'Oops, something went wrong.'
+              error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+              loading: true
             });
           });
       }
@@ -170,12 +178,16 @@ module.exports = class LoginComponent extends Component {
 
               {/* Login button*/}
               <TouchableHighlight
+                disabled={this.state.disabled}
                 onPress={this.login}
                 style={styles.loginButton}
                 underlayColor='#f74434'>
-                <Text style={styles.buttonText}>
-                  {this.state.mode === 'login' ? 'Login' : 'Create Account'}
-                </Text>
+                {
+                  this.state.loading ? <ActivityIndicator color='white' /> :
+                    <Text style={styles.buttonText}>
+                      {this.state.mode === 'login' ? 'Login' : 'Create Account'}
+                    </Text>
+                }
               </TouchableHighlight>
 
               { //  Don't have an account?
@@ -207,7 +219,10 @@ module.exports = class LoginComponent extends Component {
                 style={styles.facebookButton}
                 underlayColor='transparent'>
                 <View style={styles.facebookView}>
-                  <Icon color='white' name='facebook-official' type='font-awesome' />
+                  {
+                    this.state.facebookLoading ? <ActivityIndicator color='white' /> :
+                      <Icon color='white' name='facebook-official' type='font-awesome' />
+                  }
                   <Text style={styles.buttonText}>  Continue with Facebook</Text>
                 </View>
               </TouchableHighlight>

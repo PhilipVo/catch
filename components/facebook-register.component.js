@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Button,
   TextInput,
   Keyboard,
   KeyboardAvoidingView,
@@ -72,7 +71,7 @@ module.exports = class FacebookRegisterComponent extends Component {
             behavior={'padding'}
             style={styles.keyboardAvoidingView}>
             <View>
-              <Text style={styles.title}>Choose a username</Text>
+              <Text style={styles.title}>Choose your username</Text>
 
               {/* Username */}
               <View>
@@ -119,12 +118,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: null
   },
-  bottomText: {
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontWeight: '500',
-    textAlign: 'center'
-  },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
@@ -137,34 +130,12 @@ const styles = StyleSheet.create({
     padding: 15,
     textAlign: 'right'
   },
-  divider: {
-    backgroundColor: 'white',
-    height: 0.5,
-    width: 150
-  },
   error: {
     backgroundColor: 'transparent',
     color: 'red',
     fontWeight: '600',
     marginTop: 10,
     textAlign: 'center'
-  },
-  facebookButton: {
-    alignItems: 'center',
-    borderRadius: 5,
-    height: 40,
-    justifyContent: 'center'
-  },
-  facebookView: {
-    alignItems: 'center',
-    flexDirection: 'row'
-  },
-  forgot: {
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontWeight: '500',
-    padding: 15,
-    textAlign: 'right'
   },
   inputBorder: {
     borderBottomColor: 'white',
@@ -186,12 +157,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10
   },
-  label1: {
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
   loginButton: {
     alignItems: 'center',
     backgroundColor: '#f74434',
@@ -199,28 +164,6 @@ const styles = StyleSheet.create({
     height: 40,
     marginTop: 15,
     justifyContent: 'center'
-  },
-  or: {
-    backgroundColor: 'transparent',
-    color: 'white',
-    fontWeight: 'bold'
-  },
-  orView: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingVertical: 15
-  },
-  redTextView: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingVertical: 10
-  },
-  redText: {
-    backgroundColor: 'transparent',
-    color: '#f74434',
-    fontWeight: '900',
-    textAlign: 'center'
   },
   title: {
     backgroundColor: 'transparent',

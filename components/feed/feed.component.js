@@ -42,6 +42,10 @@ export default class FeedComponent extends Component {
     this.getEvents();
   }
 
+  componentWillUnmount() {
+    this.onEvent.unsubscribe();
+  }
+
   getEvents = () => {
     http.get('/api/events/get-public-events')
       .then(events => {

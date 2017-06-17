@@ -1,5 +1,7 @@
 const base64 = require('base-64');
 import { AsyncStorage } from 'react-native';
+import { LoginManager } from 'react-native-fbsdk';
+import PushNotification from 'react-native-push-notification';
 
 import http from './http.service';
 import socket from './socket.service';
@@ -8,6 +10,12 @@ class SessionService {
   constructor() {
     this.isFacebookUser = false;
     this.username;
+
+    PushNotification.configure({
+      onNotification: notification => {
+        console.log(notification)
+      }
+    });
   }
 
   facebookLogin(data) {
@@ -46,9 +54,11 @@ class SessionService {
   logout() {
     return AsyncStorage.removeItem('catchToken')
       .then(() => {
-        socket.disconnect();
+        if (this.isFacebookUser) LoginManager.logOut();
 
-        this.img = undefined;
+        socket.disconnect(this.username);
+
+        this.isFacebookUser = false;
         this.username = undefined;
       })
       .catch(error => Promise.reject(error));
@@ -70,7 +80,7 @@ class SessionService {
         this.username = payload.username;
 
         // Connect to sockets:
-        socket.connect();
+        socket.connect(this.username);
 
         return resolve();
       } catch (error) {

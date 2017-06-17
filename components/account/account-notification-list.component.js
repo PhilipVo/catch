@@ -11,12 +11,16 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import session from '../../services/session.service';
+import socket from '../../services/socket.service';
+
 export default class AccountNotificationListComponent extends Component {
   constructor(props) {
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = { dataSource: this.ds.cloneWithRows(this.props.screenProps.past) };
+
   }
 
   componentWillReceiveProps(nextProps) {

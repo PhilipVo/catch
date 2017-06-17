@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
+import PushNotification from 'react-native-push-notification';
 
 import AccountDetailsComponent from './account-details.component';
 import AccountNotificationListComponent from './account-notification-list.component';
@@ -12,6 +13,7 @@ import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
+import session from '../../services/session.service';
 import socket from '../../services/socket.service';
 
 export default class AccountComponent extends Component {
@@ -22,6 +24,7 @@ export default class AccountComponent extends Component {
       event: null,
       loading: true,
       modal: null,
+      notifications: [],
       past: [],
       tab: 'PastListComponent',
       upcoming: [],
@@ -32,6 +35,39 @@ export default class AccountComponent extends Component {
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
 
     // Socket events:
+    this.onCommented = socket.onCommented.subscribe(data => {
+      if (data.event.username === session.username) {
+        this.getEvents();
+        PushNotification.localNotificationSchedule({
+          message: `${data.comment.username} commented on ${data.event.title}`,
+          date: new Date,
+          number: 10
+        });
+      }
+    });
+
+    this.onContacted = socket.onContacted.subscribe(data => {
+      if (data.contact === session.username) {
+        this.getEvents();
+        PushNotification.localNotificationSchedule({
+          message: `${data.username} added you as a contact`,
+          date: new Date,
+          number: 10
+        });
+      }
+    });
+
+    this.onContributed = socket.onContributed.subscribe(data => {
+      if (data.username === session.username) {
+        this.getEvents();
+        PushNotification.localNotificationSchedule({
+          message: `${data.username} added to ${data.title}`,
+          date: new Date,
+          number: 10
+        });
+      }
+    });
+
     this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
   }
 
@@ -39,11 +75,19 @@ export default class AccountComponent extends Component {
     this.getEvents();
   }
 
+  componentWillUnmount() {
+    this.onCommented.unsubscribe();
+    this.onContact.unsubscribe();
+    this.onContributed.unsubscribe();
+    this.onEvent.unsubscribe();
+  }
+
   getEvents = () => {
     http.get('/api/users/get-my-info')
       .then(data => {
         this.setState({
           loading: false,
+          notifications: data.notifications,
           past: data.past,
           upcoming: data.upcoming,
           user: data.user
@@ -113,6 +157,7 @@ export default class AccountComponent extends Component {
                 screenProps={{
                   forceUpdate: this.forceUpdate,
                   loading: this.state.loading,
+                  notifications: this.state.notifications,
                   past: this.state.past,
                   setEvent: this.setEvent,
                   upcoming: this.state.upcoming
