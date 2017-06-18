@@ -23,6 +23,7 @@ import TabComponent from '../common/tab.component';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
+import socket from '../../services/socket.service';
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
@@ -38,15 +39,7 @@ export default class UpcomingModalComponent extends Component {
   }
 
   componentDidMount() {
-    http.get(`/api/comments/get-comments-for-event/${this.props.event.id}`)
-      .then(comments => {
-        this.setState({
-          comments: comments,
-          dataSource: this.ds.cloneWithRows(comments),
-          loading: false
-        });
-      })
-      .catch(() => { })
+    this.getComments();
   }
 
   componentDidUpdate() {
@@ -55,28 +48,29 @@ export default class UpcomingModalComponent extends Component {
 
   comment = () => {
     if (this.state.comment.length > 0) {
-      const data = {
+      http.post('/api/comments', JSON.stringify({
         comment: this.state.comment,
         eventId: this.props.event.id
-      };
-
-      http.post('/api/comments', JSON.stringify(data))
-        .then(() => {
-          const _comments = this.state.comments.slice();
-          _comments.push({
-            comment: this.state.comment,
-            username: session.username
-          });
-
-          this.setState({
-            comment: '',
-            comments: _comments,
-            dataSource: this.ds.cloneWithRows(_comments)
-          });
-
-        })
-        .catch(() => { });
+      })).then(() => {
+        this.getComments();
+        socket.emit('commented', {
+          commenter: session.username,
+          creator: this.props.event.creator,
+          title: this.props.event.title
+        });
+      }).catch(() => { });
     }
+  }
+
+  getComments = () => {
+    http.get(`/api/comments/get-comments-for-event/${this.props.event.id}`)
+      .then(comments => {
+        this.setState({
+          comments: comments,
+          dataSource: this.ds.cloneWithRows(comments),
+          loading: false
+        });
+      }).catch(() => { });
   }
 
   viewUser = username => {

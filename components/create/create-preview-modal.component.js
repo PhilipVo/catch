@@ -45,8 +45,7 @@ export default class CreatePreviewModalComponent extends Component {
             ],
             index: 0
           }));
-        })
-        .catch((error) => this.setState({ saving: false }))
+        }).catch((error) => this.setState({ saving: false }));
     }
   }
 

@@ -31,29 +31,28 @@ export default class ProfileDetailsComponent extends Component {
   }
 
   toggleContact = () => {
-    if (this.state.loading) return;
-
-    this.setState({ loading: true });
-    if (this.props.user.isContact) {
-      http.delete(`/api/contacts/${this.props.user.username}`)
-        .then(() => {
-          this.props.user.isContact = false;
-          this.setState({ loading: false });
-        }).catch(error => {
-          this.setState({ loading: false });
-          console.log(error)
-          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
-        });
-    } else {
-      http.post('/api/contacts', JSON.stringify({ contact: this.props.user.username }))
-        .then(() => {
-          this.props.user.isContact = true;
-          this.setState({ loading: false });
-          socket.emit('contact', { contact: this.props.user.username, username: session.username });
-        }).catch(error => {
-          this.setState({ loading: false });
-          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
-        });
+    if (!this.state.loading) {
+      this.setState({ loading: true });
+      if (this.props.user.isContact) {
+        http.delete(`/api/contacts/${this.props.user.username}`)
+          .then(() => {
+            this.props.user.isContact = false;
+            this.setState({ loading: false });
+          }).catch(error => {
+            this.setState({ loading: false });
+            Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+          });
+      } else {
+        http.post('/api/contacts', JSON.stringify({ contact: this.props.user.username }))
+          .then(() => {
+            this.props.user.isContact = true;
+            this.setState({ loading: false });
+            socket.emit('contacted', { contact: this.props.user.username, username: session.username });
+          }).catch(error => {
+            this.setState({ loading: false });
+            Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+          });
+      }
     }
   }
 

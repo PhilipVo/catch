@@ -36,36 +36,30 @@ export default class AccountComponent extends Component {
 
     // Socket events:
     this.onCommented = socket.onCommented.subscribe(data => {
-      if (data.event.username === session.username) {
-        this.getEvents();
-        PushNotification.localNotificationSchedule({
-          message: `${data.comment.username} commented on ${data.event.title}`,
-          date: new Date,
-          number: 10
-        });
-      }
+      this.getEvents();
+      PushNotification.localNotificationSchedule({
+        message: `${data.commenter} commented on ${data.title}`,
+        date: new Date,
+        number: 10
+      });
     });
 
     this.onContacted = socket.onContacted.subscribe(data => {
-      if (data.contact === session.username) {
-        this.getEvents();
-        PushNotification.localNotificationSchedule({
-          message: `${data.username} added you as a contact`,
-          date: new Date,
-          number: 10
-        });
-      }
+      this.getEvents();
+      PushNotification.localNotificationSchedule({
+        message: `${data.username} added you as a contact`,
+        date: new Date,
+        number: 10
+      });
     });
 
     this.onContributed = socket.onContributed.subscribe(data => {
-      if (data.username === session.username) {
-        this.getEvents();
-        PushNotification.localNotificationSchedule({
-          message: `${data.username} added to ${data.title}`,
-          date: new Date,
-          number: 10
-        });
-      }
+      this.getEvents();
+      PushNotification.localNotificationSchedule({
+        message: `${data.contributor} added to ${data.title}`,
+        date: new Date,
+        number: 10
+      });
     });
 
     this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
