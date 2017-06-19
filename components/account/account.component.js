@@ -38,8 +38,8 @@ export default class AccountComponent extends Component {
     this.onCommented = socket.onCommented.subscribe(data => {
       this.getEvents();
       PushNotification.localNotificationSchedule({
-        message: `${data.commenter} commented on ${data.title}`,
         date: new Date,
+        message: `${data.commenter} commented on ${data.title}`,
         number: 10
       });
     });
@@ -47,8 +47,8 @@ export default class AccountComponent extends Component {
     this.onContacted = socket.onContacted.subscribe(data => {
       this.getEvents();
       PushNotification.localNotificationSchedule({
-        message: `${data.username} added you as a contact`,
         date: new Date,
+        message: `${data.username} added you as a contact`,
         number: 10
       });
     });
@@ -56,8 +56,8 @@ export default class AccountComponent extends Component {
     this.onContributed = socket.onContributed.subscribe(data => {
       this.getEvents();
       PushNotification.localNotificationSchedule({
-        message: `${data.contributor} added to ${data.title}`,
         date: new Date,
+        message: `${data.contributor} added to ${data.title}`,
         number: 10
       });
     });

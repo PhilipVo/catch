@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  Dimensions,
   Image,
   KeyboardAvoidingView,
   ListView,
@@ -86,7 +87,7 @@ export default class PastModalComponent extends Component {
 
   componentDidUpdate() {
     this.setItem();
-    Animated.parallel([
+    this.animation = Animated.parallel([
       Animated.timing(this.state.timerDownAnimation, {
         duration: 4000,
         toValue: 0
@@ -125,8 +126,47 @@ export default class PastModalComponent extends Component {
     }
   }
 
+  nextItem = () => {
+    console.log('next called')
+    if (this.animation) this.animation.stop();
+    if (this.interval) TimerMixin.clearInterval(this.interval);
+
+    const currentItem = this.state.item;
+    const nextItem = this.state.stories[this.state.index + 1];
+    if (nextItem) {
+      this.setState({
+        index: this.state.index + 1,
+        item: nextItem,
+        timerDownAnimation: new Animated.Value(1),
+        timerUpAnimation: new Animated.Value(0)
+      });
+    } else this.props.hideModal();
+  }
+
+  previousItem = () => {
+    console.log('previous called')
+    if (this.animation) this.animation.stop();
+    if (this.interval) TimerMixin.clearInterval(this.interval);
+
+    const currentItem = this.state.item;
+    const previousItem = this.state.stories[this.state.index - 1];
+    if (previousItem) {
+      this.setState({
+        index: this.state.index - 1,
+        item: previousItem,
+        timerDownAnimation: new Animated.Value(1),
+        timerUpAnimation: new Animated.Value(0)
+      });
+    } else {
+      this.setState({
+        timerDownAnimation: new Animated.Value(1),
+        timerUpAnimation: new Animated.Value(0)
+      });
+    }
+  }
 
   setItem = () => {
+    console.log('setItem called')
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
     if (nextItem) {
@@ -138,9 +178,7 @@ export default class PastModalComponent extends Component {
           timerUpAnimation: new Animated.Value(0)
         });
       }, 4000);
-    }
-    else
-      this.interval = TimerMixin.setTimeout(this.props.hideModal, 4000);
+    } else this.interval = TimerMixin.setTimeout(this.props.hideModal, 4000);
   }
 
   viewUser = username => {
@@ -223,6 +261,20 @@ export default class PastModalComponent extends Component {
                       source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} />
                 }
+
+                <TouchableHighlight
+                  onPress={this.previousItem}
+                  style={styles.left}
+                  underlayColor='transparent'>
+                  <View />
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={this.nextItem}
+                  style={styles.right}
+                  underlayColor='transparent'>
+                  <View />
+                </TouchableHighlight>
 
                 <View style={styles.top}>
                   {/* Timer bars */}
@@ -349,6 +401,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: null
   },
+  left: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: Dimensions.get('window').width / 2,
+    top: 0,
+  },
   modalTextInput: {
     backgroundColor: 'white',
     borderColor: 'gray',
@@ -357,6 +416,13 @@ const styles = StyleSheet.create({
     height: 40,
     marginTop: 5,
     padding: 10
+  },
+  right: {
+    bottom: 0,
+    left: Dimensions.get('window').width / 2,
+    position: 'absolute',
+    right: 0,
+    top: 0,
   },
   top: {
     flex: 1,
