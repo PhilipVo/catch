@@ -233,21 +233,22 @@ export default class PastModalComponent extends Component {
               <Text>Loading...</Text>
             </View> : this.state.stories.length > 0 ?
               <View style={{ flex: 1 }}>
+
                 {
                   this.state.item.type === 1 ?
                     <Video source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       ref={(ref) => {
                         this.player = ref
                       }}                                      // Store reference
-                      rate={this.state.rate}                              // 0 is paused, 1 is normal.
-                      volume={this.state.rate}                            // 0 is muted, 1 is normal.
+                      rate={this.state.rate}                  // 0 is paused, 1 is normal.
+                      volume={this.state.rate}                // 0 is muted, 1 is normal.
                       muted={false}                           // Mutes the audio entirely.
                       paused={false}                          // Pauses playback entirely.
                       resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
                       repeat={true}                           // Repeat forever.
                       playInBackground={false}                // Audio continues to play when app entering background.
-                      playWhenInactive={true}                // [iOS] Video continues to play when control or notification center are shown.
-                      ignoreSilentSwitch={"obey"}           // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
+                      playWhenInactive={true}                 // [iOS] Video continues to play when control or notification center are shown.
+                      ignoreSilentSwitch={"obey"}             // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
                       progressUpdateInterval={250.0}          // [iOS] Interval to fire onProgress (default to ~250ms)
                       onLoadStart={this.loadStart}            // Callback when video starts to load
                       onLoad={this.setDuration}               // Callback when video loads
@@ -255,26 +256,12 @@ export default class PastModalComponent extends Component {
                       onEnd={this.onEnd}                      // Callback when playback finishes
                       onError={this.videoError}               // Callback when video cannot be loaded
                       onBuffer={this.onBuffer}                // Callback when remote video is buffering
-                      onTimedMetadata={data => console.log(data)}  // Callback when the stream receive some metadata
+                      onTimedMetadata={data => console.log('metadata is:', data)}  // Callback when the stream receive some metadata
                       style={styles.background} /> :
                     <Image
                       source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} />
                 }
-
-                <TouchableHighlight
-                  onPress={this.previousItem}
-                  style={styles.left}
-                  underlayColor='transparent'>
-                  <View />
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  onPress={this.nextItem}
-                  style={styles.right}
-                  underlayColor='transparent'>
-                  <View />
-                </TouchableHighlight>
 
                 <View style={styles.top}>
                   {/* Timer bars */}
@@ -335,6 +322,20 @@ export default class PastModalComponent extends Component {
                     comments
                       </Text>
                 </View>
+
+                <TouchableHighlight
+                  onPress={this.previousItem}
+                  style={styles.left}
+                  underlayColor='transparent'>
+                  <View />
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={this.nextItem}
+                  style={styles.right}
+                  underlayColor='transparent'>
+                  <View />
+                </TouchableHighlight>
 
               </View> :
 
@@ -406,7 +407,7 @@ const styles = StyleSheet.create({
     left: 0,
     position: 'absolute',
     right: Dimensions.get('window').width / 2,
-    top: 0,
+    top: 100,
   },
   modalTextInput: {
     backgroundColor: 'white',
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
     left: Dimensions.get('window').width / 2,
     position: 'absolute',
     right: 0,
-    top: 0,
+    top: 100,
   },
   top: {
     flex: 1,

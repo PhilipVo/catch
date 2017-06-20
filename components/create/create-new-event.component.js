@@ -56,7 +56,8 @@ export default class CreateNewEventComponent extends Component {
   }
 
   goBack = () => {
-    this.props.navigation.state.params.play();
+    try { this.props.navigation.state.params.play() }
+    catch (error) { }
     this.props.navigation.goBack();
   }
 

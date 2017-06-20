@@ -3096,6 +3096,10 @@ react-native-camera@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-0.6.0.tgz#dd2760b7857d660761c78f2da575b494fdc8dcb5"
 
+react-native-contacts@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/react-native-contacts/-/react-native-contacts-0.8.2.tgz#9cf8a0b4afb411163999762effb2dfdf4febc2a6"
+
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-dismiss-keyboard/-/react-native-dismiss-keyboard-1.0.0.tgz#32886242b3f2317e121f3aeb9b0a585e2b879b49"
@@ -3157,6 +3161,10 @@ react-native-progress@^3.2.1:
   resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-3.2.1.tgz#9f2353045c49f06803ae04d86a2cd5baa83cd465"
   dependencies:
     prop-types "^15.5.8"
+
+react-native-push-notification@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-3.0.0.tgz#00282ea656443e89df6057f14b10500e7b89551f"
 
 react-native-segmented-control-tab@^3.0.2:
   version "3.0.2"

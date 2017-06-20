@@ -48,8 +48,7 @@ class HttpService {
             'Authorization': `Bearer ${catchToken}`
           }
         });
-      })
-      .then(response => this.handleResponse(response))
+      }).then(response => this.handleResponse(response))
       .catch(error => Promise.reject(error));
   }
 

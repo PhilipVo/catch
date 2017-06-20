@@ -15,11 +15,12 @@ import socket from '../../services/socket.service';
 
 export default class CreateCompleteComponent extends Component {
   componentDidMount() {
-    if (params.event.id && params.event.username !== session.username)
+    const { event } = this.props.navigation.state.params;
+    if (event.id && event.username !== session.username)
       socket.emit('contributed', {
         contributor: session.username,
-        creator: params.event.username,
-        title: params.event.title
+        creator: event.username,
+        title: event.title
       });
   }
 

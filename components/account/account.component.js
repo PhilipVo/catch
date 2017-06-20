@@ -40,16 +40,17 @@ export default class AccountComponent extends Component {
       PushNotification.localNotificationSchedule({
         date: new Date,
         message: `${data.commenter} commented on ${data.title}`,
-        number: 10
+        number: 1
       });
     });
 
     this.onContacted = socket.onContacted.subscribe(data => {
+      console.log(`${data.username} added ${data.contact}`)
       this.getEvents();
       PushNotification.localNotificationSchedule({
         date: new Date,
         message: `${data.username} added you as a contact`,
-        number: 10
+        number: 1
       });
     });
 
@@ -58,7 +59,7 @@ export default class AccountComponent extends Component {
       PushNotification.localNotificationSchedule({
         date: new Date,
         message: `${data.contributor} added to ${data.title}`,
-        number: 10
+        number: 1
       });
     });
 
@@ -71,7 +72,7 @@ export default class AccountComponent extends Component {
 
   componentWillUnmount() {
     this.onCommented.unsubscribe();
-    this.onContact.unsubscribe();
+    this.onContacted.unsubscribe();
     this.onContributed.unsubscribe();
     this.onEvent.unsubscribe();
   }
