@@ -31,14 +31,12 @@ export default class CreateCameraComponent extends Component {
       mode: Camera.constants.CaptureMode.still
     };
 
-    console.log('capturing')
     this.camera.capture(options)
       .then(data => this.props.navigation.navigate('CreatePreviewComponent', { story: data.path }))
       .catch(error => console.log(error));
   }
 
   record = () => {
-    console.log('recording')
     const options = {
       audio: true,
       mode: Camera.constants.CaptureMode.video,
@@ -53,10 +51,9 @@ export default class CreateCameraComponent extends Component {
 
     this.camera.capture(options)
       .then(data => {
-        console.log('data is', data)
         this.props.navigation.navigate('CreatePreviewComponent', { isVideo: true, story: data.path })
       })
-      .catch(error => console.log('error:', error));
+      .catch(() => { });
   }
 
   stop = () => {

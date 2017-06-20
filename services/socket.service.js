@@ -5,26 +5,34 @@ import IO from 'socket.io-client';
 import http from './http.service';
 
 class SocketService {
-  connect() {
+  connect(username) {
     this.socket = IO(http.ip, { jsonp: false });
+    this.socket.emit('join', username);
 
     //////////////////////////////////////////////////////
-    //               SOCKET EVENT HANDLERS
+    //               SOCKET OBSERVABLES
     //////////////////////////////////////////////////////
-    this.onPublic = new Observable(observer => {
-      this.socket.on('public', () => observer.next());
+    this.onCommented = new Observable(observer => {
+      this.socket.on('commented', data => observer.next(data));
     });
 
-    this.onSent = new Observable(observer => {
-      this.socket.on('sent', data => {
-        observer.next(data);
-      });
+    this.onContacted = new Observable(observer => {
+      this.socket.on('contacted', data => observer.next(data));
     });
+
+    this.onContributed = new Observable(observer => {
+      this.socket.on('contributed', data => observer.next(data));
+    });
+
+    this.onEvent = new Observable(observer => {
+      this.socket.on('event', () => observer.next());
+    });
+
   }
 
-  disconnect() {
+  disconnect(username) {
     if (this.socket) {
-      this.socket.emit('disconnect');
+      this.socket.emit('disconnect', username);
       this.socket.disconnect();
     }
   }

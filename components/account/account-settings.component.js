@@ -140,20 +140,21 @@ export default class AccountSettingsComponent extends Component {
             }
             <Text style={{ textAlign: 'center' }}>{session.username}</Text>
 
-            {/* Email */}
-            <View style={{ marginTop: 20 }}>
-              <Text style={{ fontWeight: 'bold' }}>Email</Text>
-              <View style={styles.inputView}>
-                <TextInput
-                  autoCapitalize='none'
-                  autoCorrect={false}
-                  keyboardType='email-address'
-                  onChangeText={email => this.state.settings.email = email}
-                  style={styles.inputText}
-                  value={this.state.settings.email} />
+            {/* Email */
+              !session.isFacebookUser &&
+              <View style={{ marginTop: 20 }}>
+                <Text style={{ fontWeight: 'bold' }}>Email</Text>
+                <View style={styles.inputView}>
+                  <TextInput
+                    autoCapitalize='none'
+                    autoCorrect={false}
+                    keyboardType='email-address'
+                    onChangeText={email => this.state.settings.email = email}
+                    style={styles.inputText}
+                    value={this.state.settings.email} />
+                </View>
               </View>
-
-            </View>
+            }
 
             {/* Tag */}
             <View style={{ marginTop: 20 }}>
@@ -184,12 +185,14 @@ export default class AccountSettingsComponent extends Component {
               Change Profile Picture
             </Text>
 
-            {/* Password */}
-            <Text
-              onPress={() => this.setState({ passwordModal: true })}
-              style={styles.text1}
-              underlayColor='transparent'>
-              Change Password</Text>
+            {/* Password */
+              !session.isFacebookUser &&
+              <Text
+                onPress={() => this.setState({ passwordModal: true })}
+                style={styles.text1}
+                underlayColor='transparent'>
+                Change Password</Text>
+            }
 
             {/* Logout */}
             <Text
@@ -279,11 +282,6 @@ export default class AccountSettingsComponent extends Component {
           <Modal
             animationType={"slide"}
             isOpen={this.state.logoutModal}
-            onClosed={() => this.passwords = {
-              confirm: '',
-              current: '',
-              password: ''
-            }}
             style={{ borderRadius: 10, height: 150, padding: 20, width: 300 }}>
 
             <Text style={{ textAlign: 'center' }}>Are you sure you want to logout?</Text>

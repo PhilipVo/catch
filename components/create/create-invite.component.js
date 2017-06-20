@@ -10,9 +10,10 @@ import {
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
+import session from '../../services/session.service';
 import socket from '../../services/socket.service';
-import ios from '../../services/http.service';
-import android from '../../services/android.http.service';
+import http from '../../services/http.service';
+import androidhttp from '../../services/android.http.service';
 
 
 
@@ -29,22 +30,30 @@ export default class CreateNewEventComponent extends Component {
       dataSource: this.ds.cloneWithRows([]),
       error: null,
       saving: false,
-    }
+    };
   }
 
   componentDidMount() {
-     ios.get('/api/contacts')
-      .then(contacts => {
+     http.get('/api/contacts')
+      .then(data => {
+        let contacts = [];
+        if (data.length > 0) contacts = contacts.concat(data);
+        if (session.contacts.length > 0)
+          contacts = contacts.concat([{ isBreak: true }]).concat(session.contacts);
+        console.log('all contacts:', contacts)
         this.setState({
           data: contacts,
           dataSource: this.ds.cloneWithRows(contacts)
         });
-      })
-      .catch(error => {
+      }).catch(error => {
         this.setState({
           error: typeof error === 'string' ? error : 'Oops, something went wrong.'
         });
       });
+  }
+
+  componentWillUnmount() {
+    console.log('unmounted')
   }
 
   complete = () => {
@@ -55,9 +64,10 @@ export default class CreateNewEventComponent extends Component {
 
     const event = this.props.navigation.state.params.event;
     const formData = new FormData();
-    console.log(event)
+
     formData.append('audience', event.audience);
     formData.append('contributors', JSON.stringify(this.contributors));
+    console.log(this.contributors)
     formData.append('date', event.date);
     formData.append('description', event.description);
     formData.append('title', event.title);
@@ -69,7 +79,7 @@ export default class CreateNewEventComponent extends Component {
     if (Platform.OS === 'ios'){
       ios.post('/api/events', formData)
         .then(() => {
-          socket.emit('public');
+          socket.emit('event');
 
           this.props.navigation.dispatch(NavigationActions.reset({
             actions: [
@@ -84,15 +94,16 @@ export default class CreateNewEventComponent extends Component {
             index: 0
           }));
         }).catch(error => {
+          console.log(error)
           this.setState({
             error: typeof error === 'string' ? error : 'Oops, something went wrong.',
             saving: false
           })
         });
     } else {
-      android.post('/api/events', formData)
+      androidhttp.post('/api/events', formData)
         .then(() => {
-          socket.emit('public');
+          socket.emit('event');
 
           this.props.navigation.dispatch(NavigationActions.reset({
             actions: [
@@ -107,14 +118,13 @@ export default class CreateNewEventComponent extends Component {
             index: 0
           }));
         }).catch(error => {
-          console.log(error);
+          console.log(error)
           this.setState({
             error: typeof error === 'string' ? error : 'Oops, something went wrong.',
             saving: false
           })
         });
     }
-
   }
 
   invite = (rowData, rowID) => {
@@ -122,7 +132,8 @@ export default class CreateNewEventComponent extends Component {
     if (!rowData.invited) {
       const _data = this.state.data.slice();
       _data[rowID].invited = true;
-      this.contributors[rowID] = true;
+      console.log(rowData)
+      if (rowData.contact) this.contributors[rowData.contact] = true;
 
       this.setState({
         data: _data,
@@ -133,7 +144,7 @@ export default class CreateNewEventComponent extends Component {
     else {
       const _data = this.state.data.slice();
       _data[rowID].invited = false;
-      delete this.contributors[rowID];
+      if (rowData.contact) delete this.contributors[rowData.contact];
 
       this.setState({
         data: _data,
@@ -175,25 +186,36 @@ export default class CreateNewEventComponent extends Component {
                 dataSource={this.state.dataSource}
                 removeClippedSubviews={false}
                 renderRow={(rowData, sectionID, rowID) => (
-                  <View style={styles.row}>
-                    <Text style={{ fontSize: 16 }}>{rowData.username}</Text>
-                    <TouchableHighlight
-                      onPress={() => this.invite(rowData, rowID)}
-                      underlayColor='transparent'>
+                  <View>
+                    {
+                      rowData.isBreak ?
+                        <Text style={{ fontSize: 16, padding: 10, textAlign: 'center' }}>From address book:</Text> :
+                        <View style={styles.row}>
+                          {
+                            rowData.contact ?
+                              <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
+                              <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                          }
 
-                      {
-                        rowData.invited ?
-                          <View style={styles.invited}>
-                            <Text>Invited</Text>
-                            <Icon name='add' />
-                          </View> :
-                          <View style={styles.invite}>
-                            <Text>Invite</Text>
-                            <Icon name='add' />
-                          </View>
-                      }
+                          <TouchableHighlight
+                            onPress={() => this.invite(rowData, rowID)}
+                            underlayColor='transparent'>
 
-                    </TouchableHighlight>
+                            {
+                              rowData.invited ?
+                                <View style={styles.invited}>
+                                  <Text>Invited</Text>
+                                  <Icon name='add' />
+                                </View> :
+                                <View style={styles.invite}>
+                                  <Text>Invite</Text>
+                                  <Icon name='add' />
+                                </View>
+                            }
+
+                          </TouchableHighlight>
+                        </View>
+                    }
                   </View>
                 )} /> :
               <Text style={styles.grayText}>No contacts were found</Text>
@@ -262,14 +284,15 @@ const styles = StyleSheet.create({
   invite: {
     alignItems: 'center',
     borderWidth: 0.5,
-    borderRadius: 10,
+    borderRadius: 5,
     flexDirection: 'row',
     paddingHorizontal: 10
   },
   invited: {
     alignItems: 'center',
     backgroundColor: '#f74434',
-    borderRadius: 10,
+    borderWidth: 0.5,
+    borderRadius: 5,
     flexDirection: 'row',
     paddingHorizontal: 10
   },

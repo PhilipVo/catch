@@ -11,8 +11,8 @@ import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
-import ios from '../../services/http.service';
-import android from '../../services/android.http.service'
+import http from '../../services/http.service';
+import androidhttp from '../../services/android.http.service'
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -37,7 +37,7 @@ export default class CreatePreviewModalComponent extends Component {
       formData.append('media', { name: 'story', uri: this.props.story });
 
         if (Platform.OS === 'ios'){
-          ios.post('/api/stories/', formData)
+          http.post('/api/stories/', formData)
           .then(() => {
             this.props.dispatch(NavigationActions.reset({
               actions: [
@@ -51,7 +51,7 @@ export default class CreatePreviewModalComponent extends Component {
           })
           .catch((error) => this.setState({ saving: false }))
         } else {
-          android.post('/api/stories/', formData)
+          androidhttp.post('/api/stories/', formData)
           .then(() => {
             this.props.dispatch(NavigationActions.reset({
               actions: [
@@ -70,7 +70,6 @@ export default class CreatePreviewModalComponent extends Component {
   }
 
   next = () => {
-    console.log('next')
     this.props.pause();
     this.props.navigate('CreateNewEventComponent', {
       play: this.props.play,

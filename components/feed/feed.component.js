@@ -35,11 +35,15 @@ export default class FeedComponent extends Component {
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='feed' />
 
     // Socket events:
-    this.onPublic = socket.onPublic.subscribe(() => this.getEvents());
+    this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
   }
 
   componentDidMount() {
     this.getEvents();
+  }
+
+  componentWillUnmount() {
+    this.onEvent.unsubscribe();
   }
 
   getEvents = () => {

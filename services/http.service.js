@@ -11,10 +11,11 @@ class HttpService {
     // Reject on error:
     if (response.status >= 300)
       return response.json()
-        .then(data => {
-          if (data.message) return Promise.reject(data.message);
+        .then(data => Promise.reject(data.message))
+        .catch(error => {
+          if (typeof error === 'string') return Promise.reject(error);
           else return Promise.reject(response);
-        })
+        });
     // Resolve on success:
     else return response.json()
       .then(data => Promise.resolve(data))
@@ -47,8 +48,7 @@ class HttpService {
             'Authorization': `Bearer ${catchToken}`
           }
         });
-      })
-      .then(response => this.handleResponse(response))
+      }).then(response => this.handleResponse(response))
       .catch(error => Promise.reject(error));
   }
 

@@ -10,7 +10,21 @@ import {
 import { h3, Icon, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
+import http from '../../services/http.service';
+import session from '../../services/session.service';
+import socket from '../../services/socket.service';
+
 export default class CreateCompleteComponent extends Component {
+  componentDidMount() {
+    const { event } = this.props.navigation.state.params;
+    if (event.id && event.username !== session.username)
+      socket.emit('contributed', {
+        contributor: session.username,
+        creator: event.username,
+        title: event.title
+      });
+  }
+
   render() {
     const { params } = this.props.navigation.state;
     return (
@@ -30,7 +44,7 @@ export default class CreateCompleteComponent extends Component {
           style={{ alignSelf: 'flex-start' }} />
         <Text h3 style={{ textAlign: 'center' }}>Congratulations!</Text>
         <Image
-          source={{ uri: `${params.event.cover}` }}
+          source={{ uri: params.event.cover ? `${params.event.cover}` : `${http.s3}/events/${params.event.id}/cover` }}
           style={{ height: 120 }} />
 
         {/* Timer */}

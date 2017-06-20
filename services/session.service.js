@@ -1,13 +1,43 @@
 const base64 = require('base-64');
+const contacts = require('react-native-contacts');
+
 import { AsyncStorage } from 'react-native';
+import { LoginManager } from 'react-native-fbsdk';
+import PushNotification from 'react-native-push-notification';
 
 import http from './http.service';
 import socket from './socket.service';
 
 class SessionService {
   constructor() {
-    this.img;
+    this.contacts;
+    this.isFacebookUser;
     this.username;
+
+    PushNotification.configure({ permissions: { badge: false } });
+  }
+
+  facebookLogin(data) {
+    return http.post('/users/facebook-login', JSON.stringify(data))
+      .then(catchToken => {
+        if (catchToken.isNew) throw { isNew: true };
+        AsyncStorage.setItem('catchToken', catchToken);
+      }).then(() => AsyncStorage.getItem('catchToken'))
+      .then(catchToken => this.setSession(catchToken))
+      .catch(error => {
+        if (error.isNew === true) return Promise.resolve(true);
+        return Promise.reject(error);
+      });
+  }
+
+  facebookRegister(data) {
+    return http.post('/users/facebook-register', JSON.stringify(data))
+      .then(catchToken => AsyncStorage.setItem('catchToken', catchToken))
+      .then(() => AsyncStorage.getItem('catchToken'))
+      .then(catchToken => {
+        this.setSession(catchToken);
+        this.isFacebookUser = true;
+      }).catch(error => Promise.reject(error));
   }
 
   login(data) {
@@ -21,9 +51,11 @@ class SessionService {
   logout() {
     return AsyncStorage.removeItem('catchToken')
       .then(() => {
-        socket.disconnect();
+        if (this.isFacebookUser) LoginManager.logOut();
 
-        this.img = undefined;
+        socket.disconnect(this.username);
+
+        this.isFacebookUser = undefined;
         this.username = undefined;
       })
       .catch(error => Promise.reject(error));
@@ -42,11 +74,18 @@ class SessionService {
       try {
         // Set user:
         payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
-        this.img = payload.img;
+        this.isFacebookUser = payload.isFacebookUser;
         this.username = payload.username;
 
+        // Get contacts:
+        contacts.getAllWithoutPhotos((error, contacts) => {
+          console.log('contacts are:', contacts)
+          if (error) throw error;
+          this.contacts = contacts;
+        });
+
         // Connect to sockets:
-        socket.connect();
+        socket.connect(this.username);
 
         return resolve();
       } catch (error) {

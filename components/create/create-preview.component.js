@@ -20,7 +20,6 @@ export default class CreatePreviewComponent extends Component {
     super(props);
     this.state = {
       events: [],
-      paused: false,
       rate: 1.0,
       showModal: false
     };
@@ -48,7 +47,7 @@ export default class CreatePreviewComponent extends Component {
               rate={this.state.rate}                              // 0 is paused, 1 is normal.
               volume={this.state.rate}                            // 0 is muted, 1 is normal.
               muted={false}                           // Mutes the audio entirely.
-              paused={this.state.paused}                          // Pauses playback entirely.
+              paused={false}                          // Pauses playback entirely.
               resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
               repeat={true}                           // Repeat forever.
               playInBackground={false}                // Audio continues to play when app entering background.
@@ -62,20 +61,8 @@ export default class CreatePreviewComponent extends Component {
               onError={this.videoError}               // Callback when video cannot be loaded
               onBuffer={this.onBuffer}                // Callback when remote video is buffering
               onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-              }} /> :
-            <Image style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-            }} source={{ uri: params.story }} />
+              style={styles.background} /> :
+            <Image style={styles.background} source={{ uri: params.story }} />
         }
 
 
@@ -118,6 +105,13 @@ const styles = StyleSheet.create({
   arrowIcon: {
     alignSelf: 'flex-end',
     padding: 20
+  },
+  background: {
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0
   },
   clearIcon: {
     alignSelf: 'flex-start',

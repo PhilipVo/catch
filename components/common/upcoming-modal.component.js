@@ -23,6 +23,7 @@ import TabComponent from '../common/tab.component';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
+import socket from '../../services/socket.service';
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
@@ -38,15 +39,7 @@ export default class UpcomingModalComponent extends Component {
   }
 
   componentDidMount() {
-    http.get(`/api/comments/get-comments-for-event/${this.props.event.id}`)
-      .then(comments => {
-        this.setState({
-          comments: comments,
-          dataSource: this.ds.cloneWithRows(comments),
-          loading: false
-        });
-      })
-      .catch(() => { })
+    this.getComments();
   }
 
   componentDidUpdate() {
@@ -55,28 +48,29 @@ export default class UpcomingModalComponent extends Component {
 
   comment = () => {
     if (this.state.comment.length > 0) {
-      const data = {
+      http.post('/api/comments', JSON.stringify({
         comment: this.state.comment,
         eventId: this.props.event.id
-      };
-
-      http.post('/api/comments', JSON.stringify(data))
-        .then(() => {
-          const _comments = this.state.comments.slice();
-          _comments.push({
-            comment: this.state.comment,
-            username: session.username
-          });
-
-          this.setState({
-            comment: '',
-            comments: _comments,
-            dataSource: this.ds.cloneWithRows(_comments)
-          });
-
-        })
-        .catch(() => { });
+      })).then(() => {
+        this.getComments();
+        socket.emit('commented', {
+          commenter: session.username,
+          creator: this.props.event.creator,
+          title: this.props.event.title
+        });
+      }).catch(() => { });
     }
+  }
+
+  getComments = () => {
+    http.get(`/api/comments/get-comments-for-event/${this.props.event.id}`)
+      .then(comments => {
+        this.setState({
+          comments: comments,
+          dataSource: this.ds.cloneWithRows(comments),
+          loading: false
+        });
+      }).catch(() => { });
   }
 
   viewUser = username => {
@@ -103,41 +97,44 @@ export default class UpcomingModalComponent extends Component {
           behavior={'padding'}
           style={{ flex: 1 }}>
 
-          <TouchableHighlight
-            onPress={() => this.viewUser(this.props.event.username)}
-            underlayColor='transparent'>
-            <Image source={{ uri: `${http.s3}/events/${this.props.event.id}/cover` }} style={styles.mainImage}>
-              <Text style={styles.eventText}>{this.props.event.title}</Text>
+          <Image source={{ uri: `${http.s3}/events/${this.props.event.id}/cover` }} style={styles.mainImage}>
+            <Text style={styles.eventText}>{this.props.event.title}</Text>
 
-              {/* Timer */}
-              <View style={{ flexDirection: 'row' }}>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.timerText}>
-                    {moment(this.props.event.date).diff(Date.now(), 'days')}
-                  </Text>
-                  <Text style={styles.timerText}>Days</Text>
-                </View>
-                <Text style={styles.timerText}>:</Text>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.timerText}>
-                    {moment(this.props.event.date).diff(Date.now(), 'hours') % 24}
-                  </Text>
-                  <Text style={styles.timerText}>Hrs</Text>
-                </View>
-                <Text style={styles.timerText}>:</Text>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={styles.timerText}>
-                    {moment(this.props.event.date).diff(Date.now(), 'minutes') % 60}
-                  </Text>
-                  <Text style={styles.timerText}>Mins</Text>
-                </View>
+            {/* Timer */}
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={styles.timerText}>
+                  {moment(this.props.event.date).diff(Date.now(), 'days')}
+                </Text>
+                <Text style={styles.timerText}>Days</Text>
               </View>
-            </Image>
-          </TouchableHighlight>
+              <Text style={styles.timerText}>:</Text>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={styles.timerText}>
+                  {moment(this.props.event.date).diff(Date.now(), 'hours') % 24}
+                </Text>
+                <Text style={styles.timerText}>Hrs</Text>
+              </View>
+              <Text style={styles.timerText}>:</Text>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={styles.timerText}>
+                  {moment(this.props.event.date).diff(Date.now(), 'minutes') % 60}
+                </Text>
+                <Text style={styles.timerText}>Mins</Text>
+              </View>
+            </View>
+          </Image>
 
           <View style={styles.modalView0}>
             <View style={styles.modalView1}>
-              <Text style={styles.modalText1}>27 Following</Text>
+              <View>
+                <Text
+                  onPress={() => this.viewUser(this.props.event.username)}
+                  style={styles.username}>
+                  {this.props.event.username}
+                </Text>
+                <Text style={styles.modalText1}>{'27 Following'}</Text>
+              </View>
               <View style={{ alignItems: 'center' }}>
                 <Switch
                   onValueChange={(value) => this.setState({
@@ -151,8 +148,14 @@ export default class UpcomingModalComponent extends Component {
               </View>
             </View>
 
-            <Text style={styles.modalText3}>{this.props.event.detail}</Text>
+            <Text style={styles.modalText3}>{this.props.event.description}</Text>
             <Text style={styles.modalText4}>Comments</Text>
+            {
+              !this.state.loading && this.state.comments.length === 0 &&
+              <Text style={styles.noComments}>
+                No comments have been added yet
+              </Text>
+            }
 
             {/* Comments */}
             {
@@ -261,11 +264,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  noComments: {
+    color: 'gray',
+    padding: 10,
+    fontSize: 12,
+    textAlign: 'center',
+  },
   timerText: {
     color: 'white',
     fontSize: 10,
     fontWeight: 'bold',
     textShadowColor: 'black',
     textShadowOffset: { width: 0.5, height: 0.5 }
+  },
+  username: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18
   }
 });
