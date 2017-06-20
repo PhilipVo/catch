@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   ListView,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -10,7 +11,8 @@ import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
+import ios from '../../services/http.service';
+import android from '../../services/android.http.service'
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -34,19 +36,36 @@ export default class CreatePreviewModalComponent extends Component {
       formData.append('eventId', event.id);
       formData.append('media', { name: 'story', uri: this.props.story });
 
-      http.post('/api/stories/', formData)
-        .then(() => {
-          this.props.dispatch(NavigationActions.reset({
-            actions: [
-              NavigationActions.navigate({
-                routeName: 'CreateCompleteComponent',
-                params: { event: event }
-              })
-            ],
-            index: 0
-          }));
-        })
-        .catch((error) => this.setState({ saving: false }))
+        if (Platform.OS === 'ios'){
+          ios.post('/api/stories/', formData)
+          .then(() => {
+            this.props.dispatch(NavigationActions.reset({
+              actions: [
+                NavigationActions.navigate({
+                  routeName: 'CreateCompleteComponent',
+                  params: { event: event }
+                })
+              ],
+              index: 0
+            }));
+          })
+          .catch((error) => this.setState({ saving: false }))
+        } else {
+          android.post('/api/stories/', formData)
+          .then(() => {
+            this.props.dispatch(NavigationActions.reset({
+              actions: [
+                NavigationActions.navigate({
+                  routeName: 'CreateCompleteComponent',
+                  params: { event: event }
+                })
+              ],
+              index: 0
+            }));
+          })
+          .catch((error) => this.setState({ saving: false }))
+        }
+
     }
   }
 

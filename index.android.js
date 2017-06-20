@@ -57,8 +57,8 @@ export default class Catchx extends Component {
           LoginComponent: { screen: LoginComponent },
         },
         {
-            cardStyle: { backgroundColor: 'white' },
-            headerMode: 'none'
+          cardStyle: { backgroundColor: 'white' },
+          headerMode: 'none'
         }
       );
 
@@ -69,9 +69,7 @@ export default class Catchx extends Component {
   render() {
     return (
       this.state.isLoggedIn === true ?
-        <this.Navigator
-          ref={navigator => this.navigator = navigator}
-          screenProps={this.screenProps} /> :
+        <this.Navigator screenProps={this.screenProps} /> :
         this.state.isLoggedIn === false ?
           <this.Navigator screenProps={this.screenProps} /> :
           <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} />

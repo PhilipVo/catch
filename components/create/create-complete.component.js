@@ -2,14 +2,13 @@ const moment = require('moment');
 import React, { Component } from 'react';
 import {
   Image,
+  Platform,
   StatusBar,
   StyleSheet,
   View
 } from 'react-native';
 import { h3, Icon, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
-
-import http from '../../services/http.service';
 
 export default class CreateCompleteComponent extends Component {
   render() {
