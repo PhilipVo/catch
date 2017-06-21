@@ -50,7 +50,9 @@ export default class UpcomingModalComponent extends Component {
     if (this.state.comment.length > 0) {
       http.post('/api/comments', JSON.stringify({
         comment: this.state.comment,
-        eventId: this.props.event.id
+        username: this.props.event.username,
+        eventId: this.props.event.id,
+        title: this.props.event.title
       })).then(() => {
         this.getComments();
         socket.emit('commented', {
