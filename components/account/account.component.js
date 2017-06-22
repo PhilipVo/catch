@@ -45,7 +45,6 @@ export default class AccountComponent extends Component {
     });
 
     this.onContacted = socket.onContacted.subscribe(data => {
-      console.log(`${data.username} added ${data.contact}`)
       this.getEvents();
       PushNotification.localNotificationSchedule({
         date: new Date,

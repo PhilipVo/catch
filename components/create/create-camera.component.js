@@ -57,7 +57,6 @@ export default class CreateCameraComponent extends Component {
   }
 
   stop = () => {
-    console.log('stopping')
     this.setState({ recordAnimation: new Animated.Value(0) });
     this.camera.stopCapture();
   }

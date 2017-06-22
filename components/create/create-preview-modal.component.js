@@ -35,6 +35,8 @@ export default class CreatePreviewModalComponent extends Component {
       const formData = new FormData();
       formData.append('eventId', event.id);
       formData.append('media', { name: 'story', uri: this.props.story });
+      formData.append('title', event.title);
+      formData.append('username', event.username);
 
         if (Platform.OS === 'ios'){
           http.post('/api/stories/', formData)
