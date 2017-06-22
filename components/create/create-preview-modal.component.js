@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   ListView,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -11,6 +12,7 @@ import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
+import androidhttp from '../../services/android.http.service'
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -36,18 +38,36 @@ export default class CreatePreviewModalComponent extends Component {
       formData.append('title', event.title);
       formData.append('username', event.username);
 
-      http.post('/api/stories/', formData)
-        .then(() => {
-          this.props.dispatch(NavigationActions.reset({
-            actions: [
-              NavigationActions.navigate({
-                routeName: 'CreateCompleteComponent',
-                params: { event: event }
-              })
-            ],
-            index: 0
-          }));
-        }).catch((error) => this.setState({ saving: false }));
+        if (Platform.OS === 'ios'){
+          http.post('/api/stories/', formData)
+          .then(() => {
+            this.props.dispatch(NavigationActions.reset({
+              actions: [
+                NavigationActions.navigate({
+                  routeName: 'CreateCompleteComponent',
+                  params: { event: event }
+                })
+              ],
+              index: 0
+            }));
+          })
+          .catch((error) => this.setState({ saving: false }))
+        } else {
+          androidhttp.post('/api/stories/', formData)
+          .then(() => {
+            this.props.dispatch(NavigationActions.reset({
+              actions: [
+                NavigationActions.navigate({
+                  routeName: 'CreateCompleteComponent',
+                  params: { event: event }
+                })
+              ],
+              index: 0
+            }));
+          })
+          .catch((error) => this.setState({ saving: false }))
+        }
+
     }
   }
 

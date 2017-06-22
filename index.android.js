@@ -50,7 +50,7 @@ export default class Catchx extends Component {
 
       this.screenProps = { logout: () => this.setState({ isLoggedIn: false }) };
     } else if (nextState.isLoggedIn === false) {
-      const LoginComponent = require('./components/loginA.component');
+      const LoginComponent = require('./components/login.component');
 
       this.Navigator = require('react-navigation').StackNavigator(
         {
@@ -69,9 +69,7 @@ export default class Catchx extends Component {
   render() {
     return (
       this.state.isLoggedIn === true ?
-        <this.Navigator
-          ref={navigator => this.navigator = navigator}
-          screenProps={this.screenProps} /> :
+        <this.Navigator screenProps={this.screenProps} /> :
         this.state.isLoggedIn === false ?
           <this.Navigator screenProps={this.screenProps} /> :
           <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} />

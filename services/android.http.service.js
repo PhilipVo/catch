@@ -1,10 +1,8 @@
 import { AsyncStorage, Platform } from 'react-native';
 
-class HttpService {
+class HttpAndroidService {
   constructor() {
-
     this.ip = 'https://anvyl.online';
-    // this.ip = 'http://10.0.0.44:8000';
     this.s3 = 'https://s3-us-west-1.amazonaws.com/ronin.catch';
   }
 
@@ -12,11 +10,10 @@ class HttpService {
     // Reject on error:
     if (response.status >= 300)
       return response.json()
-        .then(data => Promise.reject(data.message))
-        .catch(error => {
-          if (typeof error === 'string') return Promise.reject(error);
+        .then(data => {
+          if (data.message) return Promise.reject(data.message);
           else return Promise.reject(response);
-        });
+        })
     // Resolve on success:
     else return response.json()
       .then(data => Promise.resolve(data))
@@ -26,32 +23,6 @@ class HttpService {
   /////////////////////////////////////////////////
   //                HTTP METHODS
   /////////////////////////////////////////////////
-  delete(url) {
-    return AsyncStorage.getItem('catchToken')
-      .then(catchToken => {
-        return fetch(`${this.ip}${url}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${catchToken}`
-          }
-        });
-      })
-      .then(response => this.handleResponse(response))
-      .catch(error => Promise.reject(error));
-  }
-
-  get(url) {
-    return AsyncStorage.getItem('catchToken')
-      .then(catchToken => {
-        return fetch(`${this.ip}${url}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${catchToken}`
-          }
-        });
-      }).then(response => this.handleResponse(response))
-      .catch(error => Promise.reject(error));
-  }
 
   post(url, body) {
     return AsyncStorage.getItem('catchToken')
@@ -60,7 +31,7 @@ class HttpService {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data'
           },
           body: body
         });
@@ -76,7 +47,7 @@ class HttpService {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data'
           },
           body: body
         });
@@ -87,4 +58,4 @@ class HttpService {
 
 }
 
-export default new HttpService();
+export default new HttpAndroidService();
