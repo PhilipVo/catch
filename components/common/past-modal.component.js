@@ -59,7 +59,6 @@ export default class PastModalComponent extends Component {
   componentDidMount() {
     http.get(`/api/events/get-contributions-for-event/${this.props.event.id}`)
       .then(data => {
-        console.log(data)
         if (data.stories.length > 0)
           this.setState({
             comments: data.comments,
@@ -74,7 +73,6 @@ export default class PastModalComponent extends Component {
           loading: false
         });
       }).catch(error => {
-        console.log(error)
         this.props.hideModal();
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       })
@@ -120,14 +118,12 @@ export default class PastModalComponent extends Component {
             dataSource: this.ds.cloneWithRows(_comments)
           });
         }).catch(error => {
-          console.log(error)
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
   }
 
   nextItem = () => {
-    console.log('next called')
     if (this.animation) this.animation.stop();
     if (this.interval) TimerMixin.clearInterval(this.interval);
 
@@ -144,7 +140,6 @@ export default class PastModalComponent extends Component {
   }
 
   previousItem = () => {
-    console.log('previous called')
     if (this.animation) this.animation.stop();
     if (this.interval) TimerMixin.clearInterval(this.interval);
 
@@ -166,7 +161,6 @@ export default class PastModalComponent extends Component {
   }
 
   setItem = () => {
-    console.log('setItem called')
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
     if (nextItem) {
@@ -182,16 +176,12 @@ export default class PastModalComponent extends Component {
   }
 
   viewUser = username => {
-    http.get(`/api/users/get-info-for-user/${username}`)
-      .then(data => {
-        TimerMixin.clearInterval(this.interval);
-        this.props.hideModal();
-        this.props.navigate('ProfileComponent', {
-          data: data,
-          tabComponent: this.props.tabComponent
-        });
-      })
-      .catch(() => { });
+    TimerMixin.clearInterval(this.interval);
+    this.props.hideModal();
+    this.props.navigate('ProfileComponent', {
+      tabComponent: this.props.tabComponent,
+      username: username
+    });
   }
 
   render() {
@@ -427,7 +417,8 @@ const styles = StyleSheet.create({
   },
   top: {
     flex: 1,
-    paddingTop: 20
+    padding: 5,
+    marginTop: 20
   },
   title: {
     backgroundColor: 'transparent',

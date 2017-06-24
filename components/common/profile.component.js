@@ -4,7 +4,7 @@
 //  and their list of catches. 
 //  
 //                Required params
-//  data (object): contains a user's information
+//  username: user's username
 //  tabComponent (component): instance of TabBarComponent
 ////////////////////////////////////////////////////////////
 
@@ -36,6 +36,18 @@ export default class ProfileComponent extends Component {
     };
   }
 
+  componentDidMount() {
+    http.get(`/api/users/get-info-for-user/${this.props.navigation.state.params.username}`)
+      .then(data => {
+        this.setState({
+          loading: false,
+          past: data.past,
+          upcoming: data.upcoming,
+          user: data.user,
+        });
+      }).catch(() => { });
+  }
+
   hideModal = () => this.setState({
     event: null,
     modal: null
@@ -56,15 +68,15 @@ export default class ProfileComponent extends Component {
   render() {
     const { params } = this.props.navigation.state;
     return (
-      <View style={{ flex: 1 }}>
+      !this.state.loading && <View style={{ flex: 1 }}>
         <StatusBar hidden={false} />
         <View style={styles.view}>
           <View style={{ flex: 11 }}>
 
             <ProfileDetailsComponent
-              events={params.data.past.length + params.data.upcoming.length}
+              events={this.state.past.length + this.state.upcoming.length}
               goBack={this.props.navigation.goBack}
-              user={params.data.user} />
+              user={this.state.user} />
 
             {/* Top tab bar */}
             <View style={styles.tabBar}>
@@ -89,10 +101,9 @@ export default class ProfileComponent extends Component {
               <Navigator
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
-                  loading: false,
-                  past: params.data.past,
+                  past: this.state.past,
                   setEvent: this.setEvent,
-                  upcoming: params.data.upcoming
+                  upcoming: this.state.upcoming
                 }} />
             </View>
 

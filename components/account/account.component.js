@@ -45,6 +45,7 @@ export default class AccountComponent extends Component {
     });
 
     this.onContacted = socket.onContacted.subscribe(data => {
+      console.log('contacted')
       this.getEvents();
       PushNotification.localNotificationSchedule({
         date: new Date,
@@ -79,6 +80,7 @@ export default class AccountComponent extends Component {
   getEvents = () => {
     http.get('/api/users/get-my-info')
       .then(data => {
+        console.log('updating:', data)
         this.setState({
           loading: false,
           notifications: data.notifications,
@@ -86,7 +88,7 @@ export default class AccountComponent extends Component {
           upcoming: data.upcoming,
           user: data.user
         });
-      }).catch(() => { });
+      }).catch(error => { console.log(error) });
   }
 
   hideModal = () => {

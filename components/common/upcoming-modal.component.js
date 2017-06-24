@@ -15,7 +15,6 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
-import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import TimerMixin from 'react-timer-mixin';
 
@@ -76,14 +75,10 @@ export default class UpcomingModalComponent extends Component {
   }
 
   viewUser = username => {
-    http.get(`/api/users/get-info-for-user/${username}`)
-      .then(data => {
-        this.props.navigate('ProfileComponent', {
-          data: data,
-          tabComponent: this.props.tabComponent
-        });
-      })
-      .catch(() => { });
+    this.props.navigate('ProfileComponent', {
+      tabComponent: this.props.tabComponent,
+      username: username
+    });
   }
 
   render() {
@@ -159,8 +154,7 @@ export default class UpcomingModalComponent extends Component {
               </Text>
             }
 
-            {/* Comments */}
-            {
+            { // Comments:
               this.state.loading ?
                 <ActivityIndicator style={{ alignSelf: 'center' }} /> :
                 <ListView
@@ -170,8 +164,7 @@ export default class UpcomingModalComponent extends Component {
                   removeClippedSubviews={false}
                   renderRow={(rowData, sectionID, rowID) => (
                     <View style={styles.commentView}>
-                      <TouchableHighlight
-                        onPress={() => this.viewUser(rowData.username)}>
+                      <TouchableHighlight onPress={() => this.viewUser(rowData.username)}>
                         <Image
                           source={{ uri: `${http.s3}/users/${rowData.username}` }}
                           style={styles.commentImage} />

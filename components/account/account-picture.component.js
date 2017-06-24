@@ -78,8 +78,7 @@ export default class AccountPictureComponent extends Component {
             underlayColor='transparent'>
             <Image
               style={{ height: 200, width: 200, borderRadius: 100 }}
-              source={{ uri: this.state.path ? this.state.path : `${http.s3}/users/${session.username}` }}>
-            </Image>
+              source={{ uri: this.state.path ? this.state.path : `${http.s3}/users/${session.username}` }} />
           </TouchableHighlight>
           <Text onPress={this.openPicker} style={styles.blueText} underlayColor='transparent'>
             Choose from camera roll
