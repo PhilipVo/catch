@@ -132,6 +132,7 @@ module.exports = class LoginComponent extends Component {
     }
   }
   render() {
+    console.log('login rendering');
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Image

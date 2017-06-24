@@ -128,6 +128,9 @@ android {
 dependencies {
     compile project(':react-native-contacts')
     compile project(':react-native-push-notification')
+    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
+        force = true;
+    }
     compile project(':react-native-fbsdk')
     compile project(':react-native-image-crop-picker')
     compile project(':react-native-video')
