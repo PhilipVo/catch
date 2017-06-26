@@ -12,7 +12,8 @@ import { Icon } from 'react-native-elements';
 import Video from 'react-native-video';
 
 import CreatePreviewModalComponent from './create-preview-modal.component';
-import http from '../../services/http.service';
+
+const http = require('../../services/http.service');
 
 
 export default class CreatePreviewComponent extends Component {

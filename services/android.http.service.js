@@ -2,7 +2,8 @@ import { AsyncStorage, Platform } from 'react-native';
 
 class HttpAndroidService {
   constructor() {
-    this.ip = 'https://anvyl.online';
+    // this.ip = 'https://anvyl.online';
+    this.ip = 'http://10.0.0.214:8000';
     this.s3 = 'https://s3-us-west-1.amazonaws.com/ronin.catch';
   }
 
@@ -58,4 +59,4 @@ class HttpAndroidService {
 
 }
 
-export default new HttpAndroidService();
+module.exports = new HttpAndroidService();

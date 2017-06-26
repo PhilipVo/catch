@@ -11,8 +11,10 @@ import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
-import androidhttp from '../../services/android.http.service'
+// import http from '../../services/http.service';
+// import androidhttp from '../../services/android.http.service'
+
+let http = null;
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -22,6 +24,12 @@ export default class CreatePreviewModalComponent extends Component {
       dataSource: this.ds.cloneWithRows(this.props.events),
       saving: false
     };
+
+    if (Platform.OS === 'ios') {
+      http = require('../../services/http.service');
+    } else {
+      http = require('../../services/android.http.service');
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,35 +46,19 @@ export default class CreatePreviewModalComponent extends Component {
       formData.append('title', event.title);
       formData.append('username', event.username);
 
-        if (Platform.OS === 'ios'){
-          http.post('/api/stories/', formData)
-          .then(() => {
-            this.props.dispatch(NavigationActions.reset({
-              actions: [
-                NavigationActions.navigate({
-                  routeName: 'CreateCompleteComponent',
-                  params: { event: event }
-                })
-              ],
-              index: 0
-            }));
-          })
-          .catch((error) => this.setState({ saving: false }))
-        } else {
-          androidhttp.post('/api/stories/', formData)
-          .then(() => {
-            this.props.dispatch(NavigationActions.reset({
-              actions: [
-                NavigationActions.navigate({
-                  routeName: 'CreateCompleteComponent',
-                  params: { event: event }
-                })
-              ],
-              index: 0
-            }));
-          })
-          .catch((error) => this.setState({ saving: false }))
-        }
+      http.post('/api/stories/', formData)
+      .then(() => {
+        this.props.dispatch(NavigationActions.reset({
+          actions: [
+            NavigationActions.navigate({
+              routeName: 'CreateCompleteComponent',
+              params: { event: event }
+            })
+          ],
+          index: 0
+        }));
+      })
+      .catch((error) => this.setState({ saving: false }))
 
     }
   }

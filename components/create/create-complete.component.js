@@ -10,9 +10,10 @@ import {
 import { h3, Icon, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+
+const http = require('../../services/http.service');
 
 export default class CreateCompleteComponent extends Component {
   componentDidMount() {
