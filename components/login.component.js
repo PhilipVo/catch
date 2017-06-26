@@ -6,6 +6,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Image,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -121,6 +122,15 @@ module.exports = class LoginComponent extends Component {
       this.setState({ mode: 'login' });
   }
 
+  componentWillMount(){
+    if (Platform.OS === 'android'){
+      styles.inputBorder = undefined;
+      styles.inputText = {
+        color: 'white',
+        fontSize: 16
+      };
+    }
+  }
   render() {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -139,7 +149,9 @@ module.exports = class LoginComponent extends Component {
                 <View>
                   <Text style={styles.label0}>Username</Text>
                   <View style={styles.inputBorder}>
+                    {/* check Android prop below on iOS */}
                     <TextInput
+                      underlineColorAndroid='white'
                       autoCapitalize='none'
                       autoCorrect={false}
                       onChangeText={(username) => this.user.username = username}
@@ -151,7 +163,9 @@ module.exports = class LoginComponent extends Component {
               {/* Email */}
               <Text style={styles.label1}>Email</Text>
               <View style={styles.inputBorder}>
+                {/* check Android prop below on iOS */}
                 <TextInput
+                  underlineColorAndroid='white'
                   autoCapitalize='none'
                   autoCorrect={false}
                   keyboardType='email-address'
@@ -162,7 +176,9 @@ module.exports = class LoginComponent extends Component {
               {/* Password */}
               <Text style={styles.label1}>Password</Text>
               <View style={styles.inputBorder}>
+                {/* check Android prop below on iOS */}
                 <TextInput
+                  underlineColorAndroid='white'
                   autoCapitalize='none'
                   autoCorrect={false}
                   onChangeText={(password) => this.user.password = password}

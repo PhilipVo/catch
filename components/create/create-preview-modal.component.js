@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   ListView,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -11,8 +12,6 @@ import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
-import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {

@@ -2,6 +2,7 @@ const moment = require('moment');
 import React, { Component } from 'react';
 import {
   Image,
+  Platform,
   StatusBar,
   StyleSheet,
   View

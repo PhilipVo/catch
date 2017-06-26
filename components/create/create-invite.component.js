@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   ListView,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -9,9 +10,13 @@ import {
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+import http from '../../services/http.service';
+import androidhttp from '../../services/android.http.service';
+
+
+
 
 export default class CreateNewEventComponent extends Component {
   constructor(props) {
@@ -29,7 +34,7 @@ export default class CreateNewEventComponent extends Component {
   }
 
   componentDidMount() {
-    http.get('/api/contacts')
+     http.get('/api/contacts')
       .then(data => {
         let contacts = [];
         if (data.length > 0) contacts = contacts.concat(data);
@@ -71,29 +76,55 @@ export default class CreateNewEventComponent extends Component {
     // Append story if it exists:
     if (event.story) formData.append('media', { name: 'story', uri: event.story });
 
-    http.post('/api/events', formData)
-      .then(() => {
-        socket.emit('event');
+    if (Platform.OS === 'ios'){
+      ios.post('/api/events', formData)
+        .then(() => {
+          socket.emit('event');
 
-        this.props.navigation.dispatch(NavigationActions.reset({
-          actions: [
-            NavigationActions.navigate({
-              params: {
-                event: event,
-                isNew: true
-              },
-              routeName: 'CreateCompleteComponent'
-            })
-          ],
-          index: 0
-        }));
-      }).catch(error => {
-        console.log(error)
-        this.setState({
-          error: typeof error === 'string' ? error : 'Oops, something went wrong.',
-          saving: false
-        })
-      });
+          this.props.navigation.dispatch(NavigationActions.reset({
+            actions: [
+              NavigationActions.navigate({
+                params: {
+                  event: event,
+                  isNew: true
+                },
+                routeName: 'CreateCompleteComponent'
+              })
+            ],
+            index: 0
+          }));
+        }).catch(error => {
+          console.log(error)
+          this.setState({
+            error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+            saving: false
+          })
+        });
+    } else {
+      androidhttp.post('/api/events', formData)
+        .then(() => {
+          socket.emit('event');
+
+          this.props.navigation.dispatch(NavigationActions.reset({
+            actions: [
+              NavigationActions.navigate({
+                params: {
+                  event: event,
+                  isNew: true
+                },
+                routeName: 'CreateCompleteComponent'
+              })
+            ],
+            index: 0
+          }));
+        }).catch(error => {
+          console.log(error)
+          this.setState({
+            error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+            saving: false
+          })
+        });
+    }
   }
 
   invite = (rowData, rowID) => {
