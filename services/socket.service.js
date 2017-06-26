@@ -1,4 +1,5 @@
 import { AsyncStorage } from 'react-native';
+import PushNotification from 'react-native-push-notification';
 import { Observable } from 'rxjs/Observable';
 import IO from 'socket.io-client';
 
@@ -13,15 +14,37 @@ class SocketService {
     //               SOCKET OBSERVABLES
     //////////////////////////////////////////////////////
     this.onCommented = new Observable(observer => {
-      this.socket.on('commented', data => observer.next(data));
+      this.socket.on('commented', data => {
+        console.log('commented ')
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date,
+          message: `${data.commenter} commented on ${data.title}`,
+          number: 1
+        });
+      });
     });
 
     this.onContacted = new Observable(observer => {
-      this.socket.on('contacted', data => observer.next(data));
+      this.socket.on('contacted', data => {
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date,
+          message: `${data.username} added you as a contact`,
+          number: 1
+        });
+      });
     });
 
     this.onContributed = new Observable(observer => {
-      this.socket.on('contributed', data => observer.next(data));
+      this.socket.on('contributed', data => {
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date,
+          message: `${data.contributor} added to ${data.title}`,
+          number: 1
+        });
+      });
     });
 
     this.onEvent = new Observable(observer => {

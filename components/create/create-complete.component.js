@@ -10,20 +10,8 @@ import { h3, Icon, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
-import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class CreateCompleteComponent extends Component {
-  componentDidMount() {
-    const { event } = this.props.navigation.state.params;
-    if (event.id && event.username !== session.username)
-      socket.emit('contributed', {
-        contributor: session.username,
-        creator: event.username,
-        title: event.title
-      });
-  }
-
   render() {
     const { params } = this.props.navigation.state;
     return (

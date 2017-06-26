@@ -11,6 +11,8 @@ import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
+import session from '../../services/session.service';
+import socket from '../../services/socket.service';
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -38,6 +40,13 @@ export default class CreatePreviewModalComponent extends Component {
 
       http.post('/api/stories/', formData)
         .then(() => {
+          if (event.username !== session.username)
+            socket.emit('contributed', {
+              contributor: session.username,
+              creator: event.username,
+              title: event.title
+            });
+
           this.props.dispatch(NavigationActions.reset({
             actions: [
               NavigationActions.navigate({
@@ -47,7 +56,11 @@ export default class CreatePreviewModalComponent extends Component {
             ],
             index: 0
           }));
-        }).catch((error) => this.setState({ saving: false }));
+        }).catch((error) => {
+          console.log(error)
+          this.setState({ saving: false })
+        }
+        );
     }
   }
 

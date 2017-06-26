@@ -42,7 +42,7 @@ export default class UpcomingModalComponent extends Component {
   }
 
   componentDidUpdate() {
-    setTimeout(() => _listView.scrollToEnd(), 1000);
+    // setTimeout(() => _listView.scrollToEnd(), 1000);
   }
 
   comment = () => {
@@ -53,10 +53,11 @@ export default class UpcomingModalComponent extends Component {
         eventId: this.props.event.id,
         title: this.props.event.title
       })).then(() => {
+        this.setState({ comment: '' });
         this.getComments();
         socket.emit('commented', {
           commenter: session.username,
-          creator: this.props.event.creator,
+          creator: this.props.event.username,
           title: this.props.event.title
         });
       }).catch(() => { });

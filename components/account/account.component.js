@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
-import PushNotification from 'react-native-push-notification';
 
 import AccountDetailsComponent from './account-details.component';
 import AccountNotificationListComponent from './account-notification-list.component';
@@ -35,39 +34,14 @@ export default class AccountComponent extends Component {
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
 
     // Socket events:
-    this.onCommented = socket.onCommented.subscribe(data => {
-      this.getEvents();
-      PushNotification.localNotificationSchedule({
-        date: new Date,
-        message: `${data.commenter} commented on ${data.title}`,
-        number: 1
-      });
-    });
-
-    this.onContacted = socket.onContacted.subscribe(data => {
-      console.log('contacted')
-      this.getEvents();
-      PushNotification.localNotificationSchedule({
-        date: new Date,
-        message: `${data.username} added you as a contact`,
-        number: 1
-      });
-    });
-
-    this.onContributed = socket.onContributed.subscribe(data => {
-      this.getEvents();
-      PushNotification.localNotificationSchedule({
-        date: new Date,
-        message: `${data.contributor} added to ${data.title}`,
-        number: 1
-      });
-    });
-
-    this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
+    this.onCommented = socket.onCommented.subscribe(data => this.getMyInfo());
+    this.onContacted = socket.onContacted.subscribe(data => this.getMyInfo());
+    this.onContributed = socket.onContributed.subscribe(data => this.getMyInfo());
+    this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
   }
 
   componentDidMount() {
-    this.getEvents();
+    this.getMyInfo();
   }
 
   componentWillUnmount() {
@@ -77,10 +51,9 @@ export default class AccountComponent extends Component {
     this.onEvent.unsubscribe();
   }
 
-  getEvents = () => {
+  getMyInfo = () => {
     http.get('/api/users/get-my-info')
       .then(data => {
-        console.log('updating:', data)
         this.setState({
           loading: false,
           notifications: data.notifications,
@@ -153,9 +126,11 @@ export default class AccountComponent extends Component {
                 screenProps={{
                   forceUpdate: this.forceUpdate,
                   loading: this.state.loading,
+                  navigate: this.props.navigation.navigate,
                   notifications: this.state.notifications,
                   past: this.state.past,
                   setEvent: this.setEvent,
+                  tabComponent: this.tabComponent,
                   upcoming: this.state.upcoming
                 }} />
             </View>

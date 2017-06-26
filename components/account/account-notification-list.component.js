@@ -23,12 +23,15 @@ export default class AccountNotificationListComponent extends Component {
     this.state = { dataSource: this.ds.cloneWithRows(this.props.screenProps.notifications) };
   }
 
-  addContact = () => {
-
-  }
-
   componentWillReceiveProps(nextProps) {
     this.setState({ dataSource: this.ds.cloneWithRows(nextProps.screenProps.notifications) });
+  }
+
+  viewUser = username => {
+    this.props.screenProps.navigate('ProfileComponent', {
+      tabComponent: this.props.screenProps.tabComponent,
+      username: username
+    });
   }
 
   render() {
@@ -42,17 +45,20 @@ export default class AccountNotificationListComponent extends Component {
             dataSource={this.state.dataSource}
             removeClippedSubviews={false}
             renderRow={(rowData, sectionID, rowID) => (
-              <View style={{ alignItems: 'center', flexDirection: 'row', padding: 10 }}>
+              <View style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: 5 }}>
 
                 {/* Profile picture */}
-                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+                <TouchableHighlight
+                  onPress={() => this.viewUser(rowData.notifier)}
+                  style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}
+                  underlayColor='transparent'>
                   <Image
                     style={{ borderRadius: 15, height: 30, width: 30 }}
                     source={{ uri: `${http.s3}/users/${rowData.notifier}` }} />
-                </View>
+                </TouchableHighlight>
 
                 {/* Middle text */}
-                <View style={{ flex: 3, justifyContent: 'center' }}>
+                <View style={{ flex: 4, justifyContent: 'center' }}>
                   <Text style={{ fontSize: 13 }}>
                     {
                       rowData.type === 'commented' ?
@@ -67,23 +73,7 @@ export default class AccountNotificationListComponent extends Component {
 
                 {/* Actions */}
                 <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-                  {
-                    rowData.type === 'contacted' ?
-                      <TouchableHighlight
-                        onPress={this.addContact}
-                        style={rowData.action === 0 && styles.follow}
-                        underlayColor='transparent' >
-                        {
-                          rowData.action === 0 ?
-                            <View style={styles.addContactView}>
-                              <Text style={{ fontSize: 12 }}>Follow</Text>
-                            </View> :
-                            <View style={styles.addContactView}>
-                              <Text style={{ color: 'red', fontSize: 12, fontWeight: 'bold' }}>Following</Text>
-                            </View>
-                        }
-                      </TouchableHighlight> : null
-                  }
+
                 </View>
 
               </View>
@@ -97,10 +87,6 @@ export default class AccountNotificationListComponent extends Component {
 }
 
 const styles = StyleSheet.create({
-  addContactView: {
-    alignItems: 'center',
-    flexDirection: 'row'
-  },
   follow: {
     alignSelf: 'center',
     borderWidth: 0.5,
