@@ -14,8 +14,9 @@ import {
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
+
+let http = null;
 
 export default class AccountSettingsComponent extends Component {
   constructor(props) {
@@ -35,6 +36,12 @@ export default class AccountSettingsComponent extends Component {
       confirm: '',
       current: '',
       password: ''
+    }
+
+    if (Platform.OS === 'ios') {
+      http = require('../../services/http.service');
+    } else {
+      http = require('../../services/android.http.service');
     }
   }
 

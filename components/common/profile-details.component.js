@@ -13,6 +13,7 @@ import React, { Component } from 'react';
 import {
   Alert,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -20,14 +21,21 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+
+let http = null;
 
 export default class ProfileDetailsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = { loading: false };
+
+    if (Platform.OS === 'ios'){
+      http = require('../../services/http.service');
+    } else {
+      http = require('../../services/http.service');
+    }
   }
 
   toggleContact = () => {

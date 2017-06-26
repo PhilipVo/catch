@@ -15,8 +15,9 @@ import PastModalComponent from '../common/past-modal.component';
 import TabComponent from '../common/tab.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
-import http from '../../services/http.service';
 import socket from '../../services/socket.service';
+
+const http = require('../../services/http.service');
 
 export default class FeedComponent extends Component {
   constructor(props) {

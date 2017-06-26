@@ -7,6 +7,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ListView,
+  Platform,
   StatusBar,
   StyleSheet,
   Switch,
@@ -21,9 +22,10 @@ import TimerMixin from 'react-timer-mixin';
 
 import TabComponent from '../common/tab.component';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+
+let http = null;
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
@@ -36,6 +38,12 @@ export default class UpcomingModalComponent extends Component {
       dataSource: this.ds.cloneWithRows([]),
       loading: true
     };
+
+    if (Platform.OS === 'ios'){
+      http = require('../../services/http.service');
+    } else {
+      http = require('../../services/android.http.service');
+    }
   }
 
   componentDidMount() {

@@ -12,7 +12,7 @@ import {
 import { Icon } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
-import http from '../../services/http.service';
+const http = require('../../services/http.service');
 
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {

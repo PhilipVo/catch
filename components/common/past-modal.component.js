@@ -20,6 +20,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ListView,
+  Platform,
   Text,
   TextInput,
   TouchableHighlight,
@@ -34,7 +35,7 @@ import Video from 'react-native-video';
 
 import PastModalTimerComponent from './past-modal-timer.component.js';
 
-import http from '../../services/http.service';
+let http = null;
 
 export default class PastModalComponent extends Component {
   constructor(props) {
@@ -54,6 +55,12 @@ export default class PastModalComponent extends Component {
       timerDownAnimation: new Animated.Value(1),
       timerUpAnimation: new Animated.Value(0)
     };
+
+    if (Platform.OS === 'ios'){
+      http = require('../../services/http.service');
+    } else {
+      http = require('../../services/android.http.service');
+    }
   }
 
   componentDidMount() {

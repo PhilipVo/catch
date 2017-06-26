@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Alert,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -11,8 +12,9 @@ import { Icon } from 'react-native-elements';
 import ImagePicker from 'react-native-image-crop-picker';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
+
+let http = null;
 
 export default class AccountPictureComponent extends Component {
   constructor(props) {
@@ -21,6 +23,12 @@ export default class AccountPictureComponent extends Component {
       path: null,
       saving: false
     };
+
+    if (Platform.OS === 'ios') {
+      http = require('../../services/http.service');
+    } else {
+      http = require('../../services/http.service');
+    }
   }
 
   openPicker = () => {
