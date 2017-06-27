@@ -35,7 +35,7 @@ import Video from 'react-native-video';
 
 import PastModalTimerComponent from './past-modal-timer.component.js';
 
-let http = null;
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class PastModalComponent extends Component {
   constructor(props) {
@@ -55,12 +55,6 @@ export default class PastModalComponent extends Component {
       timerDownAnimation: new Animated.Value(1),
       timerUpAnimation: new Animated.Value(0)
     };
-
-    if (Platform.OS === 'ios'){
-      http = require('../../services/http.service');
-    } else {
-      http = require('../../services/android.http.service');
-    }
   }
 
   componentDidMount() {

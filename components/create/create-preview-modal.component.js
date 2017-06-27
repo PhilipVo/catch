@@ -25,11 +25,7 @@ export default class CreatePreviewModalComponent extends Component {
       saving: false
     };
 
-    if (Platform.OS === 'ios') {
-      http = require('../../services/http.service');
-    } else {
-      http = require('../../services/android.http.service');
-    }
+    http = require('../../services/http.service')(Platform.OS);
   }
 
   componentWillReceiveProps(nextProps) {

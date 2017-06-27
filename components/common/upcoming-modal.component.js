@@ -25,7 +25,7 @@ import TabComponent from '../common/tab.component';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
 
-let http = null;
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
@@ -38,12 +38,6 @@ export default class UpcomingModalComponent extends Component {
       dataSource: this.ds.cloneWithRows([]),
       loading: true
     };
-
-    if (Platform.OS === 'ios'){
-      http = require('../../services/http.service');
-    } else {
-      http = require('../../services/android.http.service');
-    }
   }
 
   componentDidMount() {

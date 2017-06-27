@@ -14,7 +14,7 @@ import { NavigationActions } from 'react-navigation';
 
 import session from '../../services/session.service';
 
-let http = null;
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class AccountPictureComponent extends Component {
   constructor(props) {
@@ -23,12 +23,6 @@ export default class AccountPictureComponent extends Component {
       path: null,
       saving: false
     };
-
-    if (Platform.OS === 'ios') {
-      http = require('../../services/http.service');
-    } else {
-      http = require('../../services/http.service');
-    }
   }
 
   openPicker = () => {

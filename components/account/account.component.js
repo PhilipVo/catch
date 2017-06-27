@@ -15,7 +15,7 @@ import UpcomingModalComponent from '../common/upcoming-modal.component';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
 
-const http = require('../../services/http.service');
+const http = require('../../services/http.service')();
 
 export default class AccountComponent extends Component {
   constructor(props) {

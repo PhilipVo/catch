@@ -24,18 +24,12 @@ import { Icon } from 'react-native-elements';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
 
-let http = null;
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class ProfileDetailsComponent extends Component {
   constructor(props) {
     super(props);
     this.state = { loading: false };
-
-    if (Platform.OS === 'ios'){
-      http = require('../../services/http.service');
-    } else {
-      http = require('../../services/http.service');
-    }
   }
 
   toggleContact = () => {

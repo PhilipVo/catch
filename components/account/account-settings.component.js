@@ -16,7 +16,7 @@ import Modal from 'react-native-modalbox';
 
 import session from '../../services/session.service';
 
-let http = null;
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class AccountSettingsComponent extends Component {
   constructor(props) {
@@ -36,12 +36,6 @@ export default class AccountSettingsComponent extends Component {
       confirm: '',
       current: '',
       password: ''
-    }
-
-    if (Platform.OS === 'ios') {
-      http = require('../../services/http.service');
-    } else {
-      http = require('../../services/android.http.service');
     }
   }
 

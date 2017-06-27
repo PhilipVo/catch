@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native';
 import { Observable } from 'rxjs/Observable';
 import IO from 'socket.io-client';
 
-const http = require('./http.service');
+const http = require('./http.service')();
 
 class SocketService {
   connect(username) {

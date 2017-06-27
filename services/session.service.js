@@ -7,7 +7,7 @@ import PushNotification from 'react-native-push-notification';
 
 import socket from './socket.service';
 
-const http = require('./http.service');
+const http = require('./http.service')();
 
 class SessionService {
   constructor() {

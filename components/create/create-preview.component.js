@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   Dimensions,
   Image,
-  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -13,7 +12,7 @@ import Video from 'react-native-video';
 
 import CreatePreviewModalComponent from './create-preview-modal.component';
 
-const http = require('../../services/http.service');
+const http = require('../../services/http.service')();
 
 
 export default class CreatePreviewComponent extends Component {

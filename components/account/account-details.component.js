@@ -4,7 +4,7 @@ import { h4, Icon, Text } from 'react-native-elements';
 
 import session from '../../services/session.service';
 
-const http = require('../../services/http.service');
+const http = require('../../services/http.service')();
 
 export default class AccountDetailsComponent extends Component {
   constructor(props) {
