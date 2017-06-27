@@ -150,7 +150,12 @@ export default class AccountSettingsComponent extends Component {
                     autoCapitalize='none'
                     autoCorrect={false}
                     keyboardType='email-address'
-                    onChangeText={email => this.state.settings.email = email}
+                    onChangeText={email => this.setState({
+                      settings: {
+                        ...this.state.settings,
+                        email: email
+                      }
+                    })}
                     style={styles.inputText}
                     value={this.state.settings.email} />
                 </View>
@@ -164,7 +169,12 @@ export default class AccountSettingsComponent extends Component {
                 <TextInput
                   autoCapitalize='sentences'
                   autoCorrect={true}
-                  onChangeText={tag => this.state.settings.tag = tag}
+                  onChangeText={tag => this.setState({
+                    settings: {
+                      ...this.state.settings,
+                      tag: tag
+                    }
+                  })}
                   style={styles.inputText}
                   value={this.state.settings.tag} />
               </View>

@@ -11,6 +11,7 @@
 
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Platform,
@@ -77,7 +78,8 @@ export default class ProfileDetailsComponent extends Component {
         <View style={styles.view}>
           <Text style={styles.username} > {this.props.user.username}</Text>
           {
-            this.props.user.username === session.username ? null :
+            this.state.loading ? <ActivityIndicator style={styles.indicator} /> :
+              this.props.user.username != session.username &&
               <TouchableHighlight
                 onPress={this.toggleContact}
                 style={styles.addContact}
@@ -145,6 +147,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 5
+  },
+  indicator: {
+    alignSelf: 'center',
+    marginTop: 5
   },
   tag: {
     fontSize: 12,

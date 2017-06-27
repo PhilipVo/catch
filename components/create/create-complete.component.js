@@ -15,16 +15,6 @@ import socket from '../../services/socket.service';
 const http = require('../../services/http.service')();
 
 export default class CreateCompleteComponent extends Component {
-  componentDidMount() {
-    const { event } = this.props.navigation.state.params;
-    if (event.id && event.username !== session.username)
-      socket.emit('contributed', {
-        contributor: session.username,
-        creator: event.username,
-        title: event.title
-      });
-  }
-
   render() {
     const { params } = this.props.navigation.state;
     return (
