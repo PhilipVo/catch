@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -21,9 +22,10 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class ProfileDetailsComponent extends Component {
   constructor(props) {

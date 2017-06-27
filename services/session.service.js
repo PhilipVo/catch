@@ -5,8 +5,9 @@ import { AsyncStorage } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk';
 import PushNotification from 'react-native-push-notification';
 
-import http from './http.service';
 import socket from './socket.service';
+
+const http = require('./http.service')();
 
 class SessionService {
   constructor() {
@@ -14,7 +15,10 @@ class SessionService {
     this.isFacebookUser;
     this.username;
 
-    PushNotification.configure({ permissions: { badge: false } });
+    PushNotification.configure({
+      // senderID: "YOUR GCM SENDER ID",
+      permissions: { badge: false } 
+    });
   }
 
   facebookLogin(data) {

@@ -11,9 +11,10 @@ import TabComponent from '../common/tab.component';
 import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+
+const http = require('../../services/http.service')();
 
 export default class AccountComponent extends Component {
   constructor(props) {

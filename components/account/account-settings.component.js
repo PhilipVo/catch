@@ -14,8 +14,9 @@ import {
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
+
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class AccountSettingsComponent extends Component {
   constructor(props) {

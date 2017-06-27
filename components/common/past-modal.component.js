@@ -20,6 +20,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ListView,
+  Platform,
   Text,
   TextInput,
   TouchableHighlight,
@@ -34,8 +35,8 @@ import Video from 'react-native-video';
 
 import PastModalTimerComponent from './past-modal-timer.component.js';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class PastModalComponent extends Component {
   constructor(props) {

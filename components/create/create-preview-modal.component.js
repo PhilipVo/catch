@@ -11,7 +11,7 @@ import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
+const http = require('../../services/http.service')(Platform.OS);
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
