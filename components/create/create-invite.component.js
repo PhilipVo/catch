@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import SendSMS from 'react-native-sms';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
@@ -20,6 +21,7 @@ export default class CreateNewEventComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.contributors = {};
+    this.numbers = {};
 
     this.state = {
       data: [],
@@ -35,7 +37,10 @@ export default class CreateNewEventComponent extends Component {
         let contacts = [];
         if (data.length > 0) contacts = contacts.concat(data);
         if (session.contacts.length > 0)
-          contacts = contacts.concat([{ isBreak: true }]).concat(session.contacts);
+          contacts = contacts.concat([{ isBreak: true }])
+            .concat(JSON.parse(JSON.stringify(session.contacts)));
+
+        console.log('session contacts:', session.contacts)
         console.log('all contacts:', contacts)
         this.setState({
           data: contacts,
@@ -74,6 +79,13 @@ export default class CreateNewEventComponent extends Component {
 
     http.post('/api/events', formData, Platform.OS === 'android')
       .then(() => {
+        const recipients = Object.keys(this.numbers);
+        return SendSMS.send({
+          body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
+          recipients: recipients,
+          successTypes: ['sent', 'queued']
+        }, (completed, cancelled, error) => { });
+      }).then(() => {
         socket.emit('event');
 
         this.props.navigation.dispatch(NavigationActions.reset({
@@ -95,7 +107,6 @@ export default class CreateNewEventComponent extends Component {
           saving: false
         })
       });
-
   }
 
   invite = (rowData, rowID) => {
@@ -105,6 +116,10 @@ export default class CreateNewEventComponent extends Component {
       _data[rowID].invited = true;
       console.log(rowData)
       if (rowData.contact) this.contributors[rowData.contact] = true;
+      else {
+        try { this.numbers[rowData.phoneNumbers[0].number] = true }
+        catch (error) { }
+      }
 
       this.setState({
         data: _data,
@@ -116,12 +131,18 @@ export default class CreateNewEventComponent extends Component {
       const _data = this.state.data.slice();
       _data[rowID].invited = false;
       if (rowData.contact) delete this.contributors[rowData.contact];
+      else {
+        try { delete this.numbers[rowData.phoneNumbers[0].number] }
+        catch (error) { }
+      }
 
       this.setState({
         data: _data,
         dataSource: this.ds.cloneWithRows(_data)
       });
     }
+
+    console.log('contributors:', this.contributors)
   }
 
   render() {

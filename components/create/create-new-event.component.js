@@ -28,7 +28,7 @@ export default class CreateNewEventComponent extends Component {
       audience: 0,
       cover: null,
       coverError: false,
-      date: new Date(new Date().setDate(new Date().getDate() + 1)).getTime(),
+      date: Date.now(),
       description: '',
       isVisible: false,
       title: '',
@@ -173,7 +173,7 @@ export default class CreateNewEventComponent extends Component {
                 <DateTimePicker
                   isVisible={this.state.isVisible}
                   maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() + 1))}
-                  minimumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
+                  minimumDate={new Date()}
                   mode='datetime'
                   onCancel={() => this.setState({ isVisible: false })}
                   onConfirm={date => this.setState({

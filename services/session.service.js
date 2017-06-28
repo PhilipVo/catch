@@ -13,11 +13,6 @@ class SessionService {
     this.contacts;
     this.isFacebookUser;
     this.username;
-
-    PushNotification.configure({
-      // senderID: "YOUR GCM SENDER ID",
-      permissions: { badge: false }
-    });
   }
 
   facebookLogin(data) {
@@ -79,6 +74,9 @@ class SessionService {
         payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
         this.isFacebookUser = payload.isFacebookUser;
         this.username = payload.username;
+
+        // Configure notifications:        
+        PushNotification.configure({ permissions: { badge: false } });
 
         // Get contacts:
         contacts.getAllWithoutPhotos((error, contacts) => {
