@@ -126,6 +126,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-sms')
     compile project(':react-native-contacts')
     compile project(':react-native-push-notification')
     compile project(':react-native-fbsdk')

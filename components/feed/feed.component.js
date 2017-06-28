@@ -55,7 +55,7 @@ export default class FeedComponent extends Component {
           upcoming: events.upcoming
         });
       })
-      .catch(error => { console.log(error) });
+      .catch(() => { });
   }
 
   hideModal = () => {

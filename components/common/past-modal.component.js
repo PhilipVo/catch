@@ -28,11 +28,10 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { ShareDialog } from 'react-native-fbsdk';
 import Modal from 'react-native-modalbox';
-import TimerMixin from 'react-timer-mixin';
 import Video from 'react-native-video';
-
-import PastModalTimerComponent from './past-modal-timer.component.js';
+import TimerMixin from 'react-timer-mixin';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
@@ -43,6 +42,7 @@ export default class PastModalComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
+      buffering: false,
       comment: '',
       comments: [],
       dataSource: this.ds.cloneWithRows([]),
@@ -51,6 +51,7 @@ export default class PastModalComponent extends Component {
       item: null,
       loading: true,
       rate: 1.0,
+      shared: false,
       showComments: false,
       stories: [],
       timerDownAnimation: new Animated.Value(1),
@@ -80,27 +81,10 @@ export default class PastModalComponent extends Component {
       })
   }
 
-  componentWillUpdate(nextProps, nextState) {
-    if (!this.state.showComments && nextState.showComments)
-      _listView.scrollToEnd();
-  }
-
-  componentDidUpdate() {
-    console.log('done', this.state.done)
-    if (!this.state.done) {
-      this.setItem();
-      this.animation = Animated.parallel([
-        Animated.timing(this.state.timerDownAnimation, {
-          duration: 4000,
-          toValue: 0
-        }),
-        Animated.timing(this.state.timerUpAnimation, {
-          duration: 4000,
-          toValue: 1
-        })
-      ]).start();
-    }
-  }
+  // componentWillUpdate(nextProps, nextState) {
+  //   if (!this.state.showComments && nextState.showComments)
+  //     _listView.scrollToEnd();
+  // }
 
   comment = () => {
     if (this.state.comment.length > 0) {
@@ -141,7 +125,9 @@ export default class PastModalComponent extends Component {
         timerDownAnimation: new Animated.Value(1),
         timerUpAnimation: new Animated.Value(0)
       });
-    } else this.setState({ done: true });
+    } else if (session.isFacebookUser) {
+      this.setState({ done: true });
+    } else this.props.hideModal();
   }
 
   previousItem = () => {
@@ -166,6 +152,8 @@ export default class PastModalComponent extends Component {
   }
 
   setItem = () => {
+    this.setState({ buffering: false });
+
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
     if (nextItem) {
@@ -177,7 +165,39 @@ export default class PastModalComponent extends Component {
           timerUpAnimation: new Animated.Value(0)
         });
       }, 4000);
-    } else TimerMixin.setTimeout(() => this.setState({ done: true }), 4000);
+    } else if (session.isFacebookUser) {
+      this.interval = TimerMixin.setTimeout(() => this.setState({
+        done: true,
+        rate: 0.0
+      }), 4000);
+    } else this.interval = TimerMixin.setTimeout(this.props.hideModal, 4000);
+
+    this.animation = Animated.parallel([
+      Animated.timing(this.state.timerDownAnimation, {
+        duration: 4000,
+        toValue: 0
+      }),
+      Animated.timing(this.state.timerUpAnimation, {
+        duration: 4000,
+        toValue: 1
+      })
+    ]).start();
+  }
+
+  share = () => {
+    const shareLinkContent = {
+      contentType: 'link',
+      contentUrl: 'https://itunes.apple.com/app/id1246628137',
+      contentDescription: `${session.username} recently opened a Catch!`,
+    };
+
+    ShareDialog.canShow(shareLinkContent)
+      .then(canShow => {
+        if (canShow) return ShareDialog.show(shareLinkContent);
+      }).then(result => {
+        if (result.isCancelled) Alert.alert('Share operation was cancelled.');
+        else this.setState({ shared: true });
+      }, error => Alert.alert('Share failed with error: ' + error.message));
   }
 
   viewUser = username => {
@@ -248,24 +268,39 @@ export default class PastModalComponent extends Component {
                       playWhenInactive={true}                 // [iOS] Video continues to play when control or notification center are shown.
                       ignoreSilentSwitch={"obey"}             // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
                       progressUpdateInterval={250.0}          // [iOS] Interval to fire onProgress (default to ~250ms)
-                      onLoadStart={this.loadStart}            // Callback when video starts to load
-                      onLoad={this.setDuration}               // Callback when video loads
+                      onLoadStart={() => this.setState({ buffering: true })}            // Callback when video starts to load
+                      onLoad={this.setItem}               // Callback when video loads
                       onProgress={this.setTime}               // Callback every ~250ms with currentTime
                       onEnd={this.onEnd}                      // Callback when playback finishes
                       onError={this.videoError}               // Callback when video cannot be loaded
                       onBuffer={this.onBuffer}                // Callback when remote video is buffering
-                      onTimedMetadata={data => console.log('metadata is:', data)}  // Callback when the stream receive some metadata
+                      onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
                       style={styles.background} /> :
                     <Image
+                      onLoad={this.setItem}
+                      onLoadStart={() => this.setState({ buffering: true })}            // Callback when video starts to load
                       source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} />
               }
 
               <View style={styles.top}>
-                {/* Timer bars */}
-                <View style={{ flexDirection: 'row' }}>{bars}</View>
+                { // Timer bars:
+                  !this.state.done &&
+                  <View style={{ flexDirection: 'row' }}>{bars}</View>
+                }
 
-                <Text style={styles.title}>{this.props.event.title}</Text>
+                <View style={{
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between'
+                }}>
+                  <Text
+                    onPress={() => this.viewUser(this.state.item.username)}
+                    style={styles.poster}>
+                    {this.state.item.username !== this.props.event.username && this.state.item.username}
+                  </Text>
+                  <Text style={styles.title}>{this.props.event.title}</Text>
+                </View>
                 <Text
                   onPress={() => this.viewUser(this.props.event.username)}
                   style={styles.username}>
@@ -318,22 +353,45 @@ export default class PastModalComponent extends Component {
                   onPress={() => this.setState({ showComments: true })}
                   style={styles.username}>
                   comments
-                      </Text>
+                </Text>
               </View>
 
-              <TouchableHighlight
-                onPress={this.previousItem}
-                style={styles.left}
-                underlayColor='transparent'>
-                <View />
-              </TouchableHighlight>
+              {
+                this.state.buffering ?
+                  <View style={{
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    bottom: 0,
+                    justifyContent: 'center',
+                    left: 0,
+                    position: 'absolute',
+                    right: 0,
+                    top: 0
+                  }}>
+                    <ActivityIndicator size='large' />
+                  </View> :
+                  <View style={{
+                    bottom: 0,
+                    left: 0,
+                    position: 'absolute',
+                    right: 0,
+                    top: 0
+                  }}>
+                    <TouchableHighlight
+                      onPress={this.previousItem}
+                      style={styles.left}
+                      underlayColor='transparent'>
+                      <View />
+                    </TouchableHighlight>
 
-              <TouchableHighlight
-                onPress={this.nextItem}
-                style={styles.right}
-                underlayColor='transparent'>
-                <View />
-              </TouchableHighlight>
+                    <TouchableHighlight
+                      onPress={this.nextItem}
+                      style={styles.right}
+                      underlayColor='transparent'>
+                      <View />
+                    </TouchableHighlight>
+                  </View>
+              }
 
               { // Share to Facebook:
                 this.state.done &&
@@ -353,13 +411,15 @@ export default class PastModalComponent extends Component {
                     paddingHorizontal: 50,
                     textAlign: 'center'
                   }}>
-                    Know anyone else that would enjoy {this.props.event.title}?
-               </Text>
-                  <TouchableHighlight
-                    disabled={this.state.disabled}
-                    onPress={this.login}
-                    underlayColor='#f74434'>
-                    {
+                    {this.state.shared ? 'Successfully shared!' :
+                      `Know anyone else that would enjoy ${this.props.event.title}?`}
+                  </Text>
+                  {
+                    !this.state.shared &&
+                    <TouchableHighlight
+                      disabled={this.state.disabled}
+                      onPress={this.share}
+                      underlayColor='#3b5998'>
                       <View style={styles.share}>
                         <Text style={styles.buttonText}>Share to Facebook  </Text>
                         <Icon
@@ -368,8 +428,8 @@ export default class PastModalComponent extends Component {
                           type='ionicon'
                         />
                       </View>
-                    }
-                  </TouchableHighlight>
+                    </TouchableHighlight>
+                  }
                 </View>
               }
 
@@ -459,6 +519,14 @@ const styles = StyleSheet.create({
     height: 40,
     marginTop: 5,
     padding: 10
+  },
+  poster: {
+    backgroundColor: 'transparent',
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'left',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 0.5, height: 0.5 }
   },
   right: {
     bottom: 100,

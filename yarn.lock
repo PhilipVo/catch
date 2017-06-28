@@ -3174,6 +3174,10 @@ react-native-side-menu@^0.20.1:
   version "0.20.1"
   resolved "https://registry.yarnpkg.com/react-native-side-menu/-/react-native-side-menu-0.20.1.tgz#df21b4bb9d8a1aa3bae53d74ddf8a739eb59bfc5"
 
+react-native-sms@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-sms/-/react-native-sms-1.4.2.tgz#6baae34ac8bfce0967e73c4efe77f24c0eb8768c"
+
 react-native-tab-navigator@^0.3.3:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/react-native-tab-navigator/-/react-native-tab-navigator-0.3.3.tgz#b222bad21fbe773c8d28f9a0de30ce62b08724d3"

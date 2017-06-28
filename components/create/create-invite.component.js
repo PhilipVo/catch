@@ -10,13 +10,9 @@ import {
 import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
+import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
-import http from '../../services/http.service';
-import androidhttp from '../../services/android.http.service';
-
-
-
 
 export default class CreateNewEventComponent extends Component {
   constructor(props) {
@@ -34,7 +30,7 @@ export default class CreateNewEventComponent extends Component {
   }
 
   componentDidMount() {
-     http.get('/api/contacts')
+    http.get('/api/contacts')
       .then(data => {
         let contacts = [];
         if (data.length > 0) contacts = contacts.concat(data);
@@ -76,7 +72,7 @@ export default class CreateNewEventComponent extends Component {
     // Append story if it exists:
     if (event.story) formData.append('media', { name: 'story', uri: event.story });
 
-    if (Platform.OS === 'ios'){
+    if (Platform.OS === 'ios') {
       ios.post('/api/events', formData)
         .then(() => {
           socket.emit('event');
