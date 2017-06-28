@@ -14,7 +14,10 @@ class SessionService {
     this.isFacebookUser;
     this.username;
 
-    PushNotification.configure({ permissions: { badge: false } });
+    PushNotification.configure({
+      // senderID: "YOUR GCM SENDER ID",
+      permissions: { badge: false }
+    });
   }
 
   facebookLogin(data) {

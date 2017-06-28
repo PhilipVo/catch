@@ -20,6 +20,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ListView,
+  Platform,
   Text,
   TextInput,
   TouchableHighlight,
@@ -33,8 +34,8 @@ import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
 import TimerMixin from 'react-timer-mixin';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
+import http from '../../services/http.service';
 
 export default class PastModalComponent extends Component {
   constructor(props) {

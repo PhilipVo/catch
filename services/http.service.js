@@ -2,7 +2,9 @@ import { AsyncStorage, Platform } from 'react-native';
 
 class HttpService {
   constructor() {
+    console.log('constructed http')
     // this.ip = 'https://anvyl.online';
+    // this.ip = 'http://10.0.0.214:8000';
     this.ip = 'http://10.0.0.44:8000';
     this.s3 = 'https://s3-us-west-1.amazonaws.com/ronin.catch';
   }
@@ -52,14 +54,14 @@ class HttpService {
       .catch(error => Promise.reject(error));
   }
 
-  post(url, body) {
+  post(url, body, isAndroid) {
     return AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         return fetch(`${this.ip}${url}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': 'application/json'
+            'Content-Type': isAndroid ? 'multipart/form-data' : 'application/json'
           },
           body: body
         });
@@ -68,14 +70,14 @@ class HttpService {
       .catch(error => Promise.reject(error));
   }
 
-  put(url, body) {
+  put(url, body, isAndroid) {
     return AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         return fetch(`${this.ip}${url}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': 'application/json'
+            'Content-Type': isAndroid ? 'multipart/form-data' : 'application/json'
           },
           body: body
         });
@@ -83,7 +85,6 @@ class HttpService {
       .then(response => this.handleResponse(response))
       .catch(error => Promise.reject(error));
   }
-
 }
 
 export default new HttpService();

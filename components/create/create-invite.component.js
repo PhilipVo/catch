@@ -72,55 +72,30 @@ export default class CreateNewEventComponent extends Component {
     // Append story if it exists:
     if (event.story) formData.append('media', { name: 'story', uri: event.story });
 
-    if (Platform.OS === 'ios') {
-      ios.post('/api/events', formData)
-        .then(() => {
-          socket.emit('event');
+    http.post('/api/events', formData, Platform.OS === 'android')
+      .then(() => {
+        socket.emit('event');
 
-          this.props.navigation.dispatch(NavigationActions.reset({
-            actions: [
-              NavigationActions.navigate({
-                params: {
-                  event: event,
-                  isNew: true
-                },
-                routeName: 'CreateCompleteComponent'
-              })
-            ],
-            index: 0
-          }));
-        }).catch(error => {
-          console.log(error)
-          this.setState({
-            error: typeof error === 'string' ? error : 'Oops, something went wrong.',
-            saving: false
-          })
-        });
-    } else {
-      androidhttp.post('/api/events', formData)
-        .then(() => {
-          socket.emit('event');
+        this.props.navigation.dispatch(NavigationActions.reset({
+          actions: [
+            NavigationActions.navigate({
+              params: {
+                event: event,
+                isNew: true
+              },
+              routeName: 'CreateCompleteComponent'
+            })
+          ],
+          index: 0
+        }));
+      }).catch(error => {
+        console.log(error)
+        this.setState({
+          error: typeof error === 'string' ? error : 'Oops, something went wrong.',
+          saving: false
+        })
+      });
 
-          this.props.navigation.dispatch(NavigationActions.reset({
-            actions: [
-              NavigationActions.navigate({
-                params: {
-                  event: event,
-                  isNew: true
-                },
-                routeName: 'CreateCompleteComponent'
-              })
-            ],
-            index: 0
-          }));
-        }).catch(error => {
-          console.log(error)
-          this.setState({
-            error: typeof error === 'string' ? error : 'Oops, something went wrong.',
-            saving: false
-          })
-        });
-    }
   }
 
   invite = (rowData, rowID) => {

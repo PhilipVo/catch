@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Alert,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -11,8 +12,9 @@ import { Icon } from 'react-native-elements';
 import ImagePicker from 'react-native-image-crop-picker';
 import { NavigationActions } from 'react-navigation';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
+
+import http from '../../services/http.service';
 
 export default class AccountPictureComponent extends Component {
   constructor(props) {

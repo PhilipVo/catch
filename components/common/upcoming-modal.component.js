@@ -7,6 +7,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   ListView,
+  Platform,
   StatusBar,
   StyleSheet,
   Switch,
@@ -20,9 +21,10 @@ import TimerMixin from 'react-timer-mixin';
 
 import TabComponent from '../common/tab.component';
 
-import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
+
+import http from '../../services/http.service';
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {

@@ -3,7 +3,7 @@ import PushNotification from 'react-native-push-notification';
 import { Observable } from 'rxjs/Observable';
 import IO from 'socket.io-client';
 
-import http from './http.service';
+const http = require('./http.service');
 
 class SocketService {
   connect(username) {

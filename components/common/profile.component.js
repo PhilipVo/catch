@@ -19,8 +19,6 @@ import ProfileDetailsComponent from './profile-details.component';
 import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
-import http from '../../services/http.service';
-
 export default class ProfileComponent extends Component {
   constructor(props) {
     super(props);
