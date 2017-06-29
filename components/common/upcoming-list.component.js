@@ -106,11 +106,11 @@ export default class UpcomingListComponent extends Component {
                     size={25} />
                   <Icon
                     name='people-outline'
-                    onPress={() => { }}
+                    onPress={() => this.props.screenProps.setEvent('invited', rowData)}
                     size={25} />
                   <Icon
                     name='group-add'
-                    onPress={() => { }}
+                    onPress={() => this.props.screenProps.setEvent('invite', rowData)}
                     size={25} />
                 </View>
               </View>)

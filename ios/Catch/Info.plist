@@ -58,7 +58,7 @@
 	<key>NSContactsUsageDescription</key>
 	<string>Catch will not collect/store your contacts information.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Catch needs your permission to use the microphone.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

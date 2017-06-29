@@ -5,6 +5,8 @@ import { NavigationActions, TabNavigator } from 'react-navigation';
 
 import AccountDetailsComponent from './account-details.component';
 import AccountNotificationListComponent from './account-notification-list.component';
+import InviteModalComponent from '../common/invite-modal.component';
+import InvitedModalComponent from '../common/invited-modal.component';
 import PastListComponent from '../common/past-list.component';
 import PastModalComponent from '../common/past-modal.component';
 import TabComponent from '../common/tab.component';
@@ -125,7 +127,6 @@ export default class AccountComponent extends Component {
               <Navigator
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
-                  forceUpdate: this.forceUpdate,
                   loading: this.state.loading,
                   navigate: this.props.navigation.navigate,
                   notifications: this.state.notifications,
@@ -153,7 +154,15 @@ export default class AccountComponent extends Component {
                 hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
                 tabComponent={this.tabComponent} /> :
-              null
+              this.state.modal === 'invite' ?
+                <InviteModalComponent
+                  event={this.state.event}
+                  hideModal={this.hideModal} /> :
+                this.state.modal === 'invited' ?
+                  <InvitedModalComponent
+                    event={this.state.event}
+                    hideModal={this.hideModal} /> :
+                  null
         }
 
       </View>

@@ -79,7 +79,7 @@ export default class PastModalComponent extends Component {
       }).catch(error => {
         this.props.hideModal();
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
-      })
+      });
   }
 
   // componentWillUpdate(nextProps, nextState) {

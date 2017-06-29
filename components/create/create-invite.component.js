@@ -40,8 +40,6 @@ export default class CreateNewEventComponent extends Component {
           contacts = contacts.concat([{ isBreak: true }])
             .concat(JSON.parse(JSON.stringify(session.contacts)));
 
-        console.log('session contacts:', session.contacts)
-        console.log('all contacts:', contacts)
         this.setState({
           data: contacts,
           dataSource: this.ds.cloneWithRows(contacts)
@@ -51,10 +49,6 @@ export default class CreateNewEventComponent extends Component {
           error: typeof error === 'string' ? error : 'Oops, something went wrong.'
         });
       });
-  }
-
-  componentWillUnmount() {
-    console.log('unmounted')
   }
 
   complete = () => {
@@ -80,7 +74,7 @@ export default class CreateNewEventComponent extends Component {
     http.post('/api/events', formData, Platform.OS === 'android')
       .then(() => {
         const recipients = Object.keys(this.numbers);
-        return SendSMS.send({
+        if (recipients.length > 0) return SendSMS.send({
           body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
           recipients: recipients,
           successTypes: ['sent', 'queued']
@@ -114,7 +108,6 @@ export default class CreateNewEventComponent extends Component {
     if (!rowData.invited) {
       const _data = this.state.data.slice();
       _data[rowID].invited = true;
-      console.log(rowData)
       if (rowData.contact) this.contributors[rowData.contact] = true;
       else {
         try { this.numbers[rowData.phoneNumbers[0].number] = true }
@@ -141,8 +134,6 @@ export default class CreateNewEventComponent extends Component {
         dataSource: this.ds.cloneWithRows(_data)
       });
     }
-
-    console.log('contributors:', this.contributors)
   }
 
   render() {
