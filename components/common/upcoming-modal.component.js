@@ -10,7 +10,6 @@ import {
   Platform,
   StatusBar,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   TouchableHighlight,
@@ -135,16 +134,19 @@ export default class UpcomingModalComponent extends Component {
                 </Text>
                 <Text style={styles.modalText1}>{'27 Following'}</Text>
               </View>
-              <View style={{ alignItems: 'center' }}>
-                <Switch
-                  onValueChange={(value) => this.setState({
-                    event: {
-                      ...this.props.event,
-                      isFollowing: value
-                    }
-                  })}
-                  value={this.props.event.isFollowing} />
-                <Text style={styles.modalText2}> Notifications</Text>
+              <View style={{
+                alignItems: 'center',
+                backgroundColor: 'lime',
+                borderRadius: 5,
+                padding: 5
+              }}>
+                <Text style={{
+                  color: 'white',
+                  fontSize: 12,
+                  fontWeight: 'bold'
+                }}>
+                  Turn On Notifications
+                </Text>
               </View>
             </View>
 
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
   mainImage: {
     alignItems: 'flex-end',
     flexDirection: 'row',
-    height: 120,
+    height: 240,
     justifyContent: 'space-between'
   },
   modalText1: {

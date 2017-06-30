@@ -14,7 +14,6 @@ import CreatePreviewModalComponent from './create-preview-modal.component';
 
 import http from '../../services/http.service';
 
-
 export default class CreatePreviewComponent extends Component {
   constructor(props) {
     super(props);
@@ -70,6 +69,7 @@ export default class CreatePreviewComponent extends Component {
           this.state.showModal ?
             <CreatePreviewModalComponent
               dispatch={this.props.navigation.dispatch}
+              duration={params.duration}
               events={this.state.events}
               hideModal={() => this.setState({ showModal: false })}
               navigate={this.props.navigation.navigate}

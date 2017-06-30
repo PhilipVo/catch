@@ -40,7 +40,10 @@ export default class AccountComponent extends Component {
     this.onCommented = socket.onCommented.subscribe(data => this.getMyInfo());
     this.onContacted = socket.onContacted.subscribe(data => this.getMyInfo());
     this.onContributed = socket.onContributed.subscribe(data => this.getMyInfo());
-    this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
+    this.onEvent = socket.onEvent.subscribe(() => {
+      console.log('got event')
+      this.getMyInfo()
+    });
   }
 
   componentDidMount() {

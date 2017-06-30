@@ -85,6 +85,7 @@ module.exports = class LoginComponent extends Component {
   }
 
   login = () => {
+    console.log('logigng in')
     if (!this.state.disabled) {
       this.setState({
         disbaled: true,
@@ -96,10 +97,11 @@ module.exports = class LoginComponent extends Component {
         session.login(this.user)
           .then(() => this.props.screenProps.login())
           .catch(error => {
+            console.log('error is', error)
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.',
-              loading: true
+              loading: false
             });
           });
       } else {
@@ -110,7 +112,7 @@ module.exports = class LoginComponent extends Component {
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.',
-              loading: true
+              loading: false
             });
           });
       }
@@ -123,8 +125,8 @@ module.exports = class LoginComponent extends Component {
       this.setState({ mode: 'login' });
   }
 
-  componentWillMount(){
-    if (Platform.OS === 'android'){
+  componentWillMount() {
+    if (Platform.OS === 'android') {
       styles.inputBorder = undefined;
       styles.inputText = {
         color: 'white',

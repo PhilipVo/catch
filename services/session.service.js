@@ -1,5 +1,4 @@
 const base64 = require('base-64');
-const contacts = require('react-native-contacts');
 
 import { AsyncStorage } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk';
@@ -10,7 +9,6 @@ import socket from './socket.service';
 
 class SessionService {
   constructor() {
-    this.contacts;
     this.isFacebookUser;
     this.username;
   }
@@ -78,18 +76,12 @@ class SessionService {
         // Configure notifications:        
         PushNotification.configure({ permissions: { badge: false } });
 
-        // Get contacts:
-        contacts.getAllWithoutPhotos((error, contacts) => {
-          console.log('contacts are:', contacts)
-          if (error) throw error;
-          this.contacts = contacts;
-        });
-
         // Connect to sockets:
         socket.connect(this.username);
 
         return resolve();
       } catch (error) {
+        this.logout();
         return reject('Error encountered while setting session.');
       }
     })

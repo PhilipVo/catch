@@ -12,6 +12,7 @@ import Modal from 'react-native-modalbox';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
+import session from '../../services/session.service';
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ export default class CreatePreviewModalComponent extends Component {
       this.setState({ saving: true });
 
       const formData = new FormData();
+      formData.append('duration', this.props.duration);
       formData.append('eventId', event.id);
       formData.append('media', { name: 'story', uri: this.props.story });
       formData.append('title', event.title);
@@ -66,6 +68,7 @@ export default class CreatePreviewModalComponent extends Component {
   next = () => {
     this.props.pause();
     this.props.navigate('CreateNewEventComponent', {
+      duration: this.props.duration,
       play: this.props.play,
       story: this.props.story
     });

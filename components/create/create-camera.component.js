@@ -51,14 +51,12 @@ export default class CreateCameraComponent extends Component {
 
     this.camera.capture(options)
       .then(data => {
-        console.log(data)
         this.props.navigation.navigate('CreatePreviewComponent', {
           isVideo: true,
           duration: data.duration,
           story: data.path
-        })
-      })
-      .catch(() => { });
+        });
+      }).catch(() => { });
   }
 
   stop = () => {
