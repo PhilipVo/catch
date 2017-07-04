@@ -25,9 +25,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Modal from 'react-native-modalbox';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import SendSMS from 'react-native-sms';
+import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
+import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
 
@@ -109,33 +111,55 @@ export default class CreateNewEventComponent extends Component {
 
     const event = {
       audience: this.state.audience,
-      cover: this.state.cover,
+      // cover: this.state.cover,
+      contributors: this.contributors,
       date: this.state.date,
       description: this.state.description,
-      duration: this.props.navigation.state.params ?
-        this.props.navigation.state.params.duration : null,
+      isVideo: this.props.navigation.state.params ?
+        this.props.navigation.state.params.isVideo : null,
       story: this.props.navigation.state.params ?
         this.props.navigation.state.params.story : null,
       title: this.state.title
     };
-    const formData = new FormData();
+    // const formData = new FormData();
 
-    formData.append('audience', event.audience);
-    formData.append('contributors', JSON.stringify(this.contributors));
-    console.log(this.contributors)
-    formData.append('date', event.date);
-    formData.append('description', event.description);
-    formData.append('duration', event.duration);
-    formData.append('title', event.title);
-    formData.append('media', { name: 'cover', uri: event.cover });
-
-    // Append story if it exists:
-    if (event.story) formData.append('media', { name: 'story', uri: event.story });
+    // formData.append('audience', event.audience);
+    // formData.append('contributors', JSON.stringify(this.contributors));
+    // formData.append('date', event.date);
+    // formData.append('description', event.description);
+    // formData.append('duration', event.duration);
+    // formData.append('title', event.title);
+    // formData.append('media', { name: 'cover', uri: event.cover });
 
     console.log('date is:', event.date)
     console.log('date formatted:', new Date(event.date).toISOString())
-    http.post('/api/events', formData, Platform.OS === 'android')
-      .then(() => {
+
+    http.post('/api/events', JSON.stringify(event))
+      .then(data => {
+        console.log('id1:', data)
+        // Upload cover:
+        const file = {
+          name: 'cover',
+          type: 'image/jpeg',
+          uri: event.cover
+        };
+
+        return s3.put(file, `events/${data.eventId}/`)
+          .then(() => Promise.resolve(data))
+          .catch(error => { throw error });
+      }).then(data => {
+        console.log('id2:', data)
+        // Upload story:
+        if (data.storyId) {
+          const file = {
+            name: data.storyId,
+            type: event.isVideo ? 'video/mp4' : 'image/jpeg',
+            uri: event.story
+          };
+
+          return s3.put(file, `events/${data.eventId}/`);
+        }
+      }).then(() => {
         const recipients = Object.keys(this.numbers);
         if (recipients.length > 0) return SendSMS.send({
           body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
@@ -345,7 +369,7 @@ export default class CreateNewEventComponent extends Component {
                   onPress={this.complete}
                   style={{ fontSize: 20 }}
                   underlayColor='transparent' >
-                  {this.state.saving ? 'Saving...' : 'Complete Event  '}
+                  {this.state.saving ? '  Saving' : 'Complete Event  '}
                 </Text>
                 {
                   !this.state.saving &&

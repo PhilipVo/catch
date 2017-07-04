@@ -19,7 +19,7 @@ import { NavigationActions } from 'react-navigation';
 import { LoginManager, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
 import session from '../services/session.service';
-
+import s3 from '../services/s3.service';
 module.exports = class LoginComponent extends Component {
   constructor(props) {
     super(props);

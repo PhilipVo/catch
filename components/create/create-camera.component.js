@@ -53,7 +53,6 @@ export default class CreateCameraComponent extends Component {
       .then(data => {
         this.props.navigation.navigate('CreatePreviewComponent', {
           isVideo: true,
-          duration: data.duration,
           story: data.path
         });
       }).catch(() => { });
@@ -65,10 +64,8 @@ export default class CreateCameraComponent extends Component {
   }
 
   toggle = () => {
-    if (this.state.type === 1)
-      this.setState({ mirror: true, type: 2 });
-    else
-      this.setState({ mirror: false, type: 1 });
+    if (this.state.type === 1) this.setState({ mirror: true, type: 2 });
+    else this.setState({ mirror: false, type: 1 });
   }
 
   render() {

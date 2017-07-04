@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
+import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
@@ -35,11 +36,22 @@ export default class CreatePreviewModalComponent extends Component {
       const formData = new FormData();
       formData.append('duration', this.props.duration);
       formData.append('eventId', event.id);
-      formData.append('media', { name: 'story', uri: this.props.story });
       formData.append('title', event.title);
       formData.append('username', event.username);
 
-      http.post('/api/stories/', formData)
+      // Compress video:
+      new Promise((resolve, reject) => {
+        if (this.props.isVideo) {
+          return ProcessingManager.compress(this.props.story)
+            .then(uri => {
+              formData.append('media', { name: 'story', uri: uri });
+              return resolve();
+            }).catch(error => reject(error));
+        } else {
+          formData.append('media', { name: 'story', uri: this.props.story });
+          return resolve();
+        }
+      }).then(() => http.post('/api/stories/', formData))
         .then(() => {
           if (event.username !== session.username)
             socket.emit('contributed', {
@@ -60,8 +72,7 @@ export default class CreatePreviewModalComponent extends Component {
         }).catch((error) => {
           console.log(error)
           this.setState({ saving: false })
-        }
-        );
+        });
     }
   }
 
@@ -69,6 +80,7 @@ export default class CreatePreviewModalComponent extends Component {
     this.props.pause();
     this.props.navigate('CreateNewEventComponent', {
       duration: this.props.duration,
+      isVideo: this.props.isVideo,
       play: this.props.play,
       story: this.props.story
     });

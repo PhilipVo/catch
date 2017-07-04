@@ -4,7 +4,9 @@ import { AppRegistry, AsyncStorage, Image } from 'react-native';
 import session from './services/session.service';
 
 console.ignoredYellowBox = [
+  'Warning: Accessing',
   'Warning: BackAndroid',
+  'Warning: checkPropTypes',
   'Warning: View.propTypes',
   'Warning: Invalid argument supplied to oneOf'
 ];
@@ -24,8 +26,7 @@ export default class Catch extends Component {
             .catch(() => { });
         } else
           this.setState({ isLoggedIn: false });
-      })
-      .catch(() => { });
+      }).catch(() => { });
   }
 
   componentWillUpdate(nextProps, nextState) {

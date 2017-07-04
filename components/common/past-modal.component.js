@@ -311,53 +311,42 @@ export default class PastModalComponent extends Component {
                   </Text>
                 </View>
 
-                <KeyboardAvoidingView
-                  behavior='padding'
-                  style={this.state.showComments ? { flex: 1 } : { display: 'none' }}>
-                  <ListView
-                    dataSource={this.state.dataSource}
-                    enableEmptySections={true}
-                    ref={listView => _listView = listView}
-                    removeClippedSubviews={false}
-                    renderRow={(rowData, sectionID, rowID) => (
-                      <View style={styles.commentView}>
-                        <TouchableHighlight
-                          onPress={() => this.viewUser(rowData.username)}>
-                          <Image
-                            source={{ uri: `${http.s3}/users/${rowData.username}` }}
-                            style={styles.commentImage} />
-                        </TouchableHighlight>
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.comment}>{rowData.comment}</Text>
+                {
+                  this.state.showComments &&
+                  <KeyboardAvoidingView
+                    behavior='padding'
+                    style={{ flex: 1 }}>
+                    <ListView
+                      dataSource={this.state.dataSource}
+                      enableEmptySections={true}
+                      ref={listView => _listView = listView}
+                      removeClippedSubviews={false}
+                      renderRow={(rowData, sectionID, rowID) => (
+                        <View style={styles.commentView}>
+                          <TouchableHighlight
+                            onPress={() => this.viewUser(rowData.username)}>
+                            <Image
+                              source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                              style={styles.commentImage} />
+                          </TouchableHighlight>
+                          <View style={{ flex: 1 }}>
+                            <Text style={styles.comment}>{rowData.comment}</Text>
+                          </View>
                         </View>
-                      </View>
-                    )} />
+                      )} />
 
-                  <TextInput
-                    autoCapitalize='sentences'
-                    autoCorrect={true}
-                    maxLength={120}
-                    onChangeText={(comment) => this.setState({ comment: comment })}
-                    onSubmitEditing={this.comment}
-                    placeholder='comment'
-                    returnKeyType='send'
-                    style={styles.modalTextInput}
-                    value={this.state.comment} />
-                </KeyboardAvoidingView>
-
-                <View style={this.state.showComments ? { display: 'none' } : styles.bottom}>
-                  <Icon
-                    color='white'
-                    name='arrow-up'
-                    onPress={() => this.setState({ showComments: true })}
-                    size={30}
-                    type='simple-line-icon' />
-                  <Text
-                    onPress={() => this.setState({ showComments: true })}
-                    style={styles.username}>
-                    comments
-                </Text>
-                </View>
+                    <TextInput
+                      autoCapitalize='sentences'
+                      autoCorrect={true}
+                      maxLength={120}
+                      onChangeText={(comment) => this.setState({ comment: comment })}
+                      onSubmitEditing={this.comment}
+                      placeholder='comment'
+                      returnKeyType='send'
+                      style={styles.modalTextInput}
+                      value={this.state.comment} />
+                  </KeyboardAvoidingView>
+                }
 
                 {
                   this.state.buffering ?
@@ -394,6 +383,23 @@ export default class PastModalComponent extends Component {
                         <View />
                       </TouchableHighlight>
                     </View>
+                }
+
+                { // Comments
+                  !this.state.showComments &&
+                  <View style={styles.bottom}>
+                    <Icon
+                      color='white'
+                      name='arrow-up'
+                      onPress={() => this.setState({ showComments: true })}
+                      size={30}
+                      type='simple-line-icon' />
+                    <Text
+                      onPress={() => this.setState({ showComments: true })}
+                      style={styles.username}>
+                      comments
+                    </Text>
+                  </View>
                 }
 
                 { // Share to Facebook:
