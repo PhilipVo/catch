@@ -5,7 +5,7 @@ class s3 {
   constructor() {
     this.options = {
       accessKey: 'AKIAJOIHLQGNIRG3VZQA',
-      bucket: 'ronin.catch',
+      bucket: 'ronincatch',
       region: 'us-west-1',
       secretKey: keys.secretKey
     };

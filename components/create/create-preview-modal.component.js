@@ -9,10 +9,11 @@ import {
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
-import { ProcessingManager } from 'react-native-video-processing';
+// import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
+import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
 
 export default class CreatePreviewModalComponent extends Component {
@@ -33,26 +34,18 @@ export default class CreatePreviewModalComponent extends Component {
     if (!this.state.saving) {
       this.setState({ saving: true });
 
-      const formData = new FormData();
-      formData.append('duration', this.props.duration);
-      formData.append('eventId', event.id);
-      formData.append('title', event.title);
-      formData.append('username', event.username);
+      http.post('/api/stories/', JSON.stringify(event))
+        .then(storyId => {
+          console.log('storyId:', storyId)
+          // Upload story:
+          const file = {
+            name: storyId,
+            type: this.props.isVideo ? 'video/mp4' : 'image/jpeg',
+            uri: this.props.story
+          };
 
-      // Compress video:
-      new Promise((resolve, reject) => {
-        if (this.props.isVideo) {
-          return ProcessingManager.compress(this.props.story)
-            .then(uri => {
-              formData.append('media', { name: 'story', uri: uri });
-              return resolve();
-            }).catch(error => reject(error));
-        } else {
-          formData.append('media', { name: 'story', uri: this.props.story });
-          return resolve();
-        }
-      }).then(() => http.post('/api/stories/', formData))
-        .then(() => {
+          return s3.put(file, `events/${data.eventId}/`);
+        }).then(() => {
           if (event.username !== session.username)
             socket.emit('contributed', {
               contributor: session.username,

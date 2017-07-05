@@ -19,7 +19,7 @@ import { NavigationActions } from 'react-navigation';
 import { LoginManager, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
 import session from '../services/session.service';
-import s3 from '../services/s3.service';
+
 module.exports = class LoginComponent extends Component {
   constructor(props) {
     super(props);
@@ -85,7 +85,6 @@ module.exports = class LoginComponent extends Component {
   }
 
   login = () => {
-    console.log('logigng in')
     if (!this.state.disabled) {
       this.setState({
         disbaled: true,
@@ -97,7 +96,6 @@ module.exports = class LoginComponent extends Component {
         session.login(this.user)
           .then(() => this.props.screenProps.login())
           .catch(error => {
-            console.log('error is', error)
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.',
@@ -108,7 +106,6 @@ module.exports = class LoginComponent extends Component {
         session.register(this.user)
           .then(() => this.props.screenProps.login())
           .catch(error => {
-            console.log(error);
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.',

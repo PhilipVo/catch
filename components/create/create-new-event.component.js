@@ -25,7 +25,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Modal from 'react-native-modalbox';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import SendSMS from 'react-native-sms';
-import { ProcessingManager } from 'react-native-video-processing';
+// import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
@@ -111,7 +111,6 @@ export default class CreateNewEventComponent extends Component {
 
     const event = {
       audience: this.state.audience,
-      // cover: this.state.cover,
       contributors: this.contributors,
       date: this.state.date,
       description: this.state.description,
@@ -121,34 +120,26 @@ export default class CreateNewEventComponent extends Component {
         this.props.navigation.state.params.story : null,
       title: this.state.title
     };
-    // const formData = new FormData();
-
-    // formData.append('audience', event.audience);
-    // formData.append('contributors', JSON.stringify(this.contributors));
-    // formData.append('date', event.date);
-    // formData.append('description', event.description);
-    // formData.append('duration', event.duration);
-    // formData.append('title', event.title);
-    // formData.append('media', { name: 'cover', uri: event.cover });
 
     console.log('date is:', event.date)
     console.log('date formatted:', new Date(event.date).toISOString())
 
     http.post('/api/events', JSON.stringify(event))
       .then(data => {
-        console.log('id1:', data)
         // Upload cover:
         const file = {
           name: 'cover',
           type: 'image/jpeg',
-          uri: event.cover
+          uri: this.state.cover
         };
 
         return s3.put(file, `events/${data.eventId}/`)
           .then(() => Promise.resolve(data))
-          .catch(error => { throw error });
+          .catch(error => {
+            console.log('aws error', error)
+            throw error
+          });
       }).then(data => {
-        console.log('id2:', data)
         // Upload story:
         if (data.storyId) {
           const file = {

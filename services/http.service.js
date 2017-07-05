@@ -5,7 +5,7 @@ class HttpService {
     // this.ip = 'https://anvyl.online';
     // this.ip = 'http://10.0.0.214:8000';
     this.ip = 'http://10.0.0.44:8000';
-    this.s3 = 'https://s3-us-west-1.amazonaws.com/ronin.catch';
+    this.s3 = 'https://s3-us-west-1.amazonaws.com/ronincatch';
   }
 
   handleResponse(response) {

@@ -12,8 +12,8 @@ import { Icon } from 'react-native-elements';
 import ImagePicker from 'react-native-image-crop-picker';
 import { NavigationActions } from 'react-navigation';
 
+import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
-
 import http from '../../services/http.service';
 
 export default class AccountPictureComponent extends Component {
@@ -39,10 +39,13 @@ export default class AccountPictureComponent extends Component {
     if (!this.state.saving) {
       this.setState({ saving: true });
 
-      const formData = new FormData();
-      formData.append('media', { name: 'profile', uri: this.state.path });
+      const file = {
+        name: session.username,
+        type: 'image/jpeg',
+        uri: this.state.path
+      };
 
-      http.put('/api/users/update-picture', formData)
+      s3.put(file, `users/`)
         .then(() => {
           this.props.navigation.state.params.refreshImage();
           this.props.navigation.goBack();
