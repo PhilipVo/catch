@@ -11,6 +11,7 @@ import {
 import { Button, Icon, Text } from 'react-native-elements';
 import TimerMixin from 'react-timer-mixin';
 
+import http from '../../services/http.service';
 import session from '../../services/session.service';
 
 export default class UpcomingListComponent extends Component {
@@ -55,7 +56,7 @@ export default class UpcomingListComponent extends Component {
             renderRow={(rowData, sectionID, rowID) => (
               <View style={{ marginBottom: 20 }}>
                 <Image
-                  source={{ uri: `https://s3-us-west-1.amazonaws.com/ronin.catch/events/${rowData.id}/cover` }}
+                  source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
                   style={styles.image} />
 
                 {/* Header */}

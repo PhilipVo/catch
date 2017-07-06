@@ -21,6 +21,8 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import http from '../../services/http.service';
+
 export default class PastListComponent extends Component {
   constructor(props) {
     super(props);
@@ -51,7 +53,7 @@ export default class PastListComponent extends Component {
                 onPress={() => this.props.screenProps.setEvent('past', rowData)}
                 underlayColor='transparent'>
                 <Image
-                  source={{ uri: `https://s3-us-west-1.amazonaws.com/ronin.catch/events/${rowData.id}/cover` }}
+                  source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
                   style={styles.image}>
                   <Text style={styles.timer}>
                     {moment(rowData.date).fromNow().toString()}
