@@ -1,14 +1,3 @@
-////////////////////////////////////////////////////////////
-//                ProfileDetailsComponent
-//  Top portion of user's profile component, containing the
-//  user's details such as their avatar, number of friends 
-//  and events, and tagline.
-//  
-//                Required props
-//  goBack: function to unmount component
-//  user: JSON object containing user's details
-////////////////////////////////////////////////////////////
-
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
@@ -22,10 +11,9 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
-
-import http from '../../services/http.service';
 
 export default class ProfileDetailsComponent extends Component {
   constructor(props) {

@@ -16,7 +16,6 @@ import {
   View
 } from 'react-native';
 import Modal from 'react-native-modalbox';
-import TimerMixin from 'react-timer-mixin';
 
 import TabComponent from '../common/tab.component';
 
@@ -74,6 +73,10 @@ export default class UpcomingModalComponent extends Component {
           loading: false
         });
       }).catch(() => { });
+  }
+
+  toggleNotifications = () => {
+
   }
 
   viewUser = username => {
@@ -134,20 +137,24 @@ export default class UpcomingModalComponent extends Component {
                 </Text>
                 <Text style={styles.modalText1}>{'27 Following'}</Text>
               </View>
-              <View style={{
-                alignItems: 'center',
-                backgroundColor: 'lime',
-                borderRadius: 5,
-                padding: 5
-              }}>
-                <Text style={{
-                  color: 'white',
-                  fontSize: 12,
-                  fontWeight: 'bold'
+              <TouchableHighlight
+                onPress={this.toggleNotifications}
+                underlayColor='transparent'>
+                <View style={{
+                  alignItems: 'center',
+                  backgroundColor: 'green',
+                  borderRadius: 5,
+                  padding: 5
                 }}>
-                  Turn On Notifications
-                </Text>
-              </View>
+                  <Text style={{
+                    color: 'white',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                  }}>
+                    Turn On Notifications
+                  </Text>
+                </View>
+              </TouchableHighlight>
             </View>
 
             <Text style={styles.modalText3}>{this.props.event.description}</Text>

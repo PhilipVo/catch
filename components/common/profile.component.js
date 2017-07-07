@@ -1,23 +1,16 @@
-////////////////////////////////////////////////////////////
-//                ProfileComponent
-//  User's profile component which includes their details
-//  and their list of catches. 
-//  
-//                Required params
-//  username: user's username
-//  tabComponent (component): instance of TabBarComponent
-////////////////////////////////////////////////////////////
-
 import React, { Component } from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
 
+import DeleteModalComponent from '../common/delete-modal.component';
 import PastListComponent from '../common/past-list.component';
 import PastModalComponent from './past-modal.component';
 import ProfileDetailsComponent from './profile-details.component';
 import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
+
+import http from '../../services/http.service';
 
 export default class ProfileComponent extends Component {
   constructor(props) {
@@ -35,6 +28,10 @@ export default class ProfileComponent extends Component {
   }
 
   componentDidMount() {
+    this.getInfo();
+  }
+
+  getInfo = () => {
     http.get(`/api/users/get-info-for-user/${this.props.navigation.state.params.username}`)
       .then(data => {
         this.setState({
@@ -110,19 +107,24 @@ export default class ProfileComponent extends Component {
         </View>
 
         { // Modals
-          this.state.modal === 'past' ?
-            <PastModalComponent
+          this.state.modal === 'delete' ?
+            <DeleteModalComponent
               event={this.state.event}
               hideModal={this.hideModal}
-              navigate={this.props.navigation.navigate}
-              tabComponent={params.tabComponent} /> :
-            this.state.modal === 'upcoming' ?
-              <UpcomingModalComponent
+              onDelete={this.getInfo} /> :
+            this.state.modal === 'past' ?
+              <PastModalComponent
                 event={this.state.event}
                 hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
                 tabComponent={params.tabComponent} /> :
-              null
+              this.state.modal === 'upcoming' ?
+                <UpcomingModalComponent
+                  event={this.state.event}
+                  hideModal={this.hideModal}
+                  navigate={this.props.navigation.navigate}
+                  tabComponent={params.tabComponent} /> :
+                null
         }
 
       </View>

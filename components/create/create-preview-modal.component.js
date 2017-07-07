@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   ListView,
   Platform,
   StyleSheet,
@@ -34,9 +35,9 @@ export default class CreatePreviewModalComponent extends Component {
     if (!this.state.saving) {
       this.setState({ saving: true });
 
+      event.isVideo = this.props.isVideo;
       http.post('/api/stories/', JSON.stringify(event))
         .then(storyId => {
-          console.log('storyId:', storyId)
           // Upload story:
           const file = {
             name: storyId,
@@ -44,8 +45,8 @@ export default class CreatePreviewModalComponent extends Component {
             uri: this.props.story
           };
 
-          return s3.put(file, `events/${data.eventId}/`);
-        }).then(() => {
+          s3.put(file, `events/${event.id}/`).catch(error => { throw error });
+
           if (event.username !== session.username)
             socket.emit('contributed', {
               contributor: session.username,
@@ -64,7 +65,7 @@ export default class CreatePreviewModalComponent extends Component {
           }));
         }).catch((error) => {
           console.log(error)
-          this.setState({ saving: false })
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
   }

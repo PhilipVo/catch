@@ -32,10 +32,9 @@ import { Icon } from 'react-native-elements';
 import { ShareDialog } from 'react-native-fbsdk';
 import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
-import TimerMixin from 'react-timer-mixin';
 
-import session from '../../services/session.service';
 import http from '../../services/http.service';
+import session from '../../services/session.service';
 
 export default class PastModalComponent extends Component {
   constructor(props) {
@@ -43,7 +42,6 @@ export default class PastModalComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      buffering: false,
       comment: '',
       comments: [],
       dataSource: this.ds.cloneWithRows([]),
@@ -64,7 +62,6 @@ export default class PastModalComponent extends Component {
     http.get(`/api/events/get-contributions-for-event/${this.props.event.id}`)
       .then(data => {
         if (data.stories.length > 0) {
-          console.log('no stories', data)
           this.setState({
             comments: data.comments,
             dataSource: this.ds.cloneWithRows(data.comments),
@@ -73,7 +70,6 @@ export default class PastModalComponent extends Component {
             stories: data.stories
           });
         } else {
-          console.log('got stories')
           this.setState({
             comments: data.comments,
             dataSource: this.ds.cloneWithRows(data.comments),
@@ -119,8 +115,10 @@ export default class PastModalComponent extends Component {
   }
 
   nextItem = () => {
-    if (this.animation) this.animation.stop();
-    if (this.interval) TimerMixin.clearInterval(this.interval);
+    if (this.animation) {
+      this.animation.stop();
+      this.animation = undefined;
+    }
 
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
@@ -132,13 +130,48 @@ export default class PastModalComponent extends Component {
         timerUpAnimation: new Animated.Value(0)
       });
     } else if (session.isFacebookUser) {
-      this.setState({ done: true });
+      this.setState({
+        done: true,
+        // rate: 0.0
+      });
     } else this.props.hideModal();
   }
 
+  onBuffer = data => {
+    if (data.isBuffering && this.animation) this.animation.stop();
+    else if (this.animation) this.animation.start(data => {
+      if (data.finished) {
+        this.animation = undefined;
+        this.nextItem();
+      }
+    });
+  }
+
+  onLoad = data => {
+    const duration = data.duration ? parseInt(data.duration * 1000, 10) : false;
+    console.log('duration is', duration)
+
+    this.animation = Animated.parallel([
+      Animated.timing(this.state.timerDownAnimation, {
+        duration: duration ? duration : 4000,
+        toValue: 0
+      }),
+      Animated.timing(this.state.timerUpAnimation, {
+        duration: duration ? duration : 4000,
+        toValue: 1
+      })
+    ]);
+
+    if (!duration) this.animation.start(data => {
+      if (data.finished) this.nextItem();
+    });
+  }
+
   previousItem = () => {
-    if (this.animation) this.animation.stop();
-    if (this.interval) TimerMixin.clearInterval(this.interval);
+    if (this.animation) {
+      this.animation.stop();
+      this.animation = undefined;
+    }
 
     const currentItem = this.state.item;
     const previousItem = this.state.stories[this.state.index - 1];
@@ -155,39 +188,6 @@ export default class PastModalComponent extends Component {
         timerUpAnimation: new Animated.Value(0)
       });
     }
-  }
-
-  setItem = duration => {
-    this.setState({ buffering: false });
-
-    const currentItem = this.state.item;
-    const nextItem = this.state.stories[this.state.index + 1];
-    if (nextItem) {
-      this.interval = TimerMixin.setTimeout(() => {
-        this.setState({
-          index: this.state.index + 1,
-          item: nextItem,
-          timerDownAnimation: new Animated.Value(1),
-          timerUpAnimation: new Animated.Value(0)
-        });
-      }, this.duration ? duration : 4000);
-    } else if (session.isFacebookUser) {
-      this.interval = TimerMixin.setTimeout(() => this.setState({
-        done: true,
-        rate: 0.0
-      }), this.duration ? duration : 4000);
-    } else this.interval = TimerMixin.setTimeout(this.props.hideModal, this.duration ? duration : 4000);
-
-    this.animation = Animated.parallel([
-      Animated.timing(this.state.timerDownAnimation, {
-        duration: this.duration ? duration : 4000,
-        toValue: 0
-      }),
-      Animated.timing(this.state.timerUpAnimation, {
-        duration: this.duration ? duration : 4000,
-        toValue: 1
-      })
-    ]).start();
   }
 
   share = () => {
@@ -207,7 +207,6 @@ export default class PastModalComponent extends Component {
   }
 
   viewUser = username => {
-    TimerMixin.clearInterval(this.interval);
     this.props.hideModal();
     this.props.navigate('ProfileComponent', {
       tabComponent: this.props.tabComponent,
@@ -241,7 +240,6 @@ export default class PastModalComponent extends Component {
       <Modal
         isOpen={true}
         onClosed={() => {
-          TimerMixin.clearInterval(this.interval);
           this.props.hideModal();
         }}
         swipeToClose={true}>
@@ -270,18 +268,16 @@ export default class PastModalComponent extends Component {
                       playInBackground={false}                // Audio continues to play when app entering background.
                       playWhenInactive={true}                 // [iOS] Video continues to play when control or notification center are shown.
                       ignoreSilentSwitch={"obey"}             // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
-                      onLoad={(data, data1) => {
-                        console.log('onload', data, data1)
-                        this.setItem(data.duration)
-                      }}               // Callback when video loads
+                      onLoad={this.onLoad}               // Callback when video loads
+                      onLoadStart={data => console.log('load start', data)}
                       onEnd={this.onEnd}                      // Callback when playback finishes
                       onError={this.videoError}               // Callback when video cannot be loaded
-                      onBuffer={data => console.log('buffering', data)}                // Callback when remote video is buffering
+                      onBuffer={this.onBuffer}                // Callback when remote video is buffering
                       onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
                       style={styles.background} /> :
                     <Image
-                      onLoad={this.setItem}
-                      onLoadStart={() => this.setState({ buffering: true })}            // Callback when video starts to load
+                      onLoad={this.onLoad}
+                      onLoadStart={() => { }}            // Callback when video starts to load
                       source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} />
                 }
@@ -348,42 +344,27 @@ export default class PastModalComponent extends Component {
                   </KeyboardAvoidingView>
                 }
 
-                {
-                  this.state.buffering ?
-                    <View style={{
-                      alignItems: 'center',
-                      backgroundColor: 'rgba(0,0,0,0.5)',
-                      bottom: 0,
-                      justifyContent: 'center',
-                      left: 0,
-                      position: 'absolute',
-                      right: 0,
-                      top: 0
-                    }}>
-                      <ActivityIndicator size='large' />
-                    </View> :
-                    <View style={{
-                      bottom: 0,
-                      left: 0,
-                      position: 'absolute',
-                      right: 0,
-                      top: 0
-                    }}>
-                      <TouchableHighlight
-                        onPress={this.previousItem}
-                        style={styles.left}
-                        underlayColor='transparent'>
-                        <View />
-                      </TouchableHighlight>
+                <View style={{
+                  bottom: 0,
+                  left: 0,
+                  position: 'absolute',
+                  right: 0,
+                  top: 0
+                }}>
+                  <TouchableHighlight
+                    onPress={this.previousItem}
+                    style={styles.left}
+                    underlayColor='transparent'>
+                    <View />
+                  </TouchableHighlight>
 
-                      <TouchableHighlight
-                        onPress={this.nextItem}
-                        style={styles.right}
-                        underlayColor='transparent'>
-                        <View />
-                      </TouchableHighlight>
-                    </View>
-                }
+                  <TouchableHighlight
+                    onPress={this.nextItem}
+                    style={styles.right}
+                    underlayColor='transparent'>
+                    <View />
+                  </TouchableHighlight>
+                </View>
 
                 { // Comments
                   !this.state.showComments &&
@@ -534,8 +515,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     textAlign: 'left',
-    textShadowColor: 'black',
-    textShadowOffset: { width: 0.5, height: 0.5 }
   },
   right: {
     bottom: 100,
@@ -564,15 +543,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     textAlign: 'right',
-    textShadowColor: 'black',
-    textShadowOffset: { width: 0.5, height: 0.5 }
   },
   username: {
     backgroundColor: 'transparent',
     color: 'white',
     fontSize: 16,
     textAlign: 'right',
-    textShadowColor: 'black',
-    textShadowOffset: { width: 0.5, height: 0.5 }
   }
 });

@@ -71,6 +71,17 @@ export default class UpcomingListComponent extends Component {
                         </View> :
                         <Text style={{ fontSize: 12 }}>You're following this event</Text>
                     }
+
+                    {
+                      rowData.username === session.username &&
+                      <Text
+                        onPress={() => this.props.screenProps.setEvent('delete', rowData)}
+                        style={{ color: 'red', fontSize: 12, fontWeight: 'bold' }}
+                        undelayColor='transparent'>
+                        Delete event
+                  </Text>
+                    }
+
                   </View>
 
                   {/* Timer */}
@@ -114,6 +125,7 @@ export default class UpcomingListComponent extends Component {
                     onPress={() => this.props.screenProps.setEvent('invite', rowData)}
                     size={25} />
                 </View>
+
               </View>)
             }
             style={{ flex: 1 }}

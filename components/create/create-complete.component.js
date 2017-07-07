@@ -34,7 +34,7 @@ export default class CreateCompleteComponent extends Component {
           style={{ alignSelf: 'flex-start' }} />
         <Text h3 style={{ textAlign: 'center' }}>Congratulations!</Text>
         <Image
-          source={{ uri: params.event.cover ? `${params.event.cover}` : `${http.s3}/events/${params.event.id}/cover` }}
+          source={{ uri: params.cover ? `${params.cover}` : `${http.s3}/events/${params.event.id}/cover` }}
           style={{ height: 120 }} />
 
         {/* Timer */}
@@ -62,7 +62,7 @@ export default class CreateCompleteComponent extends Component {
         </View>
 
         {
-          params.isNew ?
+          params.cover ?
             <Text style={styles.text}>
               until you can view the event.{'\n\n'}
               Others may request to add content or view your event.{'\n\n'}

@@ -16,12 +16,10 @@ class s3 {
       ...this.options,
       keyPrefix: keyPrefix
     }
-    console.log('test is', test)
     return RNS3.put(file, { ...this.options, keyPrefix: keyPrefix })
       .then(response => {
         if (response.status !== 201)
           throw 'Failed to upload media.';
-        console.log(response.body);
       });
   }
 }

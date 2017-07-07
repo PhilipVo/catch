@@ -10,15 +10,27 @@ import {
 } from 'react-native';
 import Camera from 'react-native-camera';
 import { Icon } from 'react-native-elements';
-import ProgressCircle from 'react-native-progress/Circle';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 import TabComponent from '../common/tab.component';
 
 export default class CreateCameraComponent extends Component {
   constructor(props) {
     super(props);
+
+    this.captureOptions = {
+      target: Camera.constants.CaptureTarget.temp,
+      mode: Camera.constants.CaptureMode.still
+    };
+
+    this.recordOptions = {
+      audio: true,
+      mode: Camera.constants.CaptureMode.video,
+      target: Camera.constants.CaptureTarget.temp,
+      totalSeconds: 8
+    };
+
     this.state = {
-      d: 0,
       recordAnimation: new Animated.Value(0),
       mirror: false,
       type: 1
@@ -26,30 +38,14 @@ export default class CreateCameraComponent extends Component {
   }
 
   capture = () => {
-    const options = {
-      target: Camera.constants.CaptureTarget.temp,
-      mode: Camera.constants.CaptureMode.still
-    };
-
-    this.camera.capture(options)
+    this.camera.capture(this.captureOptions)
       .then(data => this.props.navigation.navigate('CreatePreviewComponent', { story: data.path }))
-      .catch(error => console.log(error));
+      .catch(() => { });
   }
 
   record = () => {
-    const options = {
-      audio: true,
-      mode: Camera.constants.CaptureMode.video,
-      target: Camera.constants.CaptureTarget.temp,
-      totalSeconds: 8
-    };
-
-    Animated.timing(this.state.recordAnimation, {
-      duration: 8000,
-      toValue: 1
-    }).start();
-
-    this.camera.capture(options)
+    this.refs.circle.performLinearAnimation(100, 8000);
+    this.camera.capture(this.recordOptions)
       .then(data => {
         this.props.navigation.navigate('CreatePreviewComponent', {
           isVideo: true,
@@ -59,6 +55,7 @@ export default class CreateCameraComponent extends Component {
   }
 
   stop = () => {
+    this.refs.circle.state.chartFillAnimation.resetAnimation();
     this.setState({ recordAnimation: new Animated.Value(0) });
     this.camera.stopCapture();
   }
@@ -95,21 +92,29 @@ export default class CreateCameraComponent extends Component {
         <View style={styles.view}>
           <View style={{ flex: 1 }} />
           <View style={styles.buttonView}>
-            <TouchableHighlight
-              onLongPress={this.record}
-              onPress={this.capture}
-              onPressOut={this.stop}
-              style={{ alignSelf: 'center' }}
-              underlayColor='transparent'>
-              <View style={styles.button}>
-                <View style={{
-                  backgroundColor: 'red',
-                  borderRadius: 45 * this.state.d,
-                  height: 90 * this.state.d,
-                  width: 90 * this.state.d,
-                }} />
-              </View>
-            </TouchableHighlight>
+            <AnimatedCircularProgress
+              backgroundColor='gray'
+              fill={0}
+              ref='circle'
+              rotation={0}
+              size={90}
+              style={{
+                alignSelf: 'center',
+                backgroundColor: 'transparent',
+              }}
+              tintColor="rgba(255,0,0,1)"
+              width={5}>
+              {() => (
+                <TouchableHighlight
+                  onLongPress={this.record}
+                  onPress={this.capture}
+                  onPressOut={this.stop}
+                  style={{ alignSelf: 'center', position: 'absolute' }}
+                  underlayColor='transparent'>
+                  <View style={styles.button} />
+                </TouchableHighlight>
+              )}
+            </AnimatedCircularProgress>
           </View>
           <View style={styles.flip}>
             <Icon
@@ -136,9 +141,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width
   },
   button: {
-    borderColor: 'rgba(255,255,255,0.5)',
     borderRadius: 45,
-    borderWidth: 2,
     height: 90,
     width: 90
   },

@@ -50,6 +50,7 @@ export default class CreateNewEventComponent extends Component {
       date: Date.now(),
       description: '',
       error: null,
+      filter: '',
       isOpen: false,
       isVisible: false,
       saving: false,
@@ -104,10 +105,16 @@ export default class CreateNewEventComponent extends Component {
     });
 
     if (!this.state.cover)
-      return this.setState({ coverError: true });
+      return this.setState({
+        coverError: true,
+        saving: false
+      });
 
     if (this.state.title.length === 0)
-      return this.setState({ titleError: true });
+      return this.setState({
+        saving: false,
+        titleError: true
+      });
 
     const event = {
       audience: this.state.audience,
@@ -133,13 +140,8 @@ export default class CreateNewEventComponent extends Component {
           uri: this.state.cover
         };
 
-        return s3.put(file, `events/${data.eventId}/`)
-          .then(() => Promise.resolve(data))
-          .catch(error => {
-            console.log('aws error', error)
-            throw error
-          });
-      }).then(data => {
+        s3.put(file, `events/${data.eventId}/`).catch(error => { throw error });
+
         // Upload story:
         if (data.storyId) {
           const file = {
@@ -148,24 +150,26 @@ export default class CreateNewEventComponent extends Component {
             uri: event.story
           };
 
-          return s3.put(file, `events/${data.eventId}/`);
+          s3.put(file, `events/${data.eventId}/`).catch(error => { throw error });
         }
-      }).then(() => {
+
+        // Send out SMS invites:
         const recipients = Object.keys(this.numbers);
         if (recipients.length > 0) return SendSMS.send({
           body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
           recipients: recipients,
           successTypes: ['sent', 'queued']
         }, (completed, cancelled, error) => { });
-      }).then(() => {
+
         socket.emit('event');
 
+        // Navigate to completion screen:
         this.props.navigation.dispatch(NavigationActions.reset({
           actions: [
             NavigationActions.navigate({
               params: {
-                event: event,
-                isNew: true
+                cover: this.state.cover,
+                event: event
               },
               routeName: 'CreateCompleteComponent'
             })
@@ -173,12 +177,15 @@ export default class CreateNewEventComponent extends Component {
           index: 0
         }));
       }).catch(error => {
-        console.log(error)
-        this.setState({
-          error: typeof error === 'string' ? error : 'Oops, something went wrong.',
-          saving: false
-        })
+        Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       });
+  }
+
+  filter = filter => {
+    this.setState({
+      filter: filter,
+      dataSource: this.ds.cloneWithRows(this.state.data)
+    })
   }
 
   goBack = () => {
@@ -240,6 +247,7 @@ export default class CreateNewEventComponent extends Component {
 
               {/* Header */}
               <View style={styles.header}>
+
                 <View style={{ flex: 1 }}>
                   <Icon
                     name='angle-left'
@@ -351,6 +359,7 @@ export default class CreateNewEventComponent extends Component {
                 </Text>
 
                 </View>
+
               </View>
 
               {/* Footer */}
@@ -382,94 +391,108 @@ export default class CreateNewEventComponent extends Component {
           style={{ borderRadius: 10, height: 500, padding: 20, width: 300 }}
           swipeToClose={false}>
 
-          <View style={{ flex: 10 }}>
-            <Text style={{ fontSize: 16, textAlign: 'center' }}>Invite contributors</Text>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{ flex: 1 }}>
+              <View style={{ flex: 10 }}>
+                <Text style={{ fontSize: 16, textAlign: 'center' }}>Invite contributors</Text>
 
-            <View style={{
-              alignSelf: 'center',
-              height: 0.5,
-              backgroundColor: 'black',
-              marginVertical: 10,
-              width: 250
-            }} />
+                <View style={{
+                  alignSelf: 'center',
+                  height: 0.5,
+                  backgroundColor: 'black',
+                  marginVertical: 10,
+                  width: 250
+                }} />
 
-            {
-              this.state.data.length > 0 ?
-                <ListView
-                  dataSource={this.state.dataSource}
-                  removeClippedSubviews={false}
-                  renderRow={(rowData, sectionID, rowID) => (
+                <TextInput
+                  autoCapitalize='none'
+                  autoCorrect={false}
+                  onChangeText={this.filter}
+                  placeholder='filter'
+                  placeholderTextColor='gray'
+                  style={styles.filter} />
 
-                    rowData.isBreak ?
-                      <Text style={{
-                        fontSize: 16,
-                        padding: 10,
-                        textAlign: 'center'
-                      }}>
-                        From address book:
-                              </Text> :
-                      <View style={{
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        padding: 5,
-                      }}>
+                {
+                  this.state.data.length > 0 ?
+                    <ListView
+                      dataSource={this.state.dataSource}
+                      removeClippedSubviews={false}
+                      renderRow={(rowData, sectionID, rowID) => (
 
-                        {
-                          rowData.contact ?
-                            <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
-                            <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
-                        }
+                        rowData.isBreak ?
+                          <Text style={{
+                            fontSize: 16,
+                            padding: 10,
+                            textAlign: 'center'
+                          }}>
+                            From address book:
+                          </Text> :
+                          rowData.contact && rowData.contact.toLowerCase().includes(this.state.filter) ||
+                            rowData.givenName && rowData.givenName.toLowerCase().includes(this.state.filter) ||
+                            rowData.familyName && rowData.familyName.toLowerCase().includes(this.state.filter) ?
+                            <View style={{
+                              alignItems: 'center',
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              padding: 5,
+                            }}>
 
-                        <TouchableHighlight
-                          onPress={() => this.invite(rowData, rowID)}
-                          underlayColor='transparent'>
-                          {
-                            rowData.invited ?
-                              <View style={{
-                                alignItems: 'center',
-                                backgroundColor: '#f74434',
-                                borderWidth: 0.5,
-                                borderRadius: 5,
-                                flexDirection: 'row',
-                                paddingHorizontal: 10
-                              }}>
-                                <Text>Invited</Text>
-                                <Icon name='add' />
-                              </View> :
-                              <View style={{
-                                alignItems: 'center',
-                                borderWidth: 0.5,
-                                borderRadius: 5,
-                                flexDirection: 'row',
-                                paddingHorizontal: 10
-                              }}>
-                                <Text>Invite</Text>
-                                <Icon name='add' />
-                              </View>
-                          }
-                        </TouchableHighlight>
-                      </View>
-                  )} /> :
-                <Text style={{ color: 'gray', textAlign: 'center' }}>
-                  Event has no contributors
+                              {
+                                rowData.contact ?
+                                  <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
+                                  <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                              }
+
+                              <TouchableHighlight
+                                onPress={() => this.invite(rowData, rowID)}
+                                underlayColor='transparent'>
+                                {
+                                  rowData.invited ?
+                                    <View style={{
+                                      alignItems: 'center',
+                                      backgroundColor: '#f74434',
+                                      borderWidth: 0.5,
+                                      borderRadius: 5,
+                                      flexDirection: 'row',
+                                      paddingHorizontal: 10
+                                    }}>
+                                      <Text>Invited</Text>
+                                      <Icon name='add' />
+                                    </View> :
+                                    <View style={{
+                                      alignItems: 'center',
+                                      borderWidth: 0.5,
+                                      borderRadius: 5,
+                                      flexDirection: 'row',
+                                      paddingHorizontal: 10
+                                    }}>
+                                      <Text>Invite</Text>
+                                      <Icon name='add' />
+                                    </View>
+                                }
+                              </TouchableHighlight>
+                            </View> : null
+                      )} /> :
+                    <Text style={{ color: 'gray', textAlign: 'center' }}>
+                      Event has no contributors
                     </Text>
-            }
-          </View>
+                }
+              </View>
 
-          <View style={{
-            alignItems: 'center',
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'center'
-          }}>
-            <Text
-              onPress={() => this.setState({ isOpen: false })}
-              style={{ borderColor: 'black', borderRadius: 5, borderWidth: 0.5, padding: 7 }}>
-              Done
+              <View style={{
+                alignItems: 'center',
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}>
+                <Text
+                  onPress={() => this.setState({ isOpen: false })}
+                  style={{ borderColor: 'black', borderRadius: 5, borderWidth: 0.5, padding: 7 }}>
+                  Done
                 </Text>
-          </View>
-
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
         </Modal>
 
       </View>
@@ -505,6 +528,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     height: 60,
     padding: 5
+  },
+  filter: {
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    fontSize: 14,
+    height: 25,
+    padding: 5,
+    textAlign: 'center'
   },
   header: {
     alignItems: 'center',

@@ -71,6 +71,7 @@ class SessionService {
         // Set user:
         payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
         this.isFacebookUser = payload.isFacebookUser;
+        // this.isFacebookUser = true;
         this.username = payload.username;
 
         // Configure notifications:        

@@ -5,6 +5,7 @@ import { NavigationActions, TabNavigator } from 'react-navigation';
 
 import AccountDetailsComponent from './account-details.component';
 import AccountNotificationListComponent from './account-notification-list.component';
+import DeleteModalComponent from '../common/delete-modal.component';
 import InviteModalComponent from '../common/invite-modal.component';
 import InvitedModalComponent from '../common/invited-modal.component';
 import PastListComponent from '../common/past-list.component';
@@ -144,27 +145,32 @@ export default class AccountComponent extends Component {
         </View>
 
         { // Modals
-          this.state.modal === 'upcoming' ?
-            <UpcomingModalComponent
+          this.state.modal === 'delete' ?
+            <DeleteModalComponent
               event={this.state.event}
               hideModal={this.hideModal}
-              navigate={this.props.navigation.navigate}
-              tabComponent={this.tabComponent} /> :
-            this.state.modal === 'past' ?
-              <PastModalComponent
+              onDelete={this.getMyInfo} /> :
+            this.state.modal === 'upcoming' ?
+              <UpcomingModalComponent
                 event={this.state.event}
                 hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
                 tabComponent={this.tabComponent} /> :
-              this.state.modal === 'invite' ?
-                <InviteModalComponent
+              this.state.modal === 'past' ?
+                <PastModalComponent
                   event={this.state.event}
-                  hideModal={this.hideModal} /> :
-                this.state.modal === 'invited' ?
-                  <InvitedModalComponent
+                  hideModal={this.hideModal}
+                  navigate={this.props.navigation.navigate}
+                  tabComponent={this.tabComponent} /> :
+                this.state.modal === 'invite' ?
+                  <InviteModalComponent
                     event={this.state.event}
                     hideModal={this.hideModal} /> :
-                  null
+                  this.state.modal === 'invited' ?
+                    <InvitedModalComponent
+                      event={this.state.event}
+                      hideModal={this.hideModal} /> :
+                    null
         }
 
       </View>

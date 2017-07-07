@@ -65,7 +65,11 @@ export default class AccountNotificationListComponent extends Component {
                         rowData.type === 'contacted' ?
                           `${rowData.notifier} added you as a contact` :
                           rowData.type === 'contributed' ?
-                            `${rowData.notifier} added to {${rowData.title}}` : null
+                            `${rowData.notifier} added to {${rowData.title}}` :
+                            rowData.type === 'invited' ?
+                              `You can now add to {${rowData.title}}` :
+                              rowData.type === 'requested' ?
+                                `Can ${rowData.notifier} added to {${rowData.title}}` : null
                     }
                   </Text>
                 </View>
