@@ -149,7 +149,6 @@ export default class PastModalComponent extends Component {
 
   onLoad = data => {
     const duration = data.duration ? parseInt(data.duration * 1000, 10) : false;
-    console.log('duration is', duration)
 
     this.animation = Animated.parallel([
       Animated.timing(this.state.timerDownAnimation, {
@@ -168,14 +167,15 @@ export default class PastModalComponent extends Component {
   }
 
   previousItem = () => {
-    if (this.animation) {
-      this.animation.stop();
-      this.animation = undefined;
-    }
-
     const currentItem = this.state.item;
     const previousItem = this.state.stories[this.state.index - 1];
+
     if (previousItem) {
+      if (this.animation) {
+        this.animation.stop();
+        this.animation = undefined;
+      }
+
       this.setState({
         index: this.state.index - 1,
         item: previousItem,
@@ -183,9 +183,12 @@ export default class PastModalComponent extends Component {
         timerUpAnimation: new Animated.Value(0)
       });
     } else {
-      this.setState({
-        timerDownAnimation: new Animated.Value(1),
-        timerUpAnimation: new Animated.Value(0)
+      this.animation.reset();
+
+      if (this.state.item.type === 1) this.player.seek(0);
+
+      this.animation.start(data => {
+        if (data.finished) this.nextItem();
       });
     }
   }
@@ -264,7 +267,7 @@ export default class PastModalComponent extends Component {
                       muted={false}                           // Mutes the audio entirely.
                       paused={false}                          // Pauses playback entirely.
                       resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-                      repeat={true}                           // Repeat forever.
+                      repeat={false}                           // Repeat forever.
                       playInBackground={false}                // Audio continues to play when app entering background.
                       playWhenInactive={true}                 // [iOS] Video continues to play when control or notification center are shown.
                       ignoreSilentSwitch={"obey"}             // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.

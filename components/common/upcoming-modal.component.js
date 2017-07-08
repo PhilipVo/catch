@@ -19,30 +19,30 @@ import Modal from 'react-native-modalbox';
 
 import TabComponent from '../common/tab.component';
 
+import http from '../../services/http.service';
 import session from '../../services/session.service';
 import socket from '../../services/socket.service';
-
-import http from '../../services/http.service';
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
     super(props);
-
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       comment: '',
       comments: [],
+      followers: 0,
       dataSource: this.ds.cloneWithRows([]),
-      loading: true
+      loading: true,
+      status: -1
     };
   }
 
   componentDidMount() {
-    this.getComments();
+    this.getDetails();
   }
 
   componentDidUpdate() {
-    // setTimeout(() => _listView.scrollToEnd(), 1000);
+    setTimeout(() => _listView.scrollToEnd(), 1000);
   }
 
   comment = () => {
@@ -54,7 +54,7 @@ export default class UpcomingModalComponent extends Component {
         title: this.props.event.title
       })).then(() => {
         this.setState({ comment: '' });
-        this.getComments();
+        this.getDetails();
         socket.emit('commented', {
           commenter: session.username,
           creator: this.props.event.username,
@@ -64,19 +64,60 @@ export default class UpcomingModalComponent extends Component {
     }
   }
 
-  getComments = () => {
-    http.get(`/api/comments/get-comments-for-event/${this.props.event.id}`)
-      .then(comments => {
+  getDetails = () => {
+    http.get(`/api/events/get-details-for-event/${this.props.event.id}`)
+      .then(data => {
         this.setState({
-          comments: comments,
-          dataSource: this.ds.cloneWithRows(comments),
-          loading: false
+          comments: data.comments,
+          dataSource: this.ds.cloneWithRows(data.comments),
+          followers: data.followers,
+          loading: false,
+          status: data.status
         });
       }).catch(() => { });
   }
 
   toggleNotifications = () => {
+    const currentStatus = this.state.status;
 
+    let request;
+    if (this.state.status === -1) {
+      this.setState({
+        followers: this.state.followers + 1,
+        status: 1
+      })
+      request = http.post('/api/contributors/follow', JSON.stringify({
+        ...this.props.event,
+        status: this.state.status
+      }));
+    } else if (this.state.status === 1) {
+      this.setState({
+        followers: this.state.followers - 1,
+        status: -1
+      })
+      request = http.delete(`/api/contributors/${this.props.event.id}`);
+    } else if (this.state.status === 2) {
+      this.setState({
+        followers: this.state.followers + 1,
+        status: 3
+      })
+      request = http.put('/api/contributors/watch', JSON.stringify({
+        ...this.props.event,
+        status: this.state.status
+      }));
+    } else if (this.state.status === 3) {
+      this.setState({
+        followers: this.state.followers - 1,
+        status: 2
+      })
+      request = http.put('/api/contributors/unwatch', JSON.stringify({
+        ...this.props.event,
+        status: this.state.status
+      }));
+    }
+
+    request.then(() => { })
+      .catch(error => this.setState({ status: currentStatus }))
   }
 
   viewUser = username => {
@@ -135,26 +176,35 @@ export default class UpcomingModalComponent extends Component {
                   style={styles.username}>
                   {this.props.event.username}
                 </Text>
-                <Text style={styles.modalText1}>{'27 Following'}</Text>
+                <Text style={styles.modalText1}>{this.state.followers} Following</Text>
               </View>
-              <TouchableHighlight
-                onPress={this.toggleNotifications}
-                underlayColor='transparent'>
-                <View style={{
-                  alignItems: 'center',
-                  backgroundColor: 'green',
-                  borderRadius: 5,
-                  padding: 5
-                }}>
-                  <Text style={{
-                    color: 'white',
-                    fontSize: 12,
-                    fontWeight: 'bold'
+              {
+                this.props.event.username !== session.username &&
+                (this.props.event.audience === 0 ||
+                  this.state.status > 0) &&
+                <TouchableHighlight
+                  onPress={this.toggleNotifications}
+                  underlayColor='transparent'>
+                  <View style={{
+                    alignItems: 'center',
+                    backgroundColor: this.state.status === -1 || this.state.status == 2 ? 'green' : 'white',
+                    borderRadius: 5,
+                    padding: 5
                   }}>
-                    Turn On Notifications
-                  </Text>
-                </View>
-              </TouchableHighlight>
+                    <Text style={{
+                      color: this.state.status === -1 || this.state.status == 2 ? 'white' : 'black',
+                      fontSize: 12,
+                      fontWeight: 'bold'
+                    }}>
+                      {
+                        this.state.status === -1 || this.state.status == 2 ?
+                          'Turn On Notifications' :
+                          'Turn Off Notifications'
+                      }
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+              }
             </View>
 
             <Text style={styles.modalText3}>{this.props.event.description}</Text>

@@ -19,8 +19,8 @@ export default class CreateCameraComponent extends Component {
     super(props);
 
     this.captureOptions = {
-      target: Camera.constants.CaptureTarget.temp,
-      mode: Camera.constants.CaptureMode.still
+      mode: Camera.constants.CaptureMode.still,
+      target: Camera.constants.CaptureTarget.temp
     };
 
     this.recordOptions = {
