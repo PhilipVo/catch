@@ -6,15 +6,11 @@ import com.facebook.react.ReactApplication;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
-import com.rt2zz.reactnativecontacts.ReactNativeContacts;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
-import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.brentvatne.react.ReactVideoPackage;
+import com.shahenlibrary.RNVideoProcessingPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -45,13 +41,13 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new FBSDKPackage(mCallbackManager),
             new ReactNativeContacts(),
+            new RCTCameraPackage(),
+            new FBSDKPackage(mCallbackManager),
             new ReactNativePushNotificationPackage(),
             new PickerPackage(),
             new ReactVideoPackage(),
-            new VectorIconsPackage(),
-            new RCTCameraPackage()
+            new VectorIconsPackage()
       );
     }
   };
