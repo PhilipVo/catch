@@ -24,8 +24,9 @@ export default class InvitedModalComponent extends Component {
   }
 
   componentDidMount() {
-    http.get(`/api/contributors/get-contributors-for-event/${this.props.event.id}`)
+    http.get(`/api/contacts/get-contacts-for-user/${this.props.username}`)
       .then(data => {
+        console.log(data)
         this.setState({
           data: data,
           dataSource: this.ds.cloneWithRows(data),
@@ -46,12 +47,8 @@ export default class InvitedModalComponent extends Component {
         style={{ borderRadius: 10, height: 500, padding: 20, width: 300 }}
         swipeToClose={false}>
 
-
         <View style={{ alignItems: 'center', flex: 10 }}>
-          <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>
-            {this.props.event.title}
-          </Text>
-          <Text style={{ fontSize: 12, textAlign: 'center' }}>Contributors</Text>
+          <Text style={{ fontSize: 16, textAlign: 'center' }}>Friends</Text>
 
           <View style={{
             alignSelf: 'center',
@@ -69,13 +66,22 @@ export default class InvitedModalComponent extends Component {
                   dataSource={this.state.dataSource}
                   removeClippedSubviews={false}
                   renderRow={(rowData, sectionID, rowID) => (
-                    <Text style={{ fontSize: 16, textAlign: 'center' }}>{rowData.username}</Text>
-                  )}
-                /> :
+                    <Text
+                      onPress={() => this.props.viewUser(rowData.contact)}
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        padding: 5,
+                        textAlign: 'center'
+                      }}>
+                      {rowData.contact}
+                    </Text>
+                  )} /> :
                 <Text style={{ color: 'gray', textAlign: 'center' }}>
-                  Event has no contributors
+                  No contacts found
                 </Text>
           }
+
         </View>
 
         <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>

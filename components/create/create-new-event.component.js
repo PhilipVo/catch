@@ -1,4 +1,4 @@
-const contacts = require('react-native-contacts');
+const Contacts = require('react-native-contacts');
 const moment = require('moment');
 
 import React, { Component } from 'react';
@@ -27,6 +27,7 @@ import SegmentedControlTab from 'react-native-segmented-control-tab';
 import SendSMS from 'react-native-sms';
 // import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
+import { Observable } from 'rxjs/Observable';
 
 import http from '../../services/http.service';
 import s3 from '../../services/s3.service';
@@ -40,6 +41,8 @@ export default class CreateNewEventComponent extends Component {
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.contributors = {};
     this.numbers = {};
+    this.contacts = [];
+    this.term = '';
 
     this.state = {
       audience: 0,
@@ -50,7 +53,6 @@ export default class CreateNewEventComponent extends Component {
       date: Date.now(),
       description: '',
       error: null,
-      filter: '',
       isOpen: false,
       isVisible: false,
       saving: false,
@@ -81,17 +83,10 @@ export default class CreateNewEventComponent extends Component {
   componentDidMount() {
     http.get('/api/contacts')
       .then(data => {
-        let allContacts = [];
-        if (data.length > 0) allContacts = allContacts.concat(data);
-        return contacts.getAllWithoutPhotos((error, contacts) => {
-          if (error) throw error;
-          if (contacts.length > 0) allContacts = allContacts.concat([{ isBreak: true }])
-            .concat(JSON.parse(JSON.stringify(contacts)));
-
-          this.setState({
-            data: allContacts,
-            dataSource: this.ds.cloneWithRows(allContacts)
-          });
+        this.contacts = data;
+        this.setState({
+          data: data,
+          dataSource: this.ds.cloneWithRows(data)
         });
       }).catch(() => { });
   }
@@ -128,9 +123,6 @@ export default class CreateNewEventComponent extends Component {
       title: this.state.title
     };
 
-    console.log('date is:', event.date)
-    console.log('date formatted:', new Date(event.date).toISOString())
-
     http.post('/api/events', JSON.stringify(event))
       .then(data => {
         // Upload cover:
@@ -159,7 +151,9 @@ export default class CreateNewEventComponent extends Component {
           body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
           recipients: recipients,
           successTypes: ['sent', 'queued']
-        }, (completed, cancelled, error) => { });
+        }, (completed, cancelled, error) => {
+          if (error) this.setState({ saving: false });
+        });
 
         socket.emit('event');
 
@@ -177,15 +171,9 @@ export default class CreateNewEventComponent extends Component {
           index: 0
         }));
       }).catch(error => {
+        this.setState({ saving: false });
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       });
-  }
-
-  filter = filter => {
-    this.setState({
-      filter: filter,
-      dataSource: this.ds.cloneWithRows(this.state.data)
-    })
   }
 
   goBack = () => {
@@ -210,7 +198,7 @@ export default class CreateNewEventComponent extends Component {
         dataSource: this.ds.cloneWithRows(_data)
       });
     }
-    // Else remove contributor: 
+    // Else remove contributor:
     else {
       const _data = this.state.data.slice();
       _data[rowID].invited = false;
@@ -235,6 +223,28 @@ export default class CreateNewEventComponent extends Component {
     })
       .then(image => this.setState({ cover: image.path }))
       .catch(() => { });
+  }
+
+  search = term => {
+    if (this.subscription) this.subscription.unsubscribe();
+
+    this.subscription = Observable.create(observer => {
+      Contacts.getContactsMatchingString(term, (error, contacts) => {
+        if (error) console.log(error)
+        else observer.next(contacts)
+      });
+    }).subscribe(contacts => {
+      let _data = this.contacts.slice();
+
+      if (contacts.length > 0) _data = _data.concat([{ isBreak: true }]);
+      _data = _data.concat(JSON.parse(JSON.stringify(contacts)));
+
+      this.setState({
+        data: _data,
+        dataSource: this.ds.cloneWithRows(_data),
+        loading: false
+      });
+    });
   }
 
   render() {
@@ -407,7 +417,7 @@ export default class CreateNewEventComponent extends Component {
                 <TextInput
                   autoCapitalize='none'
                   autoCorrect={false}
-                  onChangeText={this.filter}
+                  onChangeText={this.search}
                   placeholder='filter'
                   placeholderTextColor='gray'
                   style={styles.filter} />
@@ -427,55 +437,50 @@ export default class CreateNewEventComponent extends Component {
                           }}>
                             From address book:
                           </Text> :
-                          rowData.contact && rowData.contact.toLowerCase().includes(this.state.filter) ||
-                            rowData.givenName && rowData.givenName.toLowerCase().includes(this.state.filter) ||
-                            rowData.familyName && rowData.familyName.toLowerCase().includes(this.state.filter) ?
-                            <View style={{
-                              alignItems: 'center',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              padding: 5,
-                            }}>
+                          <View style={{
+                            alignItems: 'center',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            padding: 5,
+                          }}>
 
+                            {
+                              rowData.contact ?
+                                <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
+                                <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                            }
+
+                            <TouchableHighlight
+                              onPress={() => this.invite(rowData, rowID)}
+                              underlayColor='transparent'>
                               {
-                                rowData.contact ?
-                                  <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
-                                  <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                                rowData.invited || (rowData.phoneNumbers &&
+                                  this.numbers[[rowData.phoneNumbers[0].number]]) ?
+                                  <View style={{
+                                    alignItems: 'center',
+                                    backgroundColor: '#f74434',
+                                    borderWidth: 0.5,
+                                    borderRadius: 5,
+                                    flexDirection: 'row',
+                                    paddingHorizontal: 10
+                                  }}>
+                                    <Text>Invited</Text>
+                                    <Icon name='add' />
+                                  </View> :
+                                  <View style={{
+                                    alignItems: 'center',
+                                    borderWidth: 0.5,
+                                    borderRadius: 5,
+                                    flexDirection: 'row',
+                                    paddingHorizontal: 10
+                                  }}>
+                                    <Text>Invite</Text>
+                                    <Icon name='add' />
+                                  </View>
                               }
-
-                              <TouchableHighlight
-                                onPress={() => this.invite(rowData, rowID)}
-                                underlayColor='transparent'>
-                                {
-                                  rowData.invited ?
-                                    <View style={{
-                                      alignItems: 'center',
-                                      backgroundColor: '#f74434',
-                                      borderWidth: 0.5,
-                                      borderRadius: 5,
-                                      flexDirection: 'row',
-                                      paddingHorizontal: 10
-                                    }}>
-                                      <Text>Invited</Text>
-                                      <Icon name='add' />
-                                    </View> :
-                                    <View style={{
-                                      alignItems: 'center',
-                                      borderWidth: 0.5,
-                                      borderRadius: 5,
-                                      flexDirection: 'row',
-                                      paddingHorizontal: 10
-                                    }}>
-                                      <Text>Invite</Text>
-                                      <Icon name='add' />
-                                    </View>
-                                }
-                              </TouchableHighlight>
-                            </View> : null
-                      )} /> :
-                    <Text style={{ color: 'gray', textAlign: 'center' }}>
-                      Event has no contributors
-                    </Text>
+                            </TouchableHighlight>
+                          </View>
+                      )} /> : null
                 }
               </View>
 

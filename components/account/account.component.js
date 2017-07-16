@@ -6,6 +6,7 @@ import { NavigationActions, TabNavigator } from 'react-navigation';
 import AccountDetailsComponent from './account-details.component';
 import AccountNotificationListComponent from './account-notification-list.component';
 import DeleteModalComponent from '../common/delete-modal.component';
+import FriendsModalComponent from '../common/friends-modal.component';
 import InviteModalComponent from '../common/invite-modal.component';
 import InvitedModalComponent from '../common/invited-modal.component';
 import PastListComponent from '../common/past-list.component';
@@ -15,7 +16,6 @@ import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
-import session from '../../services/session.service';
 import socket from '../../services/socket.service';
 
 export default class AccountComponent extends Component {
@@ -40,10 +40,8 @@ export default class AccountComponent extends Component {
     this.onCommented = socket.onCommented.subscribe(data => this.getMyInfo());
     this.onContacted = socket.onContacted.subscribe(data => this.getMyInfo());
     this.onContributed = socket.onContributed.subscribe(data => this.getMyInfo());
-    this.onEvent = socket.onEvent.subscribe(() => {
-      console.log('got event')
-      this.getMyInfo()
-    });
+    this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
+    this.onInvited = socket.onInvited.subscribe(data => this.getMyInfo());
   }
 
   componentDidMount() {
@@ -89,6 +87,13 @@ export default class AccountComponent extends Component {
     });
   }
 
+  viewUser = username => {
+    this.props.navigation.navigate('ProfileComponent', {
+      tabComponent: this.tabComponent,
+      username: username
+    });
+  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -98,6 +103,8 @@ export default class AccountComponent extends Component {
             <AccountDetailsComponent
               events={this.state.past.length + this.state.upcoming.length}
               navigate={this.props.navigation.navigate}
+              setEvent={this.setEvent}
+              tabComponent={this.tabComponent}
               user={this.state.user} />
 
             {/* Top tab bar */}
@@ -150,27 +157,32 @@ export default class AccountComponent extends Component {
               event={this.state.event}
               hideModal={this.hideModal}
               onDelete={this.getMyInfo} /> :
-            this.state.modal === 'upcoming' ?
-              <UpcomingModalComponent
-                event={this.state.event}
+            this.state.modal === 'friends' ?
+              <FriendsModalComponent
                 hideModal={this.hideModal}
-                navigate={this.props.navigation.navigate}
-                tabComponent={this.tabComponent} /> :
-              this.state.modal === 'past' ?
-                <PastModalComponent
+                username={this.state.event}
+                viewUser={this.viewUser} /> :
+              this.state.modal === 'upcoming' ?
+                <UpcomingModalComponent
                   event={this.state.event}
                   hideModal={this.hideModal}
                   navigate={this.props.navigation.navigate}
                   tabComponent={this.tabComponent} /> :
-                this.state.modal === 'invite' ?
-                  <InviteModalComponent
+                this.state.modal === 'past' ?
+                  <PastModalComponent
                     event={this.state.event}
-                    hideModal={this.hideModal} /> :
-                  this.state.modal === 'invited' ?
-                    <InvitedModalComponent
+                    hideModal={this.hideModal}
+                    navigate={this.props.navigation.navigate}
+                    tabComponent={this.tabComponent} /> :
+                  this.state.modal === 'invite' ?
+                    <InviteModalComponent
                       event={this.state.event}
                       hideModal={this.hideModal} /> :
-                    null
+                    this.state.modal === 'invited' ?
+                      <InvitedModalComponent
+                        event={this.state.event}
+                        hideModal={this.hideModal} /> :
+                      null
         }
 
       </View>

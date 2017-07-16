@@ -9,10 +9,8 @@ import {
 import { h3, Icon, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
-import session from '../../services/session.service';
-import socket from '../../services/socket.service';
-
 import http from '../../services/http.service';
+import session from '../../services/session.service';
 
 export default class CreateCompleteComponent extends Component {
   render() {
@@ -70,7 +68,6 @@ export default class CreateCompleteComponent extends Component {
             </Text> :
             <Text style={styles.text}>
               until you can view the event.{'\n\n'}
-              Black Widow and Ironman also added to this event.{'\n\n'}
               When the countdown is complete, you will be able to view {params.event.title}
             </Text>
         }

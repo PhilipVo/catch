@@ -12,7 +12,6 @@ import { Icon } from 'react-native-elements';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class AccountNotificationListComponent extends Component {
   constructor(props) {
@@ -65,11 +64,11 @@ export default class AccountNotificationListComponent extends Component {
                         rowData.type === 'contacted' ?
                           `${rowData.notifier} added you as a contact` :
                           rowData.type === 'contributed' ?
-                            `${rowData.notifier} added to {${rowData.title}}` :
+                            `${rowData.notifier} added to ${rowData.title}` :
                             rowData.type === 'invited' ?
-                              `You can now add to {${rowData.title}}` :
+                              `You can now add to ${rowData.title}` :
                               rowData.type === 'requested' ?
-                                `Can ${rowData.notifier} added to {${rowData.title}}` : null
+                                `Can ${rowData.notifier} added to ${rowData.title}` : null
                     }
                   </Text>
                 </View>

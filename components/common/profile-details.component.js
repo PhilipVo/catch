@@ -85,10 +85,14 @@ export default class ProfileDetailsComponent extends Component {
               </TouchableHighlight>
           }
           <View style={styles.count}>
-            <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
-              <Text style={{ fontSize: 10 }}>Friends</Text>
-            </View>
+            <TouchableHighlight
+              onPress={() => this.props.setEvent('friends', this.props.user.username)}
+              underlayColor='transparent'>
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
+                <Text style={{ fontSize: 10 }}>Friends</Text>
+              </View>
+            </TouchableHighlight>
             <View style={{ alignItems: 'center' }}>
               <Text style={{ fontSize: 16 }}>{this.props.events}</Text>
               <Text style={{ fontSize: 10 }}>Events</Text>

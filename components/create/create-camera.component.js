@@ -31,8 +31,9 @@ export default class CreateCameraComponent extends Component {
     };
 
     this.state = {
-      recordAnimation: new Animated.Value(0),
+      flashMode: 2,
       mirror: false,
+      recordAnimation: new Animated.Value(0),
       type: 1
     };
   }
@@ -42,6 +43,8 @@ export default class CreateCameraComponent extends Component {
       .then(data => this.props.navigation.navigate('CreatePreviewComponent', { story: data.path }))
       .catch(() => { });
   }
+
+  onZoomChanged = () => { }
 
   record = () => {
     this.refs.circle.performLinearAnimation(100, 8000);
@@ -60,7 +63,13 @@ export default class CreateCameraComponent extends Component {
     this.camera.stopCapture();
   }
 
-  toggle = () => {
+  toggleFlashMode = () => {
+    if (this.state.flashMode === 2) this.setState({ flashMode: 1 });
+    else if (this.state.flashMode === 1) this.setState({ flashMode: 0 });
+    else this.setState({ flashMode: 2 });
+  }
+
+  toggleType = () => {
     if (this.state.type === 1) this.setState({ mirror: true, type: 2 });
     else this.setState({ mirror: false, type: 1 });
   }
@@ -68,7 +77,10 @@ export default class CreateCameraComponent extends Component {
   render() {
     return (
       <Camera
+        flashMode={this.state.flashMode}
+        orientation='portrait'
         mirrorImage={this.state.mirror}
+        onZoomChanged={this.onZoomChanged}
         ref={cam => this.camera = cam}
         style={styles.camera}
         type={this.state.type}>
@@ -90,7 +102,17 @@ export default class CreateCameraComponent extends Component {
 
         {/* Capture button */}
         <View style={styles.view}>
-          <View style={{ flex: 1 }} />
+          <View style={styles.light}>
+            <Icon
+              color='rgba(255,255,255,0.5)'
+              name={this.state.flashMode === 0 ? 'flash-off' :
+                this.state.flashMode === 1 ? 'flash-on' :
+                  'flash-auto'}
+              onPress={this.toggleFlashMode}
+              size={35}
+              style={{ marginBottom: 30 }}
+              underlayColor='transparent' />
+          </View>
           <View style={styles.buttonView}>
             <AnimatedCircularProgress
               backgroundColor='gray'
@@ -120,7 +142,7 @@ export default class CreateCameraComponent extends Component {
             <Icon
               color='rgba(255,255,255,0.5)'
               name='loop'
-              onPress={this.toggle}
+              onPress={this.toggleType}
               size={35}
               style={{ marginBottom: 30 }}
               underlayColor='transparent' />
@@ -151,6 +173,11 @@ const styles = StyleSheet.create({
   },
   flip: {
     alignItems: 'flex-start',
+    flex: 1,
+    justifyContent: 'flex-end'
+  },
+  light: {
+    alignItems: 'flex-end',
     flex: 1,
     justifyContent: 'flex-end'
   },

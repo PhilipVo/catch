@@ -40,10 +40,14 @@ export default class AccountDetailsComponent extends Component {
           <Text style={styles.username}>{session.username}</Text>
           <View style={{ paddingVertical: 10 }} >
             <View style={styles.count}>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
-                <Text style={{ fontSize: 10 }}>Friends</Text>
-              </View>
+              <TouchableHighlight
+                onPress={() => this.props.setEvent('friends', this.props.user.username)}
+                underlayColor='transparent'>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>
+                  <Text style={{ fontSize: 10 }}>Friends</Text>
+                </View>
+              </TouchableHighlight>
               <View style={{ alignItems: 'center' }}>
                 <Text style={{ fontSize: 16 }}>{this.props.events}</Text>
                 <Text style={{ fontSize: 10 }}>Events</Text>

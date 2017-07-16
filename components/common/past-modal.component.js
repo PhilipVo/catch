@@ -1,15 +1,3 @@
-////////////////////////////////////////////////////////////
-//                PastModalComponent
-// Modal that shows the stories of an event. Appears when a
-// past event is clicked on.
-// 
-//                Required props
-// hideModal (function): actions to take when modal closes
-// navigate (function): navigate to new screen
-// event (object): current event
-// tabComponent (component): bottom tab component
-////////////////////////////////////////////////////////////
-
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
@@ -18,7 +6,7 @@ import {
   Animated,
   Dimensions,
   Image,
-  KeyboardAvoidingView,
+  Keyboard,
   ListView,
   Platform,
   Text,
@@ -30,6 +18,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { ShareDialog } from 'react-native-fbsdk';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
 
@@ -78,39 +67,42 @@ export default class PastModalComponent extends Component {
         }
       }).catch(error => {
         this.props.hideModal();
-        console.log('MODAL ERROR', error)
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       });
   }
 
-  // componentWillUpdate(nextProps, nextState) {
-  //   if (!this.state.showComments && nextState.showComments)
-  //     _listView.scrollToEnd();
-  // }
+  componentDidUpdate() {
+    setTimeout(() => {
+      if (this._listView) this._listView.scrollToEnd();
+    }, 1000);
+  }
 
   comment = () => {
     if (this.state.comment.length > 0) {
-      const data = {
+      http.post('/api/comments', JSON.stringify({
         comment: this.state.comment,
-        eventId: this.props.event.id
-      };
-
-      http.post('/api/comments', JSON.stringify(data))
-        .then(() => {
-          const _comments = this.state.comments.slice();
-          _comments.push({
-            comment: this.state.comment,
-            username: session.username
-          });
-
-          this.setState({
-            comment: '',
-            comments: _comments,
-            dataSource: this.ds.cloneWithRows(_comments)
-          });
-        }).catch(error => {
-          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        username: this.props.event.username,
+        eventId: this.props.event.id,
+        title: this.props.event.title
+      })).then(() => {
+        const _comments = this.state.comments.slice();
+        _comments.push({
+          comment: this.state.comment,
+          username: session.username
         });
+
+        this.setState({
+          comment: '',
+          comments: _comments,
+          dataSource: this.ds.cloneWithRows(_comments)
+        });
+
+        socket.emit('commented', {
+          commenter: session.username,
+          creator: this.props.event.username,
+          title: this.props.event.title
+        });
+      }).catch(() => { });
     }
   }
 
@@ -139,12 +131,13 @@ export default class PastModalComponent extends Component {
 
   onBuffer = data => {
     if (data.isBuffering && this.animation) this.animation.stop();
-    else if (this.animation) this.animation.start(data => {
-      if (data.finished) {
-        this.animation = undefined;
-        this.nextItem();
-      }
-    });
+    else if (this.animation && !this.state.showComments)
+      this.animation.start(data => {
+        if (data.finished) {
+          this.animation = undefined;
+          this.nextItem();
+        }
+      });
   }
 
   onLoad = data => {
@@ -161,9 +154,13 @@ export default class PastModalComponent extends Component {
       })
     ]);
 
-    if (!duration) this.animation.start(data => {
-      if (data.finished) this.nextItem();
-    });
+    if (!duration && !this.state.showComments)
+      this.animation.start(data => {
+        if (data.finished) {
+          this.animation = undefined;
+          this.nextItem();
+        }
+      });
   }
 
   previousItem = () => {
@@ -188,7 +185,10 @@ export default class PastModalComponent extends Component {
       if (this.state.item.type === 1) this.player.seek(0);
 
       this.animation.start(data => {
-        if (data.finished) this.nextItem();
+        if (data.finished) {
+          this.animation = undefined;
+          this.nextItem();
+        }
       });
     }
   }
@@ -207,6 +207,34 @@ export default class PastModalComponent extends Component {
         if (result.isCancelled) Alert.alert('Share operation was cancelled.');
         else this.setState({ shared: true });
       }, error => Alert.alert('Share failed with error: ' + error.message));
+  }
+
+  toggleComments = () => {
+    if (this.state.showComments) {
+      this.setState({
+        rate: 1.0,
+        showComments: false
+      });
+
+      if (this.animation)
+        this.animation.start(data => {
+          if (data.finished) {
+            this.animation = undefined;
+            this.nextItem();
+          }
+        });
+    } else {
+      if (this.animation) {
+        console.log('stopping')
+        this.animation.stop();
+        this.animation.stop();
+      };
+      this.setState({
+        rate: 0.0,
+        showComments: true
+      });
+      console.log('animation', this.animation)
+    }
   }
 
   viewUser = username => {
@@ -242,9 +270,7 @@ export default class PastModalComponent extends Component {
     return (
       <Modal
         isOpen={true}
-        onClosed={() => {
-          this.props.hideModal();
-        }}
+        onClosed={this.props.hideModal}
         swipeToClose={true}>
         <StatusBar hidden={true} />
 
@@ -272,7 +298,6 @@ export default class PastModalComponent extends Component {
                       playWhenInactive={true}                 // [iOS] Video continues to play when control or notification center are shown.
                       ignoreSilentSwitch={"obey"}             // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
                       onLoad={this.onLoad}               // Callback when video loads
-                      onLoadStart={data => console.log('load start', data)}
                       onEnd={this.onEnd}                      // Callback when playback finishes
                       onError={this.videoError}               // Callback when video cannot be loaded
                       onBuffer={this.onBuffer}                // Callback when remote video is buffering
@@ -280,7 +305,6 @@ export default class PastModalComponent extends Component {
                       style={styles.background} /> :
                     <Image
                       onLoad={this.onLoad}
-                      onLoadStart={() => { }}            // Callback when video starts to load
                       source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} />
                 }
@@ -301,7 +325,11 @@ export default class PastModalComponent extends Component {
                       style={styles.poster}>
                       {this.state.item.username !== this.props.event.username && this.state.item.username}
                     </Text>
-                    <Text style={styles.title}>{this.props.event.title}</Text>
+                    <Text
+                      onPress={() => this.viewUser(this.props.event.username)}
+                      style={styles.title}>
+                      {this.props.event.title}
+                    </Text>
                   </View>
                   <Text
                     onPress={() => this.viewUser(this.props.event.username)}
@@ -310,64 +338,100 @@ export default class PastModalComponent extends Component {
                   </Text>
                 </View>
 
+                <TouchableHighlight
+                  onPress={this.previousItem}
+                  style={{
+                    bottom: 150,
+                    left: 0,
+                    position: 'absolute',
+                    right: Dimensions.get('window').width / 2,
+                    top: 150,
+                  }}
+                  underlayColor='transparent'>
+                  <View />
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={this.nextItem}
+                  style={{
+                    bottom: 150,
+                    left: Dimensions.get('window').width / 2,
+                    position: 'absolute',
+                    right: 0,
+                    top: 150
+                  }}
+                  underlayColor='transparent'>
+                  <View />
+                </TouchableHighlight>
+
                 {
                   this.state.showComments &&
-                  <KeyboardAvoidingView
-                    behavior='padding'
-                    style={{ flex: 1 }}>
-                    <ListView
-                      dataSource={this.state.dataSource}
-                      enableEmptySections={true}
-                      ref={listView => _listView = listView}
-                      removeClippedSubviews={false}
-                      renderRow={(rowData, sectionID, rowID) => (
-                        <View style={styles.commentView}>
+                  <TouchableHighlight
+                    onPress={Keyboard.dismiss}
+                    style={{
+                      bottom: 0,
+                      left: 0,
+                      padding: 20,
+                      position: 'absolute',
+                      right: 0,
+                      top: 100
+                    }}
+                    underlayColor='transparent'>
+                    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                      <Text
+                        onPress={this.toggleComments}
+                        style={{ color: 'white', fontWeight: 'bold' }}>
+                        Close
+                        </Text>
+                      <ListView
+                        dataSource={this.state.dataSource}
+                        enableEmptySections={true}
+                        ref={listView => this._listView = listView}
+                        removeClippedSubviews={false}
+                        renderRow={(rowData, sectionID, rowID) => (
                           <TouchableHighlight
                             onPress={() => this.viewUser(rowData.username)}>
-                            <Image
-                              source={{ uri: `${http.s3}/users/${rowData.username}` }}
-                              style={styles.commentImage} />
+                            <View style={styles.commentView}>
+                              <Image
+                                source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                                style={styles.commentImage} />
+                              <View style={{ flex: 1 }}>
+                                <Text style={styles.comment}>{rowData.comment}</Text>
+                              </View>
+                            </View>
                           </TouchableHighlight>
-                          <View style={{ flex: 1 }}>
-                            <Text style={styles.comment}>{rowData.comment}</Text>
-                          </View>
+                        )} />
+
+                      <View style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between'
+                      }}>
+                        <View style={{ flex: 6 }}>
+                          <TextInput
+                            autoCapitalize='sentences'
+                            autoCorrect={true}
+                            maxLength={120}
+                            onChangeText={(comment) => this.setState({ comment: comment })}
+                            onSubmitEditing={this.comment}
+                            placeholder='comment'
+                            returnKeyType='send'
+                            style={styles.modalTextInput}
+                            value={this.state.comment} />
                         </View>
-                      )} />
+                        <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+                          <Icon
+                            color='white'
+                            name='clear'
+                            onPress={Keyboard.dismiss}
+                            size={30}
+                            underlayColor='transparent' />
+                        </View>
+                      </View>
 
-                    <TextInput
-                      autoCapitalize='sentences'
-                      autoCorrect={true}
-                      maxLength={120}
-                      onChangeText={(comment) => this.setState({ comment: comment })}
-                      onSubmitEditing={this.comment}
-                      placeholder='comment'
-                      returnKeyType='send'
-                      style={styles.modalTextInput}
-                      value={this.state.comment} />
-                  </KeyboardAvoidingView>
+                    </View>
+                  </TouchableHighlight>
                 }
-
-                <View style={{
-                  bottom: 0,
-                  left: 0,
-                  position: 'absolute',
-                  right: 0,
-                  top: 0
-                }}>
-                  <TouchableHighlight
-                    onPress={this.previousItem}
-                    style={styles.left}
-                    underlayColor='transparent'>
-                    <View />
-                  </TouchableHighlight>
-
-                  <TouchableHighlight
-                    onPress={this.nextItem}
-                    style={styles.right}
-                    underlayColor='transparent'>
-                    <View />
-                  </TouchableHighlight>
-                </View>
 
                 { // Comments
                   !this.state.showComments &&
@@ -375,11 +439,11 @@ export default class PastModalComponent extends Component {
                     <Icon
                       color='white'
                       name='arrow-up'
-                      onPress={() => this.setState({ showComments: true })}
+                      onPress={this.toggleComments}
                       size={30}
                       type='simple-line-icon' />
                     <Text
-                      onPress={() => this.setState({ showComments: true })}
+                      onPress={this.toggleComments}
                       style={styles.username}>
                       comments
                     </Text>
@@ -497,20 +561,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: null
   },
-  left: {
-    bottom: 100,
-    left: 0,
-    position: 'absolute',
-    right: Dimensions.get('window').width / 2,
-    top: 100,
-  },
   modalTextInput: {
     backgroundColor: 'white',
     borderColor: 'gray',
     borderRadius: 5,
     borderWidth: 1,
     height: 40,
-    marginTop: 5,
+    marginVertical: 20,
     padding: 10
   },
   poster: {
@@ -518,13 +575,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     textAlign: 'left',
-  },
-  right: {
-    bottom: 100,
-    left: Dimensions.get('window').width / 2,
-    position: 'absolute',
-    right: 0,
-    top: 100,
   },
   share: {
     alignItems: 'center',

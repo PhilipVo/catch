@@ -15,7 +15,6 @@ class SocketService {
     //////////////////////////////////////////////////////
     this.onCommented = new Observable(observer => {
       this.socket.on('commented', data => {
-        console.log('commented ')
         observer.next(data);
         PushNotification.localNotificationSchedule({
           date: new Date,
@@ -49,6 +48,17 @@ class SocketService {
 
     this.onEvent = new Observable(observer => {
       this.socket.on('event', () => observer.next());
+    });
+
+    this.onInvited = new Observable(observer => {
+      this.socket.on('invited', data => {
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date,
+          message: `You can now add to ${data.title}`,
+          number: 1
+        });
+      });
     });
 
   }

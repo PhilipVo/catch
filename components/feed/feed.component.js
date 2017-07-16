@@ -50,7 +50,6 @@ export default class FeedComponent extends Component {
   getEvents = () => {
     http.get('/api/events/get-public-events')
       .then(events => {
-        console.log(events);
         this.setState({
           loading: false,
           past: events.past,

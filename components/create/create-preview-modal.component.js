@@ -16,6 +16,7 @@ import { NavigationActions } from 'react-navigation';
 import http from '../../services/http.service';
 import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
+import socket from '../../services/socket.service';
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -47,12 +48,15 @@ export default class CreatePreviewModalComponent extends Component {
 
           s3.put(file, `events/${event.id}/`).catch(error => { throw error });
 
-          if (event.username !== session.username)
+          console.log(event.username, session.username)
+          if (event.username !== session.username) {
+            console.log('emitting cont')
             socket.emit('contributed', {
               contributor: session.username,
               creator: event.username,
               title: event.title
             });
+          }
 
           this.props.dispatch(NavigationActions.reset({
             actions: [

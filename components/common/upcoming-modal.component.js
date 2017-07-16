@@ -15,6 +15,7 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 
 import TabComponent from '../common/tab.component';
@@ -42,7 +43,9 @@ export default class UpcomingModalComponent extends Component {
   }
 
   componentDidUpdate() {
-    setTimeout(() => _listView.scrollToEnd(), 1000);
+    setTimeout(() => {
+      if (this._listView) this._listView.scrollToEnd();
+    }, 1000);
   }
 
   comment = () => {
@@ -78,14 +81,16 @@ export default class UpcomingModalComponent extends Component {
   }
 
   toggleNotifications = () => {
-    const currentStatus = this.state.status;
+    const follwers = this.state.follwers;
+    const status = this.state.status;
 
     let request;
     if (this.state.status === -1) {
       this.setState({
         followers: this.state.followers + 1,
         status: 1
-      })
+      });
+
       request = http.post('/api/contributors/follow', JSON.stringify({
         ...this.props.event,
         status: this.state.status
@@ -94,13 +99,15 @@ export default class UpcomingModalComponent extends Component {
       this.setState({
         followers: this.state.followers - 1,
         status: -1
-      })
+      });
+
       request = http.delete(`/api/contributors/${this.props.event.id}`);
     } else if (this.state.status === 2) {
       this.setState({
         followers: this.state.followers + 1,
         status: 3
-      })
+      });
+
       request = http.put('/api/contributors/watch', JSON.stringify({
         ...this.props.event,
         status: this.state.status
@@ -109,7 +116,8 @@ export default class UpcomingModalComponent extends Component {
       this.setState({
         followers: this.state.followers - 1,
         status: 2
-      })
+      });
+
       request = http.put('/api/contributors/unwatch', JSON.stringify({
         ...this.props.event,
         status: this.state.status
@@ -117,7 +125,12 @@ export default class UpcomingModalComponent extends Component {
     }
 
     request.then(() => { })
-      .catch(error => this.setState({ status: currentStatus }))
+      .catch(error => {
+        this.setState({
+          followers: follwers,
+          state: status
+        });
+      });
   }
 
   viewUser = username => {
@@ -209,12 +222,6 @@ export default class UpcomingModalComponent extends Component {
 
             <Text style={styles.modalText3}>{this.props.event.description}</Text>
             <Text style={styles.modalText4}>Comments</Text>
-            {
-              !this.state.loading && this.state.comments.length === 0 &&
-              <Text style={styles.noComments}>
-                No comments have been added yet
-              </Text>
-            }
 
             { // Comments:
               this.state.loading ?
@@ -222,7 +229,7 @@ export default class UpcomingModalComponent extends Component {
                 <ListView
                   dataSource={this.state.dataSource}
                   enableEmptySections={true}
-                  ref={listView => _listView = listView}
+                  ref={listView => this._listView = listView}
                   removeClippedSubviews={false}
                   renderRow={(rowData, sectionID, rowID) => (
                     <View style={styles.commentView}>
@@ -238,16 +245,32 @@ export default class UpcomingModalComponent extends Component {
                   )} />
             }
 
-            <TextInput
-              autoCapitalize='sentences'
-              autoCorrect={true}
-              maxLength={120}
-              onChangeText={(comment) => this.setState({ comment: comment })}
-              onSubmitEditing={this.comment}
-              placeholder='comment'
-              returnKeyType='send'
-              style={styles.modalTextInput}
-              value={this.state.comment} />
+            <View style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-between'
+            }}>
+              <View style={{ flex: 6 }}>
+                <TextInput
+                  autoCapitalize='sentences'
+                  autoCorrect={true}
+                  maxLength={120}
+                  onChangeText={(comment) => this.setState({ comment: comment })}
+                  onSubmitEditing={this.comment}
+                  placeholder='comment'
+                  returnKeyType='send'
+                  style={styles.modalTextInput}
+                  value={this.state.comment} />
+              </View>
+              <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+                <Icon
+                  color='white'
+                  name='clear'
+                  onPress={Keyboard.dismiss}
+                  size={30}
+                  underlayColor='transparent' />
+              </View>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -258,9 +281,9 @@ export default class UpcomingModalComponent extends Component {
 const styles = StyleSheet.create({
   comment: {
     backgroundColor: 'white',
-    flex: 1,
     minHeight: 50,
-    padding: 10
+    padding: 10,
+    width: null
   },
   commentImage: {
     height: 50,
