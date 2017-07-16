@@ -1,7 +1,6 @@
 package com.catchx;
 
 import com.facebook.react.ReactActivity;
-import com.shahenlibrary.RNVideoProcessingPackage;
 import com.tkporter.sendsms.SendSMSPackage;
 import android.content.Intent;
 
