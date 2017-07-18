@@ -332,7 +332,7 @@ export default class PastModalComponent extends Component {
                     style={{
                       backgroundColor: 'transparent',
                       color: 'white',
-                      fontSize: 14,
+                      fontSize: 12,
                       fontWeight: 'bold',
                       textAlign: 'right',
                     }}>
