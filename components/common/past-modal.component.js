@@ -7,6 +7,7 @@ import {
   Dimensions,
   Image,
   Keyboard,
+  KeyboardAvoidingView,
   ListView,
   Platform,
   Text,
@@ -21,6 +22,7 @@ import { ShareDialog } from 'react-native-fbsdk';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
+import TimerMixin from 'react-timer-mixin';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
@@ -71,11 +73,11 @@ export default class PastModalComponent extends Component {
       });
   }
 
-  componentDidUpdate() {
-    setTimeout(() => {
-      if (this._listView) this._listView.scrollToEnd();
-    }, 1000);
-  }
+  // componentDidUpdate() {
+  //   TimerMixin.setTimeout(() => {
+  //     if (this._listView) this._listView.scrollToEnd();
+  //   }, 1000);
+  // }
 
   comment = () => {
     if (this.state.comment.length > 0) {
@@ -211,10 +213,7 @@ export default class PastModalComponent extends Component {
 
   toggleComments = () => {
     if (this.state.showComments) {
-      this.setState({
-        rate: 1.0,
-        showComments: false
-      });
+      this.setState({ showComments: false });
 
       if (this.animation)
         this.animation.start(data => {
@@ -224,21 +223,18 @@ export default class PastModalComponent extends Component {
           }
         });
     } else {
-      if (this.animation) {
-        console.log('stopping')
-        this.animation.stop();
-        this.animation.stop();
-      };
-      this.setState({
-        rate: 0.0,
-        showComments: true
-      });
-      console.log('animation', this.animation)
+      if (this.animation) this.animation.stop();
+      this.setState({ showComments: true });
+      TimerMixin.setTimeout(() => {
+        try {
+          this._listView.scrollToEnd();
+        } catch (error) { }
+      }, 1000);
     }
   }
 
   viewUser = username => {
-    this.props.hideModal();
+    // this.props.hideModal();
     this.props.navigate('ProfileComponent', {
       tabComponent: this.props.tabComponent,
       username: username
@@ -333,19 +329,25 @@ export default class PastModalComponent extends Component {
                   </View>
                   <Text
                     onPress={() => this.viewUser(this.props.event.username)}
-                    style={styles.username}>
-                    {this.props.event.username}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: 'white',
+                      fontSize: 14,
+                      fontWeight: 'bold',
+                      textAlign: 'right',
+                    }}>
+                    created by {this.props.event.username}
                   </Text>
                 </View>
 
                 <TouchableHighlight
                   onPress={this.previousItem}
                   style={{
-                    bottom: 150,
+                    bottom: 100,
                     left: 0,
                     position: 'absolute',
                     right: Dimensions.get('window').width / 2,
-                    top: 150,
+                    top: 100,
                   }}
                   underlayColor='transparent'>
                   <View />
@@ -354,11 +356,11 @@ export default class PastModalComponent extends Component {
                 <TouchableHighlight
                   onPress={this.nextItem}
                   style={{
-                    bottom: 150,
+                    bottom: 100,
                     left: Dimensions.get('window').width / 2,
                     position: 'absolute',
                     right: 0,
-                    top: 150
+                    top: 100
                   }}
                   underlayColor='transparent'>
                   <View />
@@ -366,71 +368,64 @@ export default class PastModalComponent extends Component {
 
                 {
                   this.state.showComments &&
-                  <TouchableHighlight
-                    onPress={Keyboard.dismiss}
-                    style={{
-                      bottom: 0,
-                      left: 0,
-                      padding: 20,
-                      position: 'absolute',
-                      right: 0,
-                      top: 100
-                    }}
-                    underlayColor='transparent'>
-                    <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                  <View style={{
+                    bottom: 0,
+                    left: 0,
+                    padding: 20,
+                    paddingTop: 100,
+                    position: 'absolute',
+                    right: 0,
+                    top: 0
+                  }}>
+                    <KeyboardAvoidingView
+                      behavior='padding'
+                      style={{ flex: 1, justifyContent: 'flex-end' }}>
                       <Text
                         onPress={this.toggleComments}
-                        style={{ color: 'white', fontWeight: 'bold' }}>
-                        Close
+                        style={{
+                          alignSelf: 'flex-end',
+                          backgroundColor: 'transparent',
+                          color: 'white',
+                          fontWeight: 'bold'
+                        }}>
+                        Close comments
                         </Text>
-                      <ListView
-                        dataSource={this.state.dataSource}
-                        enableEmptySections={true}
-                        ref={listView => this._listView = listView}
-                        removeClippedSubviews={false}
-                        renderRow={(rowData, sectionID, rowID) => (
-                          <TouchableHighlight
-                            onPress={() => this.viewUser(rowData.username)}>
-                            <View style={styles.commentView}>
-                              <Image
-                                source={{ uri: `${http.s3}/users/${rowData.username}` }}
-                                style={styles.commentImage} />
-                              <View style={{ flex: 1 }}>
-                                <Text style={styles.comment}>{rowData.comment}</Text>
-                              </View>
-                            </View>
-                          </TouchableHighlight>
-                        )} />
 
-                      <View style={{
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between'
-                      }}>
-                        <View style={{ flex: 6 }}>
-                          <TextInput
-                            autoCapitalize='sentences'
-                            autoCorrect={true}
-                            maxLength={120}
-                            onChangeText={(comment) => this.setState({ comment: comment })}
-                            onSubmitEditing={this.comment}
-                            placeholder='comment'
-                            returnKeyType='send'
-                            style={styles.modalTextInput}
-                            value={this.state.comment} />
-                        </View>
-                        <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-                          <Icon
-                            color='white'
-                            name='clear'
-                            onPress={Keyboard.dismiss}
-                            size={30}
-                            underlayColor='transparent' />
-                        </View>
+                      <View style={{ flex: 5 }}>
+                        <ListView
+                          dataSource={this.state.dataSource}
+                          enableEmptySections={true}
+                          ref={listView => this._listView = listView}
+                          removeClippedSubviews={false}
+                          renderRow={(rowData, sectionID, rowID) => (
+                            <View style={styles.commentView}>
+                              <TouchableHighlight
+                                onPress={() => this.viewUser(rowData.username)}>
+                                <Image
+                                  source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                                  style={styles.commentImage} />
+                              </TouchableHighlight>
+                              <TouchableHighlight>
+                                <Text style={styles.comment}>{rowData.comment}</Text>
+                              </TouchableHighlight>
+                            </View>
+                          )} />
+                      </View>
+                      <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <TextInput
+                          autoCapitalize='sentences'
+                          autoCorrect={true}
+                          maxLength={120}
+                          onChangeText={(comment) => this.setState({ comment: comment })}
+                          onSubmitEditing={this.comment}
+                          placeholder='comment'
+                          returnKeyType='send'
+                          style={styles.modalTextInput}
+                          value={this.state.comment} />
                       </View>
 
-                    </View>
-                  </TouchableHighlight>
+                    </KeyboardAvoidingView>
+                  </View>
                 }
 
                 { // Comments
@@ -530,9 +525,10 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   comment: {
+    alignSelf: 'flex-start',
     backgroundColor: 'white',
-    flex: 1,
     minHeight: 50,
+    minWidth: 50,
     padding: 10
   },
   commentImage: {
@@ -540,7 +536,6 @@ const styles = StyleSheet.create({
     width: 50
   },
   commentView: {
-    flex: 1,
     flexDirection: 'row',
     padding: 2
   },
@@ -567,7 +562,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     height: 40,
-    marginVertical: 20,
     padding: 10
   },
   poster: {
