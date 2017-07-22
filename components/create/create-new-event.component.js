@@ -270,8 +270,7 @@ export default class CreateNewEventComponent extends Component {
                 <View style={{ flex: 10 }}>
                   <Text style={styles.headerText}>Create a Catch</Text>
                 </View>
-                <View style={{ flex: 1 }}>
-                </View>
+                <View style={{ flex: 1 }} />
               </View>
 
               {/* Body */}
@@ -359,7 +358,7 @@ export default class CreateNewEventComponent extends Component {
                     onPress={() => this.setState({ isOpen: true })}
                     style={{
                       borderColor: 'gray',
-                      borderWidth: 0.5,
+                      borderWidth: 1,
                       fontSize: 16,
                       padding: 5,
                       textAlign: 'center'
@@ -529,7 +528,7 @@ const styles = StyleSheet.create({
   },
   description: {
     borderColor: 'gray',
-    borderWidth: 0.5,
+    borderWidth: 1,
     fontSize: 16,
     height: 60,
     padding: 5
@@ -562,7 +561,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderColor: 'gray',
-    borderWidth: 0.5,
+    borderWidth: 1,
     height: 30,
     marginBottom: 20,
     textAlign: 'center',

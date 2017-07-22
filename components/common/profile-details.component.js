@@ -111,7 +111,7 @@ export default class ProfileDetailsComponent extends Component {
 const styles = StyleSheet.create({
   addContact: {
     alignSelf: 'center',
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderRadius: 10,
     borderColor: 'gray',
     marginTop: 5,

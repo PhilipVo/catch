@@ -33,7 +33,7 @@ export default class AccountComponent extends Component {
       user: {},
     };
 
-    // Tab component:    
+    // Tab component:
     this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
 
     // Socket events:
@@ -65,7 +65,7 @@ export default class AccountComponent extends Component {
           upcoming: data.upcoming,
           user: data.user
         });
-      }).catch(error => { console.log(error) });
+      }).catch(error => { });
   }
 
   hideModal = () => {

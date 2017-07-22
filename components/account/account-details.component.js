@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
 import { h4, Icon, Text } from 'react-native-elements';
 
-import session from '../../services/session.service';
-
 import http from '../../services/http.service';
+import session from '../../services/session.service';
 
 export default class AccountDetailsComponent extends Component {
   constructor(props) {
@@ -41,7 +40,7 @@ export default class AccountDetailsComponent extends Component {
           <View style={{ paddingVertical: 10 }} >
             <View style={styles.count}>
               <TouchableHighlight
-                onPress={() => this.props.setEvent('friends', this.props.user.username)}
+                onPress={() => this.props.setEvent('friends', session.username)}
                 underlayColor='transparent'>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>

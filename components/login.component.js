@@ -104,8 +104,9 @@ module.exports = class LoginComponent extends Component {
           });
       } else {
         session.register(this.user)
-          .then(() => this.props.screenProps.login())
+          .then(() => this.props.screenProps.register())
           .catch(error => {
+            console.log(error)
             this.setState({
               disabled: false,
               error: typeof error === 'string' ? error : 'Oops, something went wrong.',

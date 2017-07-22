@@ -32,7 +32,6 @@ export default class InvitedModalComponent extends Component {
           loading: false,
         });
       }).catch(error => {
-        console.log(error)
         this.props.hideModal();
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       });
@@ -45,7 +44,6 @@ export default class InvitedModalComponent extends Component {
         onClosed={this.props.hideModal}
         style={{ borderRadius: 10, height: 500, padding: 20, width: 300 }}
         swipeToClose={false}>
-
 
         <View style={{ alignItems: 'center', flex: 10 }}>
           <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>

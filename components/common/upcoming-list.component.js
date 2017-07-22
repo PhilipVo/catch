@@ -68,8 +68,11 @@ export default class UpcomingListComponent extends Component {
                         <View style={{ flexDirection: 'row' }}>
                           <Icon color='purple' name='star' size={15} />
                           <Text style={{ fontSize: 12 }}>You created this event</Text>
-                        </View> :
-                        <Text style={{ fontSize: 12 }}>You're following this event</Text>
+                        </View> : rowData.status === 1 ?
+                          <Text style={{ fontSize: 12 }}>You're following this event</Text> :
+                          rowData.status > 1 ?
+                            <Text style={{ fontSize: 12 }}>You're a contributor</Text> :
+                            null
                     }
 
                     {
@@ -79,7 +82,7 @@ export default class UpcomingListComponent extends Component {
                         style={{ color: 'red', fontSize: 12, fontWeight: 'bold' }}
                         undelayColor='transparent'>
                         Delete event
-                  </Text>
+                      </Text>
                     }
 
                   </View>

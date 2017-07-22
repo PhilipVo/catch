@@ -25,13 +25,6 @@ module.exports = class AccountNavigatorComponent extends Component {
 
     return (
       <AccountNavigator
-        onNavigationStateChange={(prevState, newState, action) => {
-          console.log(prevState, newState, action)
-          if (prevState.routes[1] && prevState.routes[1].routeName === 'AccountSettingsComponent') {
-            console.log('leaving settings')
-            this.forceUpdate();
-          }
-        }}
         screenProps={{
           logout: this.props.screenProps.logout,
           navigate: this.props.navigation.navigate

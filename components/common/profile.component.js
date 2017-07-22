@@ -5,6 +5,8 @@ import { NavigationActions, TabNavigator } from 'react-navigation';
 
 import DeleteModalComponent from '../common/delete-modal.component';
 import FriendsModalComponent from '../common/friends-modal.component';
+import InviteModalComponent from '../common/invite-modal.component';
+import InvitedModalComponent from '../common/invited-modal.component';
 import PastListComponent from '../common/past-list.component';
 import PastModalComponent from './past-modal.component';
 import ProfileDetailsComponent from './profile-details.component';
@@ -140,7 +142,15 @@ export default class ProfileComponent extends Component {
                     hideModal={this.hideModal}
                     navigate={this.props.navigation.navigate}
                     tabComponent={params.tabComponent} /> :
-                  null
+                  this.state.modal === 'invite' ?
+                    <InviteModalComponent
+                      event={this.state.event}
+                      hideModal={this.hideModal} /> :
+                    this.state.modal === 'invited' ?
+                      <InvitedModalComponent
+                        event={this.state.event}
+                        hideModal={this.hideModal} /> :
+                      null
         }
 
       </View>
