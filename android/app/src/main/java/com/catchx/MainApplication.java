@@ -3,13 +3,13 @@ package com.catchx;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.tkporter.sendsms.SendSMSPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.brentvatne.react.ReactVideoPackage;
-import com.shahenlibrary.RNVideoProcessingPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -25,11 +25,11 @@ import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
-   private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
+  private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
-   protected static CallbackManager getCallbackManager() {
-     return mCallbackManager;
-   }
+  protected static CallbackManager getCallbackManager() {
+    return mCallbackManager;
+  }
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -41,14 +41,13 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeContacts(),
-            new RCTCameraPackage(),
-            new FBSDKPackage(mCallbackManager),
-            new ReactNativePushNotificationPackage(),
-            new PickerPackage(),
-            new ReactVideoPackage(),
-            new VectorIconsPackage()
-      );
+          SendSMSPackage.getInstance(),
+          new ReactNativeContacts(),
+          new RCTCameraPackage(), new FBSDKPackage(mCallbackManager),
+          new ReactNativePushNotificationPackage(),
+          new PickerPackage(),
+          new ReactVideoPackage(),
+          new VectorIconsPackage());
     }
   };
 
