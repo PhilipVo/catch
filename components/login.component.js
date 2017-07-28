@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Palatino',
     fontSize: 50,
-    fontWeight: 'bold',
+    fontWeight: Platform.OS === 'android' ? null : 'bold',
     textAlign: 'center'
   }
 });
