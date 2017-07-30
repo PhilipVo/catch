@@ -4,11 +4,12 @@ import { AppRegistry, AsyncStorage, Image } from 'react-native';
 import session from './services/session.service';
 
 console.ignoredYellowBox = [
+  'Setting a timer',
   'Warning: Accessing',
   'Warning: BackAndroid',
   'Warning: checkPropTypes',
-  'Warning: View.propTypes',
-  'Warning: Invalid argument supplied to oneOf'
+  'Warning: Invalid argument supplied to oneOf',
+  'Warning: View.propTypes'
 ];
 
 export default class Catchx extends Component {
@@ -30,8 +31,7 @@ export default class Catchx extends Component {
           session.setSession(catchToken)
             .then(() => this.setState({ mode: 1 }))
             .catch(() => { });
-        } else
-          this.setState({ mode: 2 });
+        } else this.setState({ mode: 2 });
       }).catch(() => { });
   }
 
@@ -51,7 +51,8 @@ export default class Catchx extends Component {
         {
           headerMode: 'none',
           initialRouteName: 'FeedNavigatorComponent',
-          navigationOptions: { tabBarVisible: false }
+          navigationOptions: { tabBarVisible: false },
+          swipeEnabled: false
         }
       );
 
