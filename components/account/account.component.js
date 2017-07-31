@@ -102,6 +102,7 @@ export default class AccountComponent extends Component {
 
             <AccountDetailsComponent
               events={this.state.past.length + this.state.upcoming.length}
+              getMyInfo={this.getMyInfo}
               navigate={this.props.navigation.navigate}
               setEvent={this.setEvent}
               tabComponent={this.tabComponent}

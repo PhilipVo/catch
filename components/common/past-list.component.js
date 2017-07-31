@@ -1,13 +1,3 @@
-////////////////////////////////////////////////////////////
-//                PastListComponent
-//  List of past events. Used in AccountComponent,
-//  FeedComponent, and ProfileComponent.
-// 
-//                Required screenProps
-//  loading: boolean for ActivityIndicator
-//  past: array of past events
-////////////////////////////////////////////////////////////
-
 const moment = require('moment');
 import React, { Component } from 'react';
 import {

@@ -60,7 +60,10 @@ export default class AccountDetailsComponent extends Component {
             color='gray'
             name='settings'
             onPress={() => this.props.navigate('AccountSettingsComponent',
-              { refreshImage: this.refreshImage })
+              {
+                getMyInfo: this.props.getMyInfo,
+                refreshImage: this.refreshImage
+              })
             }
             size={30}
             type='simple-line-icon'

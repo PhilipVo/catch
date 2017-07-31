@@ -26,14 +26,12 @@ export default class InvitedModalComponent extends Component {
   componentDidMount() {
     http.get(`/api/contacts/get-contacts-for-user/${this.props.username}`)
       .then(data => {
-        console.log(data)
         this.setState({
           data: data,
           dataSource: this.ds.cloneWithRows(data),
           loading: false,
         });
       }).catch(error => {
-        console.log(error)
         this.props.hideModal();
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
       });

@@ -10,13 +10,11 @@ import http from '../../services/http.service';
 
 export default class DeleteModalComponent extends Component {
   deleteEvent = () => {
-    console.log('deleting evnet')
     http.delete(`/api/events/${this.props.event.id}`)
       .then(() => {
-        console.log('done del')
         this.props.onDelete();
         this.props.hideModal();
-      }).catch(error => { console.log(error) })
+      }).catch(error => { })
   }
 
   render() {

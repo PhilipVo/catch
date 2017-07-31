@@ -48,9 +48,7 @@ export default class CreatePreviewModalComponent extends Component {
 
           s3.put(file, `events/${event.id}/`).catch(error => { throw error });
 
-          console.log(event.username, session.username)
           if (event.username !== session.username) {
-            console.log('emitting cont')
             socket.emit('contributed', {
               contributor: session.username,
               creator: event.username,
@@ -68,7 +66,6 @@ export default class CreatePreviewModalComponent extends Component {
             index: 0
           }));
         }).catch((error) => {
-          console.log(error)
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }

@@ -70,7 +70,6 @@ export default class UpcomingModalComponent extends Component {
   getDetails = () => {
     http.get(`/api/events/get-details-for-event/${this.props.event.id}`)
       .then(data => {
-        console.log('data', data)
         this.setState({
           comments: data.comments,
           dataSource: this.ds.cloneWithRows(data.comments),

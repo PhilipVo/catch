@@ -79,7 +79,10 @@ export default class AccountSettingsComponent extends Component {
       this.setState({ saving: true });
 
       http.put('/api/users/update-settings', JSON.stringify(this.state.settings))
-        .then(() => this.setState({ saving: false }))
+        .then(() => {
+          this.props.navigation.state.params.getMyInfo();
+          this.setState({ saving: false });
+        })
         .catch(error => {
           this.setState({ saving: false });
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
