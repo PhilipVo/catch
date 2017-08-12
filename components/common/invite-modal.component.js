@@ -68,12 +68,12 @@ export default class InviteModalComponent extends Component {
           recipients: recipients,
           successTypes: ['sent', 'queued']
         }, (completed, cancelled, error) => { });
-      }).then(() => {
-        socket.emit('invited', {
-          contributors: this.props.contributors,
-          event: this.props.event,
-          username: session.username
+
+        socket.emit('contributor requested', {
+          title: this.props.event.title,
+          username: this.props.event.username
         });
+
         this.props.hideModal();
       }).catch(error => {
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
@@ -116,7 +116,10 @@ export default class InviteModalComponent extends Component {
   }
 
   search = term => {
-    if (this.subscription) this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = undefined;
+    }
 
     this.subscription = Observable.create(observer => {
       Contacts.getContactsMatchingString(term, (error, contacts) => {

@@ -17,7 +17,7 @@ class SocketService {
       this.socket.on('commented', data => {
         observer.next(data);
         PushNotification.localNotificationSchedule({
-          date: new Date,
+          date: new Date(Date.now() + 60000),
           message: `${data.commenter} commented on ${data.title}`,
           number: 1
         });
@@ -28,7 +28,7 @@ class SocketService {
       this.socket.on('contacted', data => {
         observer.next(data);
         PushNotification.localNotificationSchedule({
-          date: new Date,
+          date: new Date(Date.now() + 60000),
           message: `${data.username} added you as a contact`,
           number: 1
         });
@@ -39,8 +39,30 @@ class SocketService {
       this.socket.on('contributed', data => {
         observer.next(data);
         PushNotification.localNotificationSchedule({
-          date: new Date,
+          date: new Date(Date.now() + 60000),
           message: `${data.contributor} added to ${data.title}`,
+          number: 1
+        });
+      });
+    });
+
+    this.onContributorAccepted = new Observable(observer => {
+      this.socket.on('contributor accepted', data => {
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date(Date.now() + 60000),
+          message: `You can now add to ${data.title}`,
+          number: 1
+        });
+      });
+    });
+
+    this.onContributorRequested = new Observable(observer => {
+      this.socket.on('contributor requested', data => {
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date(Date.now() + 60000),
+          message: `New users have requested to add to ${data.title}`,
           number: 1
         });
       });
@@ -50,12 +72,23 @@ class SocketService {
       this.socket.on('event', () => observer.next());
     });
 
-    this.onInvited = new Observable(observer => {
-      this.socket.on('invited', data => {
+    this.onWatchAccepted = new Observable(observer => {
+      this.socket.on('watch accepted', data => {
         observer.next(data);
         PushNotification.localNotificationSchedule({
-          date: new Date,
-          message: `You can now add to ${data.title}`,
+          date: new Date(Date.now() + 60000),
+          message: `You can now view ${data.title}`,
+          number: 1
+        });
+      });
+    });
+
+    this.onWatchRequested = new Observable(observer => {
+      this.socket.on('watch requested', data => {
+        observer.next(data);
+        PushNotification.localNotificationSchedule({
+          date: new Date(Date.now() + 60000),
+          message: `${data.watcher} requested to watch to ${data.title}`,
           number: 1
         });
       });

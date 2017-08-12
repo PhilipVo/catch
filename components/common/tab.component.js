@@ -8,7 +8,10 @@ const TabComponent = props => {
       <Icon
         color={props.tab === 'feed' ? 'black' : 'gray'}
         name='calendar'
-        onPress={() => { props.navigate('FeedNavigatorComponent') }}
+        onPress={() => {
+          if (props.tab === 'feed') props.reset();
+          else props.navigate('FeedNavigatorComponent');
+        }}
         size={30}
         type='simple-line-icon'
         underlayColor='transparent' />
@@ -22,7 +25,10 @@ const TabComponent = props => {
       <Icon
         color={props.tab === 'account' ? 'black' : 'gray'}
         name='user'
-        onPress={() => { props.navigate('AccountNavigatorComponent') }}
+        onPress={() => {
+          if (props.tab === 'account') props.reset();
+          else props.navigate('AccountNavigatorComponent')
+        }}
         size={30}
         type='simple-line-icon'
         underlayColor='transparent' />

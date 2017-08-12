@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StackNavigator } from 'react-navigation';
+import { NavigationActions, StackNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 
 import FeedComponent from './feed.component';
@@ -20,7 +20,15 @@ module.exports = class FeedNavigatorComponent extends Component {
     );
 
     return (
-      <FeedNavigator screenProps={{ navigate: this.props.navigation.navigate }} />
+      <FeedNavigator
+        ref={nav => this.navigator = nav}
+        screenProps={{
+          navigate: this.props.navigation.navigate,
+          reset: () => this.navigator.dispatch(NavigationActions.reset({
+            actions: [NavigationActions.navigate({ routeName: 'FeedComponent' })],
+            index: 0
+          }))
+        }} />
     );
   }
 }

@@ -46,7 +46,10 @@ export default class CreatePreviewModalComponent extends Component {
             uri: this.props.story
           };
 
-          s3.put(file, `events/${event.id}/`).catch(error => { throw error });
+          s3.put(file, `events/${event.id}/`)
+            .catch(error => {
+              Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+            });
 
           if (event.username !== session.username) {
             socket.emit('contributed', {

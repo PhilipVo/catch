@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ListView,
   Text,
@@ -12,19 +13,58 @@ import { Icon } from 'react-native-elements';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
+import socket from '../../services/socket.service';
 
 export default class AccountNotificationListComponent extends Component {
   constructor(props) {
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    this.state = { dataSource: this.ds.cloneWithRows(this.props.screenProps.notifications) };
+    this.state = {
+      accepting: false,
+      dataSource: this.ds.cloneWithRows(this.props.screenProps.notifications)
+    };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ dataSource: this.ds.cloneWithRows(nextProps.screenProps.notifications) });
   }
 
+  acceptContributor = rowData => {
+    if (!this.state.accepting) {
+      this.setState({ accepting: true });
+
+      http.put(`/api/contributors/accept-contributor`, JSON.stringify(rowData))
+        .then(() => {
+          socket.emit('contributor accepted', {
+            contributor: rowData.notifier,
+            title: rowData.title
+          });
+          rowData.action = 1;
+          this.setState({ accepting: false });
+        }).catch(error => {
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
+    }
+  }
+
+  acceptWatcher = rowData => {
+    if (!this.state.accepting) {
+      this.setState({ accepting: true });
+
+      http.put(`/api/contributors/accept-watcher`, JSON.stringify(rowData))
+        .then(() => {
+          socket.emit('watcher accepted', {
+            contributor: rowData.notifier,
+            title: rowData.title
+          });
+          rowData.action = 1;
+          this.setState({ accepting: false });
+        }).catch(error => {
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
+    }
+  }
   viewUser = username => {
     this.props.screenProps.navigate('ProfileComponent', {
       tabComponent: this.props.screenProps.tabComponent,
@@ -65,17 +105,38 @@ export default class AccountNotificationListComponent extends Component {
                           `${rowData.notifier} added you as a contact` :
                           rowData.type === 'contributed' ?
                             `${rowData.notifier} added to ${rowData.title}` :
-                            rowData.type === 'invited' ?
+                            rowData.type === 'contributor accepted' ?
                               `You can now add to ${rowData.title}` :
-                              rowData.type === 'requested' ?
-                                `Can ${rowData.notifier} added to ${rowData.title}` : null
+                              rowData.type === 'contributor requested' ?
+                                `Can ${rowData.notifier} add to ${rowData.title}?` :
+                                rowData.type === 'watch accepted' ?
+                                  `You can now view ${rowData.title}` :
+                                  rowData.type === 'watch requested' ?
+                                    `Can ${rowData.notifier} watch ${rowData.title}?` : null
                     }
                   </Text>
                 </View>
 
                 {/* Actions */}
                 <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-
+                  {
+                    rowData.type === 'contributor requested' && rowData.action === 0 ?
+                      <Icon
+                        name='add-circle-outline'
+                        onPress={() => this.acceptContributor(rowData)} /> :
+                      rowData.type === 'contributor requested' && rowData.action === 1 ?
+                        <Icon
+                          color='#f74434'
+                          name='check-circle' /> :
+                        rowData.type === 'watch requested' && rowData.action === 0 ?
+                          <Icon
+                            name='add-circle-outline'
+                            onPress={() => this.acceptWatcher(rowData)} /> :
+                          rowData.type === 'watch requested' && rowData.action === 1 ?
+                            <Icon
+                              color='#f74434'
+                              name='check-circle' /> : null
+                  }
                 </View>
 
               </View>

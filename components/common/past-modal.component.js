@@ -32,6 +32,9 @@ export default class PastModalComponent extends Component {
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    this.onLoadCalled = false;
+    this.timerBarStopped = true;
+
     this.state = {
       comment: '',
       comments: [],
@@ -40,7 +43,6 @@ export default class PastModalComponent extends Component {
       index: 0,
       item: null,
       loading: true,
-      rate: 1.0,
       shared: false,
       showComments: false,
       stories: [],
@@ -73,12 +75,6 @@ export default class PastModalComponent extends Component {
       });
   }
 
-  // componentDidUpdate() {
-  //   TimerMixin.setTimeout(() => {
-  //     if (this._listView) this._listView.scrollToEnd();
-  //   }, 1000);
-  // }
-
   comment = () => {
     if (this.state.comment.length > 0) {
       http.post('/api/comments', JSON.stringify({
@@ -109,60 +105,57 @@ export default class PastModalComponent extends Component {
   }
 
   nextItem = () => {
-    if (this.animation) {
-      this.animation.stop();
-      this.animation = undefined;
-    }
+    this.onLoadCalled = false;
+
+    try { this.animation.stop(); } catch (error) { }
+    this.animation = undefined;
 
     const currentItem = this.state.item;
     const nextItem = this.state.stories[this.state.index + 1];
     if (nextItem) {
-      this.setState({
-        index: this.state.index + 1,
-        item: nextItem,
-        timerDownAnimation: new Animated.Value(1),
-        timerUpAnimation: new Animated.Value(0)
-      });
-    } else if (session.isFacebookUser) {
-      this.setState({
-        done: true,
-        // rate: 0.0
-      });
-    } else this.props.hideModal();
-  }
-
-  onBuffer = data => {
-    if (data.isBuffering && this.animation) this.animation.stop();
-    else if (this.animation && !this.state.showComments)
-      this.animation.start(data => {
-        if (data.finished) {
-          this.animation = undefined;
-          this.nextItem();
+      this.setState(() => {
+        return {
+          index: this.state.index + 1,
+          item: nextItem,
+          timerDownAnimation: new Animated.Value(1),
+          timerUpAnimation: new Animated.Value(0)
         }
       });
+    } else {
+      this.setState(() => { return { done: true } });
+    }
+  }
+
+  onBuffer = buffer => {
+    console.log('isbuff', buffer, this.player)
+    if (this.onLoadCalled && buffer.isBuffering) this.stopTimerBar();
+    else if (this.onLoadCalled && this.timerBarStopped && !this.state.showComments) this.startTimerBar();
   }
 
   onLoad = data => {
-    const duration = data.duration ? parseInt(data.duration * 1000, 10) : false;
+    console.log('onload', data)
+    this.onLoadCalled = true;
+    this.duration = data.duration ? parseInt(data.duration * 1000, 10) : 4000;
+    console.log('duration', this.duration)
 
     this.animation = Animated.parallel([
       Animated.timing(this.state.timerDownAnimation, {
-        duration: duration ? duration : 4000,
+        duration: this.duration,
         toValue: 0
       }),
       Animated.timing(this.state.timerUpAnimation, {
-        duration: duration ? duration : 4000,
+        duration: this.duration,
         toValue: 1
       })
     ]);
 
-    if (!duration && !this.state.showComments)
-      this.animation.start(data => {
-        if (data.finished) {
-          this.animation = undefined;
-          this.nextItem();
-        }
-      });
+    if (!this.player) this.animation.start(data => {
+      console.log('finishing in og')
+      if (data.finished) {
+        this.animation = undefined;
+        this.nextItem();
+      }
+    });
   }
 
   previousItem = () => {
@@ -170,16 +163,16 @@ export default class PastModalComponent extends Component {
     const previousItem = this.state.stories[this.state.index - 1];
 
     if (previousItem) {
-      if (this.animation) {
-        this.animation.stop();
-        this.animation = undefined;
-      }
+      try { this.animation.stop(); } catch (error) { }
+      this.animation = undefined;
 
-      this.setState({
-        index: this.state.index - 1,
-        item: previousItem,
-        timerDownAnimation: new Animated.Value(1),
-        timerUpAnimation: new Animated.Value(0)
+      this.setState(() => {
+        return {
+          index: this.state.index - 1,
+          item: previousItem,
+          timerDownAnimation: new Animated.Value(1),
+          timerUpAnimation: new Animated.Value(0)
+        }
       });
     } else {
       this.animation.reset();
@@ -211,25 +204,49 @@ export default class PastModalComponent extends Component {
       }, error => Alert.alert('Share failed with error: ' + error.message));
   }
 
+  startTimerBar = () => {
+    console.log('start', this.duration)
+    const duration = parseInt(this.state.timerDownAnimation._value * this.duration);
+    this.animation = Animated.parallel([
+      Animated.timing(this.state.timerDownAnimation, {
+        duration: duration,
+        toValue: 0
+      }),
+      Animated.timing(this.state.timerUpAnimation, {
+        duration: duration,
+        toValue: 1
+      })
+    ]).start(data => {
+      if (data.finished) {
+        this.animation = undefined;
+        this.nextItem();
+      }
+    });
+    this.timerBarStopped = false;
+  }
+
+  stopTimerBar = () => {
+    console.log('stop', this.duration)
+    try { this.animation.stop(); } catch (error) { }
+    this.animation = undefined;
+    this.state.timerDownAnimation.stopAnimation();
+    this.state.timerUpAnimation.stopAnimation();
+    this.timerBarStopped = true;
+  }
+
   toggleComments = () => {
     if (this.state.showComments) {
-      this.setState({ showComments: false });
-
-      if (this.animation)
-        this.animation.start(data => {
-          if (data.finished) {
-            this.animation = undefined;
-            this.nextItem();
-          }
-        });
+      this.setState({
+        showComments: false,
+        pause: false
+      });
+      this.startTimerBar();
     } else {
-      if (this.animation) this.animation.stop();
-      this.setState({ showComments: true });
-      TimerMixin.setTimeout(() => {
-        try {
-          this._listView.scrollToEnd();
-        } catch (error) { }
-      }, 1000);
+      this.stopTimerBar();
+      this.setState({
+        showComments: true,
+        pause: true
+      });
     }
   }
 
@@ -282,22 +299,19 @@ export default class PastModalComponent extends Component {
               <View style={{ flex: 1 }}>
                 {
                   this.state.item.type === 1 ?
-                    <Video source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
-                      ref={ref => this.player = ref}         // Store reference
-                      rate={this.state.rate}                  // 0 is paused, 1 is normal.
-                      volume={this.state.rate}                // 0 is muted, 1 is normal.
-                      muted={false}                           // Mutes the audio entirely.
-                      paused={false}                          // Pauses playback entirely.
-                      resizeMode="cover"                      // Fill the whole screen at aspect ratio.*
-                      repeat={false}                           // Repeat forever.
-                      playInBackground={false}                // Audio continues to play when app entering background.
-                      playWhenInactive={true}                 // [iOS] Video continues to play when control or notification center are shown.
-                      ignoreSilentSwitch={"obey"}             // [iOS] ignore | obey - When 'ignore', audio will still play with the iOS hard silent switch set to silent. When 'obey', audio will toggle with the switch. When not specified, will inherit audio settings as usual.
-                      onLoad={this.onLoad}               // Callback when video loads
-                      onEnd={this.onEnd}                      // Callback when playback finishes
-                      onError={this.videoError}               // Callback when video cannot be loaded
-                      onBuffer={this.onBuffer}                // Callback when remote video is buffering
-                      onTimedMetadata={this.onTimedMetadata}  // Callback when the stream receive some metadata
+                    <Video
+                      ignoreSilentSwitch={"obey"}
+                      onBuffer={this.onBuffer}
+                      onLoad={this.onLoad}
+                      onLoadStart={this.onLoadStart}
+                      onProgress={this.onProgress}
+                      paused={this.state.pause}
+                      playInBackground={false}
+                      playWhenInactive={true}
+                      ref={ref => this.player = ref}
+                      repeat={false}
+                      resizeMode="cover"
+                      source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} /> :
                     <Image
                       onLoad={this.onLoad}
@@ -471,8 +485,9 @@ export default class PastModalComponent extends Component {
                       <TouchableHighlight
                         disabled={this.state.disabled}
                         onPress={this.share}
+                        style={styles.share}
                         underlayColor='#3b5998'>
-                        <View style={styles.share}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                           <Text style={styles.buttonText}>Share to Facebook  </Text>
                           <Icon
                             color='white'
@@ -574,7 +589,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#3b5998',
     borderRadius: 5,
-    flexDirection: 'row',
     height: 40,
     justifyContent: 'center',
     marginTop: 50,

@@ -34,14 +34,20 @@ export default class AccountComponent extends Component {
     };
 
     // Tab component:
-    this.tabComponent = <TabComponent navigate={this.props.screenProps.navigate} tab='account' />
+    this.tabComponent = <TabComponent
+      navigate={this.props.screenProps.navigate}
+      reset={this.props.screenProps.reset}
+      tab='account' />
 
     // Socket events:
-    this.onCommented = socket.onCommented.subscribe(data => this.getMyInfo());
-    this.onContacted = socket.onContacted.subscribe(data => this.getMyInfo());
-    this.onContributed = socket.onContributed.subscribe(data => this.getMyInfo());
+    this.onCommented = socket.onCommented.subscribe(data => this.getMyNotifications());
+    this.onContacted = socket.onContacted.subscribe(data => this.getMyNotifications());
+    this.onContributed = socket.onContributed.subscribe(data => this.getMyNotifications());
+    this.onContributorAccepted = socket.onContributorAccepted.subscribe(data => this.getMyNotifications());
+    this.onContributorRequested = socket.onContributorRequested.subscribe(data => this.getMyNotifications());
     this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
-    this.onInvited = socket.onInvited.subscribe(data => this.getMyInfo());
+    this.onWatchAccepted = socket.onWatchAccepted.subscribe(data => this.getMyNotifications());
+    this.onWatchRequested = socket.onWatchRequested.subscribe(data => this.getMyNotifications());
   }
 
   componentDidMount() {
@@ -66,6 +72,13 @@ export default class AccountComponent extends Component {
           user: data.user
         });
       }).catch(error => { });
+
+  }
+
+  getMyNotifications = () => {
+    http.get('/api/notifications')
+      .then(data => this.setState({ notifications: data }))
+      .catch(error => { });
   }
 
   hideModal = () => {

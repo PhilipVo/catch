@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Icon } from 'react-native-elements';
-import { StackNavigator } from 'react-navigation';
+import { NavigationActions, StackNavigator } from 'react-navigation';
 
 import AccountComponent from './account.component';
 import AccountPictureComponent from './account-picture.component';
@@ -25,9 +25,14 @@ module.exports = class AccountNavigatorComponent extends Component {
 
     return (
       <AccountNavigator
+        ref={nav => this.navigator = nav}
         screenProps={{
           logout: this.props.screenProps.logout,
-          navigate: this.props.navigation.navigate
+          navigate: this.props.navigation.navigate,
+          reset: () => this.navigator.dispatch(NavigationActions.reset({
+            actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
+            index: 0
+          }))
         }} />
     );
   }

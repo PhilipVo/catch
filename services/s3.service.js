@@ -12,14 +12,10 @@ class s3 {
   }
 
   put(file, keyPrefix) {
-    const test = {
-      ...this.options,
-      keyPrefix: keyPrefix
-    }
     return RNS3.put(file, { ...this.options, keyPrefix: keyPrefix })
       .then(response => {
         if (response.status !== 201)
-          throw 'Failed to upload media.';
+          return Promise.reject('Failed to upload media.');
       });
   }
 }

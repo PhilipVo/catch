@@ -4,6 +4,7 @@ const moment = require('moment');
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
   Keyboard,
@@ -132,7 +133,10 @@ export default class CreateNewEventComponent extends Component {
           uri: this.state.cover
         };
 
-        s3.put(file, `events/${data.eventId}/`).catch(error => { throw error });
+        s3.put(file, `events/${data.eventId}/`)
+          .catch(error => {
+            Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+          });
 
         // Upload story:
         if (data.storyId) {
@@ -142,7 +146,10 @@ export default class CreateNewEventComponent extends Component {
             uri: event.story
           };
 
-          s3.put(file, `events/${data.eventId}/`).catch(error => { throw error });
+          s3.put(file, `events/${data.eventId}/`)
+            .catch(error => {
+              Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+            });
         }
 
         // Send out SMS invites:
@@ -226,7 +233,10 @@ export default class CreateNewEventComponent extends Component {
   }
 
   search = term => {
-    if (this.subscription) this.subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+      this.subscription = undefined;
+    }
 
     this.subscription = Observable.create(observer => {
       Contacts.getContactsMatchingString(term, (error, contacts) => {

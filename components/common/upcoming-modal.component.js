@@ -33,8 +33,10 @@ export default class UpcomingModalComponent extends Component {
       comments: [],
       followers: 0,
       dataSource: this.ds.cloneWithRows([]),
+      isNotificationsOn: null,
       loading: true,
-      status: -1
+      status: null,
+      toggling: false
     };
   }
 
@@ -75,62 +77,35 @@ export default class UpcomingModalComponent extends Component {
           dataSource: this.ds.cloneWithRows(data.comments),
           followers: data.followers,
           loading: false,
+          isNotificationsOn: data.isNotificationsOn,
           status: data.status
         });
       }).catch(() => { });
   }
 
   toggleNotifications = () => {
-    const follwers = this.state.follwers;
-    const status = this.state.status;
+    if (!this.state.toggling) {
+      this.setState({ toggling: true });
 
-    let request;
-    if (this.state.status === -1) {
-      this.setState({
-        followers: this.state.followers + 1,
-        status: 1
-      });
+      let request;
+      if (this.state.isNotificationsOn === null) {
+        request = http.post('/api/contributors/turn-on-notifications', JSON.stringify({
+          id: this.props.event.id
+        }));
+      } else {
+        request = http.put(`/api/contributors/toggle-notifications`, JSON.stringify({
+          id: this.props.event.id,
+          isNotificationsOn: this.state.isNotificationsOn === 0 ? 1 : 0
+        }));
+      }
 
-      request = http.post('/api/contributors/follow', JSON.stringify({
-        ...this.props.event,
-        status: this.state.status
-      }));
-    } else if (this.state.status === 1) {
-      this.setState({
-        followers: this.state.followers - 1,
-        status: -1
-      });
-
-      request = http.delete(`/api/contributors/${this.props.event.id}`);
-    } else if (this.state.status === 2) {
-      this.setState({
-        followers: this.state.followers + 1,
-        status: 3
-      });
-
-      request = http.put('/api/contributors/watch', JSON.stringify({
-        ...this.props.event,
-        status: this.state.status
-      }));
-    } else if (this.state.status === 3) {
-      this.setState({
-        followers: this.state.followers - 1,
-        status: 2
-      });
-
-      request = http.put('/api/contributors/unwatch', JSON.stringify({
-        ...this.props.event,
-        status: this.state.status
-      }));
+      request.then(() => this.setState({
+        followers: this.state.isNotificationsOn === 1 ?
+          this.state.followers - 1 : this.state.followers + 1,
+        isNotificationsOn: this.state.isNotificationsOn === 1 ? 0 : 1,
+        toggling: false
+      })).catch(error => this.setState({ toggling: false }));
     }
-
-    request.then(() => { })
-      .catch(error => {
-        this.setState({
-          followers: follwers,
-          state: status
-        });
-      });
   }
 
   viewUser = username => {
@@ -191,33 +166,42 @@ export default class UpcomingModalComponent extends Component {
                 </Text>
                 <Text style={styles.modalText1}>{this.state.followers} Following</Text>
               </View>
-              {
-                this.props.event.username !== session.username &&
-                (this.props.event.audience === 0 ||
-                  this.state.status > 0) &&
-                <TouchableHighlight
-                  onPress={this.toggleNotifications}
-                  underlayColor='transparent'>
-                  <View style={{
-                    alignItems: 'center',
-                    backgroundColor: this.state.status === -1 || this.state.status == 2 ? 'green' : 'white',
-                    borderRadius: 5,
-                    padding: 5
+              <View style={{ alignItems: 'center' }}>
+                {
+                  this.props.event.audience === 1 &&
+                  <Text style={{
+                    color: 'white',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    marginBottom: 5
                   }}>
-                    <Text style={{
-                      color: this.state.status === -1 || this.state.status == 2 ? 'white' : 'black',
-                      fontSize: 12,
-                      fontWeight: 'bold'
+                    Private event
+                </Text>
+                }
+
+                {
+                  !this.state.loading && this.props.event.username !== session.username &&
+                  (this.props.event.audience === 0 || this.state.status !== null) &&
+                  <TouchableHighlight
+                    onPress={this.toggleNotifications}
+                    underlayColor='transparent'>
+                    <View style={{
+                      alignItems: 'center',
+                      backgroundColor: !this.state.isNotificationsOn ? 'green' : 'white',
+                      borderRadius: 5,
+                      padding: 5
                     }}>
-                      {
-                        this.state.status === -1 || this.state.status == 2 ?
-                          'Turn On Notifications' :
-                          'Turn Off Notifications'
-                      }
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-              }
+                      <Text style={{
+                        color: !this.state.isNotificationsOn ? 'white' : 'black',
+                        fontSize: 12,
+                        fontWeight: 'bold'
+                      }}>
+                        {!this.state.isNotificationsOn ? 'Turn On Notifications' : 'Turn Off Notifications'}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                }
+              </View>
             </View>
 
             <Text style={styles.modalText3}>{this.props.event.description}</Text>
@@ -340,7 +324,7 @@ const styles = StyleSheet.create({
     padding: 20
   },
   modalView1: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     justifyContent: 'space-between'
   },

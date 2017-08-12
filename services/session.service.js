@@ -75,7 +75,10 @@ class SessionService {
         this.username = payload.username;
 
         // Configure notifications:        
-        PushNotification.configure({ permissions: { badge: false } });
+        PushNotification.configure({
+          onNotification: notification => { console.log('Notification', notification) },
+          permissions: { badge: false }
+        });
 
         // Connect to sockets:
         socket.connect(this.username);
