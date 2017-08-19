@@ -64,8 +64,8 @@ export default class CreatePreviewComponent extends Component {
         {
           this.state.showModal ?
             <CreatePreviewModalComponent
-              dispatch={this.props.navigation.dispatch}
               events={this.state.events}
+              goBack={this.props.navigation.goBack}
               hideModal={() => this.setState({ showModal: false })}
               isVideo={params.isVideo}
               navigate={this.props.navigation.navigate}

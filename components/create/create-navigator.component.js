@@ -24,7 +24,8 @@ module.exports = class CreateNavigatorComponent extends Component {
     );
 
     return (
-      <CreateNavigator screenProps={{ navigate: this.props.navigation.navigate }} />
+      <CreateNavigator
+        screenProps={{ navigate: this.props.navigation.navigate }} />
     );
   }
 }

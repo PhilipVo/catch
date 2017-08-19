@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { AppRegistry, AsyncStorage, Image } from 'react-native';
+import { AppRegistry, AsyncStorage, Dimensions, Image, View } from 'react-native';
+import { MessageBar, MessageBarManager } from 'react-native-message-bar';
 
 import session from './services/session.service';
 
@@ -24,6 +25,8 @@ export default class Catch extends Component {
   }
 
   componentDidMount() {
+    MessageBarManager.registerMessageBar(this.refs.alert);
+
     AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         if (catchToken) {
@@ -94,11 +97,21 @@ export default class Catch extends Component {
     }
   }
 
+  componentWillUnmount() {
+    MessageBarManager.unregisterMessageBar();
+  }
+
   render() {
     return (
-      this.state.mode === 0 ?
-        <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} /> :
-        <this.Navigator screenProps={this.screenProps} />
+      <View style={{ flex: 1 }}>
+        {
+          this.state.mode === 0 ?
+            <Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} /> :
+            <this.Navigator screenProps={this.screenProps} />
+        }
+
+        <MessageBar ref='alert' />
+      </View>
     );
   }
 }

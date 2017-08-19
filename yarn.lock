@@ -3481,6 +3481,10 @@ react-native-keyboard-aware-scroll-view@^0.2.8:
   dependencies:
     react-timer-mixin "^0.13.3"
 
+react-native-message-bar@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-message-bar/-/react-native-message-bar-2.0.1.tgz#07f433a6041cbc45264e1c9355f60ecf22714287"
+
 react-native-modal-datetime-picker@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/react-native-modal-datetime-picker/-/react-native-modal-datetime-picker-4.6.0.tgz#bf0bfa771d76678eb883dbba1b4ff21dfe885b6d"

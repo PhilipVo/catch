@@ -70,6 +70,7 @@ class SessionService {
       try {
         // Set user:
         payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
+        console.log(payload)
         this.isFacebookUser = payload.isFacebookUser;
         // this.isFacebookUser = true;
         this.username = payload.username;

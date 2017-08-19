@@ -121,9 +121,9 @@ export default class PastModalComponent extends Component {
           timerUpAnimation: new Animated.Value(0)
         }
       });
-    } else {
-      this.setState(() => { return { done: true } });
-    }
+    } else if (session.isFacebookUser) {
+      this.setState({ done: true });
+    } else this.props.hideModal();
   }
 
   onBuffer = buffer => {
@@ -157,6 +157,7 @@ export default class PastModalComponent extends Component {
       }
     });
   }
+
 
   previousItem = () => {
     const currentItem = this.state.item;

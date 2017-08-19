@@ -9,8 +9,8 @@ import {
   View
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
+import { MessageBarManager } from 'react-native-message-bar';
 import Modal from 'react-native-modalbox';
-// import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
@@ -47,27 +47,40 @@ export default class CreatePreviewModalComponent extends Component {
           };
 
           s3.put(file, `events/${event.id}/`)
-            .catch(error => {
-              Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+            .then(() => {
+              MessageBarManager.showAlert({
+                alertType: 'custom',
+                message: `${this.props.isVideo ? 'Video' : 'Picture'} successfully uploaded!`,
+                stylesheetExtra: { backgroundColor: 'deepskyblue' },
+                viewTopInset: 20
+              });
+
+              if (event.username !== session.username) {
+                socket.emit('contributed', {
+                  contributor: session.username,
+                  creator: event.username,
+                  title: event.title
+                });
+              }
+            }).catch(() => {
+              http.delete(`/api/stories/${storyId}`)
+                .catch(() => { });
+
+              MessageBarManager.showAlert({
+                alertType: 'error',
+                message: `${this.props.isVideo ? 'Video' : 'Picture'} failed to upload.`,
+                viewTopInset: 20
+              });
             });
 
-          if (event.username !== session.username) {
-            socket.emit('contributed', {
-              contributor: session.username,
-              creator: event.username,
-              title: event.title
-            });
-          }
+          MessageBarManager.showAlert({
+            alertType: 'custom',
+            message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
+            stylesheetExtra: { backgroundColor: 'white', color: 'black' },
+            viewTopInset: 20
+          });
 
-          this.props.dispatch(NavigationActions.reset({
-            actions: [
-              NavigationActions.navigate({
-                routeName: 'CreateCompleteComponent',
-                params: { event: event }
-              })
-            ],
-            index: 0
-          }));
+          this.props.goBack();
         }).catch((error) => {
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });

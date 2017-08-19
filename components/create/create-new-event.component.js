@@ -134,47 +134,73 @@ export default class CreateNewEventComponent extends Component {
         };
 
         s3.put(file, `events/${data.eventId}/`)
-          .catch(error => {
-            Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+          .then(() => {
+            MessageBarManager.showAlert({
+              alertType: 'custom',
+              message: 'Cover image successfully uploaded!',
+              stylesheetExtra: { backgroundColor: 'deepskyblue' },
+              viewTopInset: 20
+            });
+
+            socket.emit('event');
+
+            // Send out SMS invites:
+            const recipients = Object.keys(this.numbers);
+            if (recipients.length > 0) return SendSMS.send({
+              body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
+              recipients: recipients,
+              successTypes: ['sent', 'queued']
+            }, (completed, cancelled, error) => {
+              if (error) this.setState({ saving: false });
+            });
+
+            // Upload story:
+            if (data.storyId) {
+              const file = {
+                name: data.storyId,
+                type: event.isVideo ? 'video/mp4' : 'image/jpeg',
+                uri: event.story
+              };
+
+              s3.put(file, `events/${data.eventId}/`)
+                .then(() => {
+                  MessageBarManager.showAlert({
+                    alertType: 'custom',
+                    message: `${event.isVideo ? 'Video' : 'Picture'} successfully uploaded!`,
+                    stylesheetExtra: { backgroundColor: 'deepskyblue' },
+                    viewTopInset: 20
+                  });
+                }).catch(error => {
+                  http.delete(`/api/stories/${storyId}`)
+                    .catch(() => { });
+
+                  MessageBarManager.showAlert({
+                    alertType: 'error',
+                    message: `${event.isVideo ? 'Video' : 'Picture'} failed to upload.`,
+                    viewTopInset: 20
+                  });
+                });
+            }
+          }).catch(error => {
+            http.delete(`/api/events/${data.eventId}`)
+              .catch(() => { });
+
+            MessageBarManager.showAlert({
+              alertType: 'error',
+              message: 'Event failed to save',
+              viewTopInset: 20
+            });
           });
 
-        // Upload story:
-        if (data.storyId) {
-          const file = {
-            name: data.storyId,
-            type: event.isVideo ? 'video/mp4' : 'image/jpeg',
-            uri: event.story
-          };
-
-          s3.put(file, `events/${data.eventId}/`)
-            .catch(error => {
-              Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
-            });
-        }
-
-        // Send out SMS invites:
-        const recipients = Object.keys(this.numbers);
-        if (recipients.length > 0) return SendSMS.send({
-          body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
-          recipients: recipients,
-          successTypes: ['sent', 'queued']
-        }, (completed, cancelled, error) => {
-          if (error) this.setState({ saving: false });
+        MessageBarManager.showAlert({
+          alertType: 'custom',
+          message: `Now uploading your event...`,
+          stylesheetExtra: { backgroundColor: 'white', color: 'black' },
+          viewTopInset: 20
         });
 
-        socket.emit('event');
-
-        // Navigate to completion screen:
         this.props.navigation.dispatch(NavigationActions.reset({
-          actions: [
-            NavigationActions.navigate({
-              params: {
-                cover: this.state.cover,
-                event: event
-              },
-              routeName: 'CreateCompleteComponent'
-            })
-          ],
+          actions: [NavigationActions.navigate({ routeName: 'CreateCameraComponent' })],
           index: 0
         }));
       }).catch(error => {
@@ -225,10 +251,9 @@ export default class CreateNewEventComponent extends Component {
   openPicker = () => {
     ImagePicker.openPicker({
       cropping: true,
-      height: 120,
+      height: 240,
       width: Dimensions.get('window').width,
-    })
-      .then(image => this.setState({ cover: image.path }))
+    }).then(image => this.setState({ cover: image.path }))
       .catch(() => { });
   }
 
