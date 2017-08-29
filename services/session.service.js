@@ -5,6 +5,7 @@ import { LoginManager } from 'react-native-fbsdk';
 import http from './http.service';
 import notification from './notification.service';
 import socket from './socket.service';
+notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++NOTIFICATION SERVICE++++++++++++++++++++++++', notification));
 
 class SessionService {
   constructor() {
@@ -19,10 +20,7 @@ class SessionService {
         AsyncStorage.setItem('catchToken', catchToken);
       }).then(() => AsyncStorage.getItem('catchToken'))
       .then(catchToken => this.setSession(catchToken))
-      .catch(error => {
-        if (error.isNew === true) return Promise.resolve(true);
-        return Promise.reject(error);
-      });
+      .catch(error => error.isNew ? Promise.resolve(true) : Promise.reject(error));
   }
 
   facebookRegister(data) {

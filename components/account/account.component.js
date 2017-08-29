@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PushNotificationIOS, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
 
@@ -17,7 +17,7 @@ import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
 import notification from '../../services/notification.service';
-import socket from '../../services/socket.service';
+// import socket from '../../services/socket.service';
 
 export default class AccountComponent extends Component {
   constructor(props) {
@@ -34,12 +34,6 @@ export default class AccountComponent extends Component {
       user: {},
     };
 
-    // Tab component:
-    this.tabComponent = <TabComponent
-      navigate={this.props.screenProps.navigate}
-      reset={this.props.screenProps.reset}
-      tab='account' />
-
     // Socket events:
     // this.onCommented = socket.onCommented.subscribe(data => this.getMyNotifications());
     // this.onContacted = socket.onContacted.subscribe(data => {
@@ -51,9 +45,9 @@ export default class AccountComponent extends Component {
     // this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
     // this.onWatchAccepted = socket.onWatchAccepted.subscribe(data => this.getMyNotifications());
     // this.onWatchRequested = socket.onWatchRequested.subscribe(data => this.getMyNotifications());
-    PushNotificationIOS.addEventListener('notification', this.getMyInfo);
-    PushNotificationIOS.addEventListener('register', data => console.log('=========================================\nregister event', data));
-    notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++notif service', notification));
+    // PushNotificationIOS.addEventListener('notification', );
+    // PushNotificationIOS.addEventListener('register', data => console.log('=========================================\nregister event', data));
+    // notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++notif service', notification));
   }
 
   componentDidMount() {
@@ -66,8 +60,8 @@ export default class AccountComponent extends Component {
     // this.onContacted.unsubscribe();
     // this.onContributed.unsubscribe();
     // this.onEvent.unsubscribe();
-    PushNotificationIOS.removeEventListener('notification', this.getMyInfo);
-    PushNotificationIOS.removeEventListener('register');
+    // PushNotificationIOS.removeEventListener('notification', this.getMyInfo);
+    // PushNotificationIOS.removeEventListener('register');
   }
 
   getMyInfo = () => {
@@ -116,7 +110,7 @@ export default class AccountComponent extends Component {
 
   viewUser = username => {
     this.props.navigation.navigate('ProfileComponent', {
-      tabComponent: this.tabComponent,
+      tabComponent: this.props.screenProps.tabComponent,
       username: username
     });
   }
@@ -132,7 +126,7 @@ export default class AccountComponent extends Component {
               getMyInfo={this.getMyInfo}
               navigate={this.props.navigation.navigate}
               setEvent={this.setEvent}
-              tabComponent={this.tabComponent}
+              tabComponent={this.props.screenProps.tabComponent}
               user={this.state.user} />
 
             {/* Top tab bar */}
@@ -170,13 +164,13 @@ export default class AccountComponent extends Component {
                   notifications: this.state.notifications,
                   past: this.state.past,
                   setEvent: this.setEvent,
-                  tabComponent: this.tabComponent,
+                  tabComponent: this.props.screenProps.tabComponent,
                   upcoming: this.state.upcoming
                 }} />
             </View>
 
           </View>
-          {this.tabComponent}
+          {this.props.screenProps.tabComponent}
         </View>
 
         { // Modals
@@ -195,13 +189,13 @@ export default class AccountComponent extends Component {
                   event={this.state.event}
                   hideModal={this.hideModal}
                   navigate={this.props.navigation.navigate}
-                  tabComponent={this.tabComponent} /> :
+                  tabComponent={this.props.screenProps.tabComponent} /> :
                 this.state.modal === 'past' ?
                   <PastModalComponent
                     event={this.state.event}
                     hideModal={this.hideModal}
                     navigate={this.props.navigation.navigate}
-                    tabComponent={this.tabComponent} /> :
+                    tabComponent={this.props.screenProps.tabComponent} /> :
                   this.state.modal === 'invite' ?
                     <InviteModalComponent
                       event={this.state.event}

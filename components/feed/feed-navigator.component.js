@@ -4,31 +4,39 @@ import { Icon } from 'react-native-elements';
 
 import FeedComponent from './feed.component';
 import ProfileComponent from '../common/profile.component';
+import TabComponent from '../common/tab.component';
 
 module.exports = class FeedNavigatorComponent extends Component {
-  render() {
-    const FeedNavigator = StackNavigator(
-      {
-        FeedComponent: { screen: FeedComponent },
-        ProfileComponent: { screen: ProfileComponent }
-      },
-      {
-        cardStyle: { backgroundColor: 'white' },
-        headerMode: 'none',
-        initialRouteName: 'FeedComponent'
-      }
-    );
+  shouldComponentUpdate() {
+    return false;
+  }
 
+  render() {
     return (
       <FeedNavigator
         ref={nav => this.navigator = nav}
         screenProps={{
           navigate: this.props.navigation.navigate,
-          reset: () => this.navigator.dispatch(NavigationActions.reset({
-            actions: [NavigationActions.navigate({ routeName: 'FeedComponent' })],
-            index: 0
-          }))
+          tabComponent: <TabComponent
+            navigate={this.props.navigation.navigate}
+            reset={() => this.navigator.dispatch(NavigationActions.reset({
+              actions: [NavigationActions.navigate({ routeName: 'FeedComponent' })],
+              index: 0
+            }))}
+            tab='feed' />
         }} />
     );
   }
 }
+
+const FeedNavigator = StackNavigator(
+  {
+    FeedComponent: { screen: FeedComponent },
+    ProfileComponent: { screen: ProfileComponent }
+  },
+  {
+    cardStyle: { backgroundColor: 'white' },
+    headerMode: 'none',
+    initialRouteName: 'FeedComponent'
+  }
+);

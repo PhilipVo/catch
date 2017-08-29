@@ -1,8 +1,11 @@
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { Subject } from 'rxjs/Subject';
 
 import http from './http.service';
+
+PushNotificationIOS.addEventListener('notification', notification => console.log('==================NOTIFICATION==================', notification));
+PushNotificationIOS.addEventListener('register', data => console.log('====================REGISTER=====================', data));
 
 class NotificationService {
   constructor() {

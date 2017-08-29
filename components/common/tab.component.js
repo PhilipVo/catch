@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 
 const TabComponent = props => {
   return (
-    <View style={props.tab === 'create' ? styles.tab1 : styles.tab2}>
+    <View style={props.tab === 'camera' ? styles.tab1 : styles.tab2}>
       <Icon
         color={props.tab === 'feed' ? 'black' : 'gray'}
         name='calendar'
@@ -16,9 +16,9 @@ const TabComponent = props => {
         type='simple-line-icon'
         underlayColor='transparent' />
       <Icon
-        color={props.tab === 'create' ? 'transparent' : 'gray'}
+        color={props.tab === 'camera' ? 'transparent' : 'gray'}
         name='plus'
-        onPress={() => { props.navigate('CreateNavigatorComponent') }}
+        onPress={() => { props.navigate('CameraComponent') }}
         size={30}
         type='simple-line-icon'
         underlayColor='transparent' />

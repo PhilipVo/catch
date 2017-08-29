@@ -13,7 +13,6 @@ import { NavigationActions, TabNavigator } from 'react-navigation';
 import FeedUpcomingListComponent from './feed-upcoming-list.component';
 import PastListComponent from '../common/past-list.component';
 import PastModalComponent from '../common/past-modal.component';
-import TabComponent from '../common/tab.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import socket from '../../services/socket.service';
@@ -32,12 +31,6 @@ export default class FeedComponent extends Component {
       tab: 'FeedUpcomingListComponent',
       upcoming: [],
     };
-
-    // Tab component:
-    this.tabComponent = <TabComponent
-      navigate={this.props.screenProps.navigate}
-      reset={this.props.screenProps.reset}
-      tab='feed' />
 
     // Socket events:
     // this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
@@ -121,7 +114,7 @@ export default class FeedComponent extends Component {
               }} />
 
           </View>
-          {this.tabComponent}
+          {this.props.screenProps.tabComponent}
         </View>
 
         { // Modals
@@ -130,13 +123,13 @@ export default class FeedComponent extends Component {
               event={this.state.event}
               hideModal={this.hideModal}
               navigate={this.props.navigation.navigate}
-              tabComponent={this.tabComponent} /> :
+              tabComponent={this.props.screenProps.tabComponent} /> :
             this.state.modal === 'upcoming' ?
               <UpcomingModalComponent
                 event={this.state.event}
                 hideModal={this.hideModal}
                 navigate={this.props.navigation.navigate}
-                tabComponent={this.tabComponent} /> :
+                tabComponent={this.props.screenProps.tabComponent} /> :
               null
         }
 

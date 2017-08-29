@@ -12,9 +12,9 @@ import Camera from 'react-native-camera';
 import { Icon } from 'react-native-elements';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
-import TabComponent from '../common/tab.component';
+import TabComponent from './common/tab.component';
 
-export default class CreateCameraComponent extends Component {
+module.exports = class CameraComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -47,7 +47,7 @@ export default class CreateCameraComponent extends Component {
 
   capture = () => {
     this.camera.capture(this.captureOptions)
-      .then(data => this.props.navigation.navigate('CreatePreviewComponent', { story: data.path }))
+      .then(data => this.props.navigation.navigate('CreateNavigatorComponent', { story: data.path }))
       .catch(() => { });
   }
 
@@ -57,7 +57,7 @@ export default class CreateCameraComponent extends Component {
     this.refs.circle.performLinearAnimation(100, 8000);
     this.camera.capture(this.recordOptions)
       .then(data => {
-        this.props.navigation.navigate('CreatePreviewComponent', {
+        this.props.navigation.navigate('CreateNavigatorComponent', {
           isVideo: true,
           story: data.path
         });
@@ -94,19 +94,18 @@ export default class CreateCameraComponent extends Component {
         type={this.state.type}>
 
         {/* Skip button */}
-        <TouchableHighlight
-          onPress={() => this.props.navigation.navigate('CreateNewEventComponent')}
-          style={{ flex: 1 }}>
-          <View style={styles.skipView}>
-            <Text style={styles.skipText}>Skip  </Text>
-            <Icon
-              color='rgba(255,255,255,0.5)'
-              name='angle-right'
-              size={33}
-              type='font-awesome'
-              underlayColor='transparent' />
-          </View>
-        </TouchableHighlight>
+        <View style={styles.skipView}>
+          <Text
+            onPress={() => this.props.navigation.navigate('CreateNavigatorComponent')}
+            style={styles.skipText}>Skip  </Text>
+          <Icon
+            color='rgba(255,255,255,0.5)'
+            name='angle-right'
+            onPress={() => this.props.navigation.navigate('CreateNavigatorComponent')}
+            size={33}
+            type='font-awesome'
+            underlayColor='transparent' />
+        </View>
 
         {/* Capture button */}
         <View style={styles.view}>
@@ -157,8 +156,7 @@ export default class CreateCameraComponent extends Component {
           </View>
         </View>
 
-        <TabComponent navigate={this.props.screenProps.navigate} tab='create' />
-
+        <TabComponent navigate={this.props.navigation.navigate} tab='camera' />
       </Camera>
     );
   }

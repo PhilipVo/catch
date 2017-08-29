@@ -11,12 +11,11 @@ import {
 import { Divider, Icon } from 'react-native-elements';
 import { MessageBarManager } from 'react-native-message-bar';
 import Modal from 'react-native-modalbox';
-import { NavigationActions } from 'react-navigation';
 
 import http from '../../services/http.service';
 import s3 from '../../services/s3.service';
-import session from '../../services/session.service';
-import socket from '../../services/socket.service';
+// import session from '../../services/session.service';
+// import socket from '../../services/socket.service';
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -55,13 +54,13 @@ export default class CreatePreviewModalComponent extends Component {
                 viewTopInset: 20
               });
 
-              if (event.username !== session.username) {
-                socket.emit('contributed', {
-                  contributor: session.username,
-                  creator: event.username,
-                  title: event.title
-                });
-              }
+              // if (event.username !== session.username) {
+              //   socket.emit('contributed', {
+              //     contributor: session.username,
+              //     creator: event.username,
+              //     title: event.title
+              //   });
+              // }
             }).catch(() => {
               http.delete(`/api/stories/${storyId}`)
                 .catch(() => { });
@@ -93,7 +92,7 @@ export default class CreatePreviewModalComponent extends Component {
   next = () => {
     this.props.pause();
     console.log(this.props.key)
-    this.props.navigate('CreateNewEventComponent', {
+    this.props.navigate('CreateComponent', {
       duration: this.props.duration,
       isVideo: this.props.isVideo,
       key: this.props.key,

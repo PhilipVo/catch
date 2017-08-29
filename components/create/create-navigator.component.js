@@ -1,37 +1,54 @@
 import React, { Component } from 'react';
 import { NavigationActions, StackNavigator } from 'react-navigation';
 
-import CreateCameraComponent from './create-camera.component';
-import CreateCompleteComponent from './create-complete.component';
-import CreateNewEventComponent from './create-new-event.component';
+import CreateComponent from './create.component';
 import CreatePreviewComponent from './create-preview.component';
+import TabComponent from '../common/tab.component';
 
 module.exports = class CreateNavigatorComponent extends Component {
-  render() {
-    const CreateNavigator = StackNavigator(
-      {
-        CreateCameraComponent: { screen: CreateCameraComponent },
-        CreateCompleteComponent: { screen: CreateCompleteComponent },
-        CreateNewEventComponent: { screen: CreateNewEventComponent },
-        CreatePreviewComponent: { screen: CreatePreviewComponent, key: 'preview' }
-      },
-      {
-        cardStyle: { backgroundColor: 'white' },
-        headerMode: 'none',
-        initialRouteName: 'CreateCameraComponent',
-      }
-    );
+  componentWillReceiveProps(nextProps) {
+    console.log('got nextProps', nextProps)
+    if (nextProps.navigation.state.params)
+      this.reset('CreatePreviewComponent', nextProps.navigation.state.params);
+  }
 
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  reset = (routeName, params) => {
+    this.navigator.dispatch(NavigationActions.reset({
+      actions: [NavigationActions.navigate({ routeName: routeName, params: params })],
+      index: 0
+    }));
+  }
+
+  render() {
     return (
       <CreateNavigator
         ref={nav => this.navigator = nav}
         screenProps={{
           navigate: this.props.navigation.navigate,
-          reset: () => this.navigator.dispatch(NavigationActions.reset({
-            actions: [NavigationActions.navigate({ routeName: 'CreateCameraComponent' })],
-            index: 0
-          }))
+          reset: () => {
+            this.props.navigation.navigate('CameraComponent');
+            this.reset('CreateComponent');
+          },
+          tabComponent: <TabComponent
+            navigate={this.props.navigation.navigate}
+            tab='create' />
         }} />
     );
   }
 }
+
+const CreateNavigator = StackNavigator(
+  {
+    CreateComponent: { screen: CreateComponent },
+    CreatePreviewComponent: { screen: CreatePreviewComponent }
+  },
+  {
+    cardStyle: { backgroundColor: 'white' },
+    headerMode: 'none',
+    initialRouteName: 'CreateComponent',
+  }
+);
