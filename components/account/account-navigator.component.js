@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Icon } from 'react-native-elements';
 import { NavigationActions, StackNavigator } from 'react-navigation';
 
 import AccountComponent from './account.component';

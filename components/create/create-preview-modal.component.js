@@ -51,7 +51,7 @@ export default class CreatePreviewModalComponent extends Component {
               MessageBarManager.showAlert({
                 alertType: 'custom',
                 message: `${this.props.isVideo ? 'Video' : 'Picture'} successfully uploaded!`,
-                stylesheetExtra: { backgroundColor: 'deepskyblue' },
+                stylesheetExtra: { backgroundColor: '#f74434' },
                 viewTopInset: 20
               });
 
@@ -67,8 +67,9 @@ export default class CreatePreviewModalComponent extends Component {
                 .catch(() => { });
 
               MessageBarManager.showAlert({
-                alertType: 'error',
+                alertType: 'custom',
                 message: `${this.props.isVideo ? 'Video' : 'Picture'} failed to upload.`,
+                stylesheetExtra: { backgroundColor: 'yellow' },
                 viewTopInset: 20
               });
             });
@@ -76,12 +77,14 @@ export default class CreatePreviewModalComponent extends Component {
           MessageBarManager.showAlert({
             alertType: 'custom',
             message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
-            stylesheetExtra: { backgroundColor: 'white', color: 'black' },
+            stylesheetExtra: { backgroundColor: '#f74434' },
             viewTopInset: 20
           });
 
-          this.props.goBack();
+          // this.props.goBack();
+          this.props.reset();
         }).catch((error) => {
+          console.log(error)
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
@@ -89,9 +92,11 @@ export default class CreatePreviewModalComponent extends Component {
 
   next = () => {
     this.props.pause();
+    console.log(this.props.key)
     this.props.navigate('CreateNewEventComponent', {
       duration: this.props.duration,
       isVideo: this.props.isVideo,
+      key: this.props.key,
       play: this.props.play,
       story: this.props.story
     });

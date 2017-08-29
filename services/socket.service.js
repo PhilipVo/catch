@@ -16,10 +16,8 @@ class SocketService {
     this.onCommented = new Observable(observer => {
       this.socket.on('commented', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `${data.commenter} commented on ${data.title}`,
-          number: 1
         });
       });
     });
@@ -27,10 +25,8 @@ class SocketService {
     this.onContacted = new Observable(observer => {
       this.socket.on('contacted', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `${data.username} added you as a contact`,
-          number: 1
         });
       });
     });
@@ -38,10 +34,8 @@ class SocketService {
     this.onContributed = new Observable(observer => {
       this.socket.on('contributed', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `${data.contributor} added to ${data.title}`,
-          number: 1
         });
       });
     });
@@ -49,10 +43,8 @@ class SocketService {
     this.onContributorAccepted = new Observable(observer => {
       this.socket.on('contributor accepted', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `You can now add to ${data.title}`,
-          number: 1
         });
       });
     });
@@ -60,10 +52,8 @@ class SocketService {
     this.onContributorRequested = new Observable(observer => {
       this.socket.on('contributor requested', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `New users have requested to add to ${data.title}`,
-          number: 1
         });
       });
     });
@@ -75,10 +65,8 @@ class SocketService {
     this.onWatchAccepted = new Observable(observer => {
       this.socket.on('watch accepted', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `You can now view ${data.title}`,
-          number: 1
         });
       });
     });
@@ -86,10 +74,8 @@ class SocketService {
     this.onWatchRequested = new Observable(observer => {
       this.socket.on('watch requested', data => {
         observer.next(data);
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + 10000),
+        PushNotification.localNotification({
           message: `${data.watcher} requested to watch to ${data.title}`,
-          number: 1
         });
       });
     });

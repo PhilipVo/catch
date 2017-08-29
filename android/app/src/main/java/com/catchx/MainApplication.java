@@ -3,6 +3,7 @@ package com.catchx;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.devicetoken.RNDeviceTokenPackage;
 import com.tkporter.sendsms.SendSMSPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceTokenPackage(),
           SendSMSPackage.getInstance(),
           new ReactNativeContacts(),
           new RCTCameraPackage(), new FBSDKPackage(mCallbackManager),

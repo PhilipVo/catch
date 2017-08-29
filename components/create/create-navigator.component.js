@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { StackNavigator } from 'react-navigation';
-import { Icon } from 'react-native-elements';
+import { NavigationActions, StackNavigator } from 'react-navigation';
 
 import CreateCameraComponent from './create-camera.component';
 import CreateCompleteComponent from './create-complete.component';
@@ -25,7 +24,14 @@ module.exports = class CreateNavigatorComponent extends Component {
 
     return (
       <CreateNavigator
-        screenProps={{ navigate: this.props.navigation.navigate }} />
+        ref={nav => this.navigator = nav}
+        screenProps={{
+          navigate: this.props.navigation.navigate,
+          reset: () => this.navigator.dispatch(NavigationActions.reset({
+            actions: [NavigationActions.navigate({ routeName: 'CreateCameraComponent' })],
+            index: 0
+          }))
+        }} />
     );
   }
 }

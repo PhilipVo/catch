@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, TouchableHighlight, View } from 'react-native';
-import { h4, Icon, Text } from 'react-native-elements';
+import { Icon, Text } from 'react-native-elements';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';

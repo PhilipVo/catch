@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { PushNotificationIOS, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
 
@@ -16,6 +16,7 @@ import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
+import notification from '../../services/notification.service';
 import socket from '../../services/socket.service';
 
 export default class AccountComponent extends Component {
@@ -40,46 +41,59 @@ export default class AccountComponent extends Component {
       tab='account' />
 
     // Socket events:
-    this.onCommented = socket.onCommented.subscribe(data => this.getMyNotifications());
-    this.onContacted = socket.onContacted.subscribe(data => this.getMyNotifications());
-    this.onContributed = socket.onContributed.subscribe(data => this.getMyNotifications());
-    this.onContributorAccepted = socket.onContributorAccepted.subscribe(data => this.getMyNotifications());
-    this.onContributorRequested = socket.onContributorRequested.subscribe(data => this.getMyNotifications());
-    this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
-    this.onWatchAccepted = socket.onWatchAccepted.subscribe(data => this.getMyNotifications());
-    this.onWatchRequested = socket.onWatchRequested.subscribe(data => this.getMyNotifications());
+    // this.onCommented = socket.onCommented.subscribe(data => this.getMyNotifications());
+    // this.onContacted = socket.onContacted.subscribe(data => {
+    //   this.getMyNotifications()
+    // });
+    // this.onContributed = socket.onContributed.subscribe(data => this.getMyNotifications());
+    // this.onContributorAccepted = socket.onContributorAccepted.subscribe(data => this.getMyNotifications());
+    // this.onContributorRequested = socket.onContributorRequested.subscribe(data => this.getMyNotifications());
+    // this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
+    // this.onWatchAccepted = socket.onWatchAccepted.subscribe(data => this.getMyNotifications());
+    // this.onWatchRequested = socket.onWatchRequested.subscribe(data => this.getMyNotifications());
+    PushNotificationIOS.addEventListener('notification', this.getMyInfo);
+    PushNotificationIOS.addEventListener('register', data => console.log('=========================================\nregister event', data));
+    notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++notif service', notification));
   }
 
   componentDidMount() {
     this.getMyInfo();
+
   }
 
   componentWillUnmount() {
-    this.onCommented.unsubscribe();
-    this.onContacted.unsubscribe();
-    this.onContributed.unsubscribe();
-    this.onEvent.unsubscribe();
+    // this.onCommented.unsubscribe();
+    // this.onContacted.unsubscribe();
+    // this.onContributed.unsubscribe();
+    // this.onEvent.unsubscribe();
+    PushNotificationIOS.removeEventListener('notification', this.getMyInfo);
+    PushNotificationIOS.removeEventListener('register');
   }
 
   getMyInfo = () => {
     http.get('/api/users/get-my-info')
       .then(data => {
-        this.setState({
-          loading: false,
-          notifications: data.notifications,
-          past: data.past,
-          upcoming: data.upcoming,
-          user: data.user
+        this.setState(() => {
+          return {
+            loading: false,
+            notifications: data.notifications,
+            past: data.past,
+            upcoming: data.upcoming,
+            user: data.user
+          }
         });
       }).catch(error => { });
 
   }
 
-  getMyNotifications = () => {
-    http.get('/api/notifications')
-      .then(data => this.setState({ notifications: data }))
-      .catch(error => { });
-  }
+  // getMyNotifications = () => {
+  //   http.get('/api/notifications')
+  //     .then(data => this.setState(() => {
+  //       console.log(data)
+  //       return { notifications: data }
+  //     }))
+  //     .catch(error => { console.log(error) });
+  // }
 
   hideModal = () => {
     this.setState({

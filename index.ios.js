@@ -33,8 +33,7 @@ export default class Catch extends Component {
           session.setSession(catchToken)
             .then(() => this.setState({ mode: 1 }))
             .catch(() => { });
-        } else
-          this.setState({ mode: 2 });
+        } else this.setState({ mode: 2 });
       }).catch(() => { });
   }
 

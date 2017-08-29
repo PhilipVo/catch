@@ -1,10 +1,9 @@
 const base64 = require('base-64');
-
 import { AsyncStorage } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk';
-import PushNotification from 'react-native-push-notification';
 
 import http from './http.service';
+import notification from './notification.service';
 import socket from './socket.service';
 
 class SessionService {
@@ -49,12 +48,12 @@ class SessionService {
       .then(() => {
         if (this.isFacebookUser) LoginManager.logOut();
 
+        notification.clearDeviceToken();
         socket.disconnect(this.username);
 
         this.isFacebookUser = undefined;
         this.username = undefined;
-      })
-      .catch(error => Promise.reject(error));
+      }).catch(error => Promise.reject(error));
   }
 
   register(data) {
@@ -70,16 +69,11 @@ class SessionService {
       try {
         // Set user:
         payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
-        console.log(payload)
         this.isFacebookUser = payload.isFacebookUser;
-        // this.isFacebookUser = true;
         this.username = payload.username;
 
-        // Configure notifications:        
-        PushNotification.configure({
-          onNotification: notification => { console.log('Notification', notification) },
-          permissions: { badge: false }
-        });
+        // Update deviceToken:
+        notification.updateDeviceToken();
 
         // Connect to sockets:
         socket.connect(this.username);
@@ -89,7 +83,7 @@ class SessionService {
         this.logout();
         return reject('Error encountered while setting session.');
       }
-    })
+    });
   }
 }
 

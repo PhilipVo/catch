@@ -28,6 +28,7 @@ import SegmentedControlTab from 'react-native-segmented-control-tab';
 import SendSMS from 'react-native-sms';
 // import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
+import { MessageBarManager } from 'react-native-message-bar';
 import { Observable } from 'rxjs/Observable';
 
 import http from '../../services/http.service';
@@ -138,7 +139,7 @@ export default class CreateNewEventComponent extends Component {
             MessageBarManager.showAlert({
               alertType: 'custom',
               message: 'Cover image successfully uploaded!',
-              stylesheetExtra: { backgroundColor: 'deepskyblue' },
+              stylesheetExtra: { backgroundColor: '#f74434' },
               viewTopInset: 20
             });
 
@@ -167,7 +168,7 @@ export default class CreateNewEventComponent extends Component {
                   MessageBarManager.showAlert({
                     alertType: 'custom',
                     message: `${event.isVideo ? 'Video' : 'Picture'} successfully uploaded!`,
-                    stylesheetExtra: { backgroundColor: 'deepskyblue' },
+                    stylesheetExtra: { backgroundColor: '#f74434' },
                     viewTopInset: 20
                   });
                 }).catch(error => {
@@ -175,8 +176,9 @@ export default class CreateNewEventComponent extends Component {
                     .catch(() => { });
 
                   MessageBarManager.showAlert({
-                    alertType: 'error',
+                    alertType: 'custom',
                     message: `${event.isVideo ? 'Video' : 'Picture'} failed to upload.`,
+                    stylesheetExtra: { backgroundColor: 'yellow' },
                     viewTopInset: 20
                   });
                 });
@@ -186,8 +188,9 @@ export default class CreateNewEventComponent extends Component {
               .catch(() => { });
 
             MessageBarManager.showAlert({
-              alertType: 'error',
-              message: 'Event failed to save',
+              alertType: 'custom',
+              message: 'Event failed to save.',
+              stylesheetExtra: { backgroundColor: 'yellow' },
               viewTopInset: 20
             });
           });
@@ -195,14 +198,11 @@ export default class CreateNewEventComponent extends Component {
         MessageBarManager.showAlert({
           alertType: 'custom',
           message: `Now uploading your event...`,
-          stylesheetExtra: { backgroundColor: 'white', color: 'black' },
+          stylesheetExtra: { backgroundColor: '#f74434' },
           viewTopInset: 20
         });
-
-        this.props.navigation.dispatch(NavigationActions.reset({
-          actions: [NavigationActions.navigate({ routeName: 'CreateCameraComponent' })],
-          index: 0
-        }));
+        console.log(this.props.key)
+        this.props.navigation.dispatch(NavigationActions.back({ key: this.props.key }));
       }).catch(error => {
         this.setState({ saving: false });
         Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');

@@ -1,6 +1,7 @@
 const moment = require('moment');
 import React, { Component } from 'react';
 import {
+  PushNotificationIOS,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -39,7 +40,8 @@ export default class FeedComponent extends Component {
       tab='feed' />
 
     // Socket events:
-    this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
+    // this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
+    // PushNotificationIOS.addEventListener('notification', () => console.log('in feed'))
   }
 
   componentDidMount() {
@@ -47,7 +49,8 @@ export default class FeedComponent extends Component {
   }
 
   componentWillUnmount() {
-    this.onEvent.unsubscribe();
+    // this.onEvent.unsubscribe();
+    // PushNotificationIOS.removeEventListener('notification', this.getMyInfo);
   }
 
   getEvents = () => {
