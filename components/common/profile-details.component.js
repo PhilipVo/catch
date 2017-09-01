@@ -64,7 +64,7 @@ export default class ProfileDetailsComponent extends Component {
         </View>
 
         <View style={styles.view}>
-          <Text style={styles.username} > {this.props.user.username}</Text>
+          <Text style={styles.username}>{this.props.user.username}</Text>
           {
             this.state.loading ? <ActivityIndicator style={styles.indicator} /> :
               this.props.user.username != session.username &&

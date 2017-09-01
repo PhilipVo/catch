@@ -40,7 +40,7 @@ export default class AccountDetailsComponent extends Component {
           <View style={{ paddingVertical: 10 }} >
             <View style={styles.count}>
               <TouchableHighlight
-                onPress={() => this.props.setEvent('friends', session.username)}
+                onPress={() => this.props.navigate('AccountFriendsComponent')}
                 underlayColor='transparent'>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ fontSize: 16 }}>{this.props.user.contacts}</Text>

@@ -15,9 +15,8 @@ import PastListComponent from '../common/past-list.component';
 import PastModalComponent from '../common/past-modal.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
-import socket from '../../services/socket.service';
-
 import http from '../../services/http.service';
+import notification from '../../services/notification.service';
 
 export default class FeedComponent extends Component {
   constructor(props) {
@@ -32,9 +31,7 @@ export default class FeedComponent extends Component {
       upcoming: [],
     };
 
-    // Socket events:
-    // this.onEvent = socket.onEvent.subscribe(() => this.getEvents());
-    // PushNotificationIOS.addEventListener('notification', () => console.log('in feed'))
+    this.onNotification = notification.subject.subscribe(notification => this.getMyevent());
   }
 
   componentDidMount() {
@@ -42,8 +39,7 @@ export default class FeedComponent extends Component {
   }
 
   componentWillUnmount() {
-    // this.onEvent.unsubscribe();
-    // PushNotificationIOS.removeEventListener('notification', this.getMyInfo);
+    this.onNotification.unsubscribe();
   }
 
   getEvents = () => {

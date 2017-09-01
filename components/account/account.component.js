@@ -17,7 +17,6 @@ import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
 import notification from '../../services/notification.service';
-// import socket from '../../services/socket.service';
 
 export default class AccountComponent extends Component {
   constructor(props) {
@@ -34,34 +33,15 @@ export default class AccountComponent extends Component {
       user: {},
     };
 
-    // Socket events:
-    // this.onCommented = socket.onCommented.subscribe(data => this.getMyNotifications());
-    // this.onContacted = socket.onContacted.subscribe(data => {
-    //   this.getMyNotifications()
-    // });
-    // this.onContributed = socket.onContributed.subscribe(data => this.getMyNotifications());
-    // this.onContributorAccepted = socket.onContributorAccepted.subscribe(data => this.getMyNotifications());
-    // this.onContributorRequested = socket.onContributorRequested.subscribe(data => this.getMyNotifications());
-    // this.onEvent = socket.onEvent.subscribe(() => this.getMyInfo());
-    // this.onWatchAccepted = socket.onWatchAccepted.subscribe(data => this.getMyNotifications());
-    // this.onWatchRequested = socket.onWatchRequested.subscribe(data => this.getMyNotifications());
-    // PushNotificationIOS.addEventListener('notification', );
-    // PushNotificationIOS.addEventListener('register', data => console.log('=========================================\nregister event', data));
-    // notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++notif service', notification));
+    this.onNotification = notification.subject.subscribe(notification => this.getMyInfo());
   }
 
   componentDidMount() {
     this.getMyInfo();
-
   }
 
   componentWillUnmount() {
-    // this.onCommented.unsubscribe();
-    // this.onContacted.unsubscribe();
-    // this.onContributed.unsubscribe();
-    // this.onEvent.unsubscribe();
-    // PushNotificationIOS.removeEventListener('notification', this.getMyInfo);
-    // PushNotificationIOS.removeEventListener('register');
+    this.onNotification.unsubscribe();
   }
 
   getMyInfo = () => {
@@ -77,17 +57,7 @@ export default class AccountComponent extends Component {
           }
         });
       }).catch(error => { });
-
   }
-
-  // getMyNotifications = () => {
-  //   http.get('/api/notifications')
-  //     .then(data => this.setState(() => {
-  //       console.log(data)
-  //       return { notifications: data }
-  //     }))
-  //     .catch(error => { console.log(error) });
-  // }
 
   hideModal = () => {
     this.setState({
@@ -179,32 +149,27 @@ export default class AccountComponent extends Component {
               event={this.state.event}
               hideModal={this.hideModal}
               onDelete={this.getMyInfo} /> :
-            this.state.modal === 'friends' ?
-              <FriendsModalComponent
+            this.state.modal === 'upcoming' ?
+              <UpcomingModalComponent
+                event={this.state.event}
                 hideModal={this.hideModal}
-                username={this.state.event}
-                viewUser={this.viewUser} /> :
-              this.state.modal === 'upcoming' ?
-                <UpcomingModalComponent
+                navigate={this.props.navigation.navigate}
+                tabComponent={this.props.screenProps.tabComponent} /> :
+              this.state.modal === 'past' ?
+                <PastModalComponent
                   event={this.state.event}
                   hideModal={this.hideModal}
                   navigate={this.props.navigation.navigate}
                   tabComponent={this.props.screenProps.tabComponent} /> :
-                this.state.modal === 'past' ?
-                  <PastModalComponent
+                this.state.modal === 'invite' ?
+                  <InviteModalComponent
                     event={this.state.event}
-                    hideModal={this.hideModal}
-                    navigate={this.props.navigation.navigate}
-                    tabComponent={this.props.screenProps.tabComponent} /> :
-                  this.state.modal === 'invite' ?
-                    <InviteModalComponent
+                    hideModal={this.hideModal} /> :
+                  this.state.modal === 'invited' ?
+                    <InvitedModalComponent
                       event={this.state.event}
                       hideModal={this.hideModal} /> :
-                    this.state.modal === 'invited' ?
-                      <InvitedModalComponent
-                        event={this.state.event}
-                        hideModal={this.hideModal} /> :
-                      null
+                    null
         }
 
       </View>

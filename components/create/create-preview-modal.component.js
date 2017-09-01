@@ -144,21 +144,18 @@ export default class CreatePreviewModalComponent extends Component {
                 dataSource={this.state.dataSource}
                 removeClippedSubviews={false}
                 renderRow={(rowData, sectionID, rowID) => (
-                  rowData.isBreak && rowID != 0 && rowID != this.props.events.length - 1 ?
-                    <Divider style={styles.divider} /> :
-                    rowData.isBreak ? null :
-                      <View style={styles.eventView}>
-                        <TouchableHighlight
-                          onPress={() => this.complete(rowData)}
-                          underlayColor='transparent'>
-                          <Text style={styles.eventText}>{rowData.title}</Text>
-                        </TouchableHighlight>
-                        <Icon
-                          color='white'
-                          name='add-circle-outline'
-                          onPress={() => this.complete(rowData)}
-                          underlayColor='transparent' />
-                      </View>
+                  <View style={styles.eventView}>
+                    <TouchableHighlight
+                      onPress={() => this.complete(rowData)}
+                      underlayColor='transparent'>
+                      <Text style={styles.eventText}>{rowData.title}</Text>
+                    </TouchableHighlight>
+                    <Icon
+                      color='white'
+                      name='add-circle-outline'
+                      onPress={() => this.complete(rowData)}
+                      underlayColor='transparent' />
+                  </View>
                 )} /> :
               <Text style={styles.noEvents}>No existing events found</Text>
           }

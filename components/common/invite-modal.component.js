@@ -26,15 +26,9 @@ export default class InviteModalComponent extends Component {
     super(props);
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    this.contributors = {};
-    this.numbers = {};
-    this.contacts = [];
-    this.term = '';
-
     this.state = {
       data: [],
       dataSource: this.ds.cloneWithRows([]),
-      inviting: false,
       loading: true
     };
   }
@@ -42,7 +36,6 @@ export default class InviteModalComponent extends Component {
   componentDidMount() {
     http.get(`/api/contacts/get-uninvited-contacts-for-event/${this.props.event.id}`)
       .then(data => {
-        this.contacts = data;
         this.setState({
           data: data,
           dataSource: this.ds.cloneWithRows(data),
@@ -122,7 +115,11 @@ export default class InviteModalComponent extends Component {
     }
 
     this.subscription = Observable.create(observer => {
-      Contacts.getContactsMatchingString(term, (error, contacts) => {
+      if (term.length === 0)
+        http.get(`/api/contacts/get-uninvited-contacts-for-event/${this.props.event.id}`)
+          .then(data => observer.next(data))
+          .catch(() => { });
+      else Contacts.getContactsMatchingString(term, (error, contacts) => {
         if (error) console.log(error)
         else observer.next(contacts)
       });
@@ -145,127 +142,109 @@ export default class InviteModalComponent extends Component {
       <Modal
         isOpen={true}
         onClosed={this.props.hideModal}
-        style={{ borderRadius: 10, height: 500, padding: 20, width: 300 }}
-        swipeToClose={false}>
-
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
-            <View style={{ flex: 10 }}>
-              <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>
-                {this.props.event.title}
+        style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
+        swipeToClose={true}>
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <View style={{ flex: 10 }}>
+            <Text style={{ color: 'white', fontSize: 12, textAlign: 'center' }}>
+              Invite contributors to
               </Text>
-              <Text style={{ fontSize: 12, textAlign: 'center' }}>Invite contributors</Text>
-
-              <View style={{
-                alignSelf: 'center',
-                height: 0.5,
-                backgroundColor: 'black',
-                marginVertical: 10,
-                width: 250
-              }} />
-
-              <TextInput
-                autoCapitalize='none'
-                autoCorrect={false}
-                onChangeText={this.search}
-                placeholder='search address book'
-                placeholderTextColor='gray'
-                style={{
-                  borderColor: 'gray',
-                  borderWidth: 0.5,
-                  fontSize: 14,
-                  height: 25,
-                  padding: 5,
-                  textAlign: 'center'
-                }} />
-
-              {
-                this.state.loading ?
-                  <ActivityIndicator /> :
-                  this.state.data.length > 0 ?
-                    <ListView
-                      dataSource={this.state.dataSource}
-                      removeClippedSubviews={false}
-                      renderRow={(rowData, sectionID, rowID) => (
-
-                        rowData.isBreak ?
-                          <Text style={{
-                            fontSize: 16,
-                            padding: 10,
-                            textAlign: 'center'
-                          }}>
-                            From address book:
-                          </Text> :
-                          <View style={{
-                            alignItems: 'center',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            padding: 5
-                          }}>
-
-                            {
-                              rowData.contact ?
-                                <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
-                                <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
-                            }
-
-                            <TouchableHighlight
-                              onPress={() => this.invite(rowData, rowID)}
-                              underlayColor='transparent'>
-                              {
-                                rowData.invited || (rowData.phoneNumbers &&
-                                  this.numbers[[rowData.phoneNumbers[0].number]]) ?
-                                  <View style={{
-                                    alignItems: 'center',
-                                    backgroundColor: '#f74434',
-                                    borderWidth: 0.5,
-                                    borderRadius: 5,
-                                    flexDirection: 'row',
-                                    paddingHorizontal: 10
-                                  }}>
-                                    <Text>Invited</Text>
-                                    <Icon name='add' />
-                                  </View> :
-                                  <View style={{
-                                    alignItems: 'center',
-                                    borderWidth: 0.5,
-                                    borderRadius: 5,
-                                    flexDirection: 'row',
-                                    paddingHorizontal: 10
-                                  }}>
-                                    <Text>Invite</Text>
-                                    <Icon name='add' />
-                                  </View>
-                              }
-                            </TouchableHighlight>
-                          </View>
-                      )} /> : null
-              }
-            </View>
+            <Text style={{
+              color: 'white',
+              fontSize: 16,
+              fontWeight: 'bold',
+              textAlign: 'center'
+            }}>
+              {this.props.event.title}
+            </Text>
 
             <View style={{
-              alignItems: 'center',
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'space-around'
-            }}>
-              <Text
-                onPress={this.props.hideModal}
-                style={{ borderColor: 'black', borderRadius: 5, borderWidth: 0.5, padding: 7 }}>
-                Cancel
-              </Text>
-              {
-                this.state.inviting ?
-                  <Text style={{ padding: 7 }}>Inviting...</Text> :
-                  <Text
-                    onPress={this.complete}
-                    style={{ borderColor: 'black', borderRadius: 5, borderWidth: 0.5, padding: 7 }}>
-                    Invite
-                  </Text>
-              }
-            </View>
+              alignSelf: 'center',
+              height: 0.5,
+              backgroundColor: 'black',
+              marginVertical: 10,
+              width: 250
+            }} />
+
+            <TextInput
+              autoCapitalize='none'
+              autoCorrect={false}
+              onChangeText={this.search}
+              placeholder='search address book'
+              placeholderTextColor='gray'
+              style={{
+                borderColor: 'gray',
+                borderWidth: 0.5,
+                fontSize: 14,
+                height: 25,
+                padding: 5,
+                textAlign: 'center'
+              }} />
+
+            {
+              this.state.loading ?
+                <ActivityIndicator /> :
+                this.state.data.length > 0 ?
+                  <ListView
+                    dataSource={this.state.dataSource}
+                    removeClippedSubviews={false}
+                    renderRow={(rowData, sectionID, rowID) => (
+
+                      rowData.isBreak ?
+                        <Text style={{
+                          fontSize: 16,
+                          padding: 10,
+                          textAlign: 'center'
+                        }}>
+                          From address book:
+                          </Text> :
+                        <View style={{
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          padding: 5
+                        }}>
+
+                          {
+                            rowData.contact ?
+                              <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
+                              <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                          }
+
+                          <TouchableHighlight
+                            onPress={() => this.invite(rowData, rowID)}
+                            underlayColor='transparent'>
+                            {
+                              rowData.invited || (rowData.phoneNumbers[0] &&
+                                this.numbers[[rowData.phoneNumbers[0].number]]) ?
+                                <View style={{
+                                  alignItems: 'center',
+                                  backgroundColor: '#f74434',
+                                  borderWidth: 0.5,
+                                  borderRadius: 5,
+                                  flexDirection: 'row',
+                                  paddingHorizontal: 10
+                                }}>
+                                  <Text>Invited</Text>
+                                  <Icon name='add' />
+                                </View> :
+                                <View style={{
+                                  alignItems: 'center',
+                                  borderWidth: 0.5,
+                                  borderRadius: 5,
+                                  flexDirection: 'row',
+                                  paddingHorizontal: 10
+                                }}>
+                                  <Text>Invite</Text>
+                                  <Icon name='add' />
+                                </View>
+                            }
+                          </TouchableHighlight>
+                        </View>
+                    )} /> : null
+            }
           </View>
-        </TouchableWithoutFeedback>
+        </View>
 
       </Modal>
     );

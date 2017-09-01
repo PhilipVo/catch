@@ -13,7 +13,6 @@ import { Icon } from 'react-native-elements';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class AccountNotificationListComponent extends Component {
   constructor(props) {
@@ -36,10 +35,6 @@ export default class AccountNotificationListComponent extends Component {
 
       http.put(`/api/contributors/accept-contributor`, JSON.stringify(rowData))
         .then(() => {
-          socket.emit('contributor accepted', {
-            contributor: rowData.notifier,
-            title: rowData.title
-          });
           rowData.action = 1;
           this.setState({ accepting: false });
         }).catch(error => {
@@ -54,10 +49,6 @@ export default class AccountNotificationListComponent extends Component {
 
       http.put(`/api/contributors/accept-watcher`, JSON.stringify(rowData))
         .then(() => {
-          socket.emit('watcher accepted', {
-            contributor: rowData.notifier,
-            title: rowData.title
-          });
           rowData.action = 1;
           this.setState({ accepting: false });
         }).catch(error => {
@@ -65,6 +56,7 @@ export default class AccountNotificationListComponent extends Component {
         });
     }
   }
+
   viewUser = username => {
     this.props.screenProps.navigate('ProfileComponent', {
       tabComponent: this.props.screenProps.tabComponent,

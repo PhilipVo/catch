@@ -79,10 +79,8 @@ export default class AccountSettingsComponent extends Component {
 
       http.put('/api/users/update-settings', JSON.stringify(this.state.settings))
         .then(() => {
-          this.props.navigation.state.params.getMyInfo();
           this.setState({ saving: false });
-        })
-        .catch(error => {
+        }).catch(error => {
           this.setState({ saving: false });
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
@@ -113,7 +111,7 @@ export default class AccountSettingsComponent extends Component {
             <View style={{ flex: 1 }}>
               <Icon
                 name='angle-left'
-                onPress={() => this.props.navigation.goBack()}
+                onPress={() => this.props.screenProps.reset()}
                 size={40}
                 type='font-awesome'
                 undelayColor='transparent' />
@@ -127,8 +125,7 @@ export default class AccountSettingsComponent extends Component {
           {/* Body */}
           <View style={styles.body}>
 
-            {/* Picture */}
-            {
+            {/* Picture */
               this.state.uri &&
               <TouchableHighlight
                 onPress={() => this.props.navigation.navigate('AccountPictureComponent',
@@ -141,6 +138,7 @@ export default class AccountSettingsComponent extends Component {
                 }} style={styles.picture} />
               </TouchableHighlight>
             }
+
             <Text style={{ textAlign: 'center' }}>{session.username}</Text>
 
             {/* Email */
@@ -331,7 +329,7 @@ const styles = StyleSheet.create({
     width: 60
   },
   body: {
-    flex: 11,
+    flex: 10,
     paddingHorizontal: 20
   },
   header: {

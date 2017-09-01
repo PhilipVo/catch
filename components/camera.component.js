@@ -38,13 +38,6 @@ module.exports = class CameraComponent extends Component {
     };
   }
 
-  componentDidMount() {
-    console.log('mounting')
-  }
-  componentWillUnmount() {
-    console.log('unmounting')
-  }
-
   capture = () => {
     this.camera.capture(this.captureOptions)
       .then(data => this.props.navigation.navigate('CreateNavigatorComponent', { story: data.path }))
@@ -71,7 +64,6 @@ module.exports = class CameraComponent extends Component {
   }
 
   toggleFlashMode = () => {
-    console.log('toggle')
     if (this.state.flashMode === 2) this.setState({ flashMode: 1 });
     else if (this.state.flashMode === 1) this.setState({ flashMode: 0 });
     else this.setState({ flashMode: 2 });
