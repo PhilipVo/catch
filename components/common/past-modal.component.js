@@ -94,12 +94,6 @@ export default class PastModalComponent extends Component {
           comments: _comments,
           dataSource: this.ds.cloneWithRows(_comments)
         });
-
-        socket.emit('commented', {
-          commenter: session.username,
-          creator: this.props.event.username,
-          title: this.props.event.title
-        });
       }).catch(() => { });
     }
   }
@@ -127,16 +121,13 @@ export default class PastModalComponent extends Component {
   }
 
   onBuffer = buffer => {
-    console.log('isbuff', buffer, this.player)
     if (this.onLoadCalled && buffer.isBuffering) this.stopTimerBar();
     else if (this.onLoadCalled && this.timerBarStopped && !this.state.showComments) this.startTimerBar();
   }
 
   onLoad = data => {
-    console.log('onload', data)
     this.onLoadCalled = true;
     this.duration = data.duration ? parseInt(data.duration * 1000, 10) : 4000;
-    console.log('duration', this.duration)
 
     this.animation = Animated.parallel([
       Animated.timing(this.state.timerDownAnimation, {
@@ -150,7 +141,6 @@ export default class PastModalComponent extends Component {
     ]);
 
     if (!this.player) this.animation.start(data => {
-      console.log('finishing in og')
       if (data.finished) {
         this.animation = undefined;
         this.nextItem();
@@ -206,7 +196,6 @@ export default class PastModalComponent extends Component {
   }
 
   startTimerBar = () => {
-    console.log('start', this.duration)
     const duration = parseInt(this.state.timerDownAnimation._value * this.duration);
     this.animation = Animated.parallel([
       Animated.timing(this.state.timerDownAnimation, {
@@ -227,7 +216,6 @@ export default class PastModalComponent extends Component {
   }
 
   stopTimerBar = () => {
-    console.log('stop', this.duration)
     try { this.animation.stop(); } catch (error) { }
     this.animation = undefined;
     this.state.timerDownAnimation.stopAnimation();

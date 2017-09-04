@@ -4,8 +4,7 @@ import { LoginManager } from 'react-native-fbsdk';
 
 import http from './http.service';
 import notification from './notification.service';
-import socket from './socket.service';
-notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++NOTIFICATION SERVICE++++++++++++++++++++++++', notification));
+// notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++NOTIFICATION SERVICE++++++++++++++++++++++++', notification));
 
 class SessionService {
   constructor() {
@@ -42,13 +41,10 @@ class SessionService {
   }
 
   logout() {
-    return AsyncStorage.removeItem('catchToken')
+    return http.put('/api/users/clear-device-token')
+      .then(() => AsyncStorage.removeItem('catchToken'))
       .then(() => {
         if (this.isFacebookUser) LoginManager.logOut();
-
-        notification.clearDeviceToken();
-        socket.disconnect(this.username);
-
         this.isFacebookUser = undefined;
         this.username = undefined;
       }).catch(error => Promise.reject(error));
@@ -72,9 +68,6 @@ class SessionService {
 
         // Update deviceToken:
         notification.updateDeviceToken();
-
-        // Connect to sockets:
-        socket.connect(this.username);
 
         return resolve();
       } catch (error) {

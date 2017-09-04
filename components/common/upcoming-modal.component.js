@@ -22,7 +22,6 @@ import TabComponent from '../common/tab.component';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
@@ -33,9 +32,10 @@ export default class UpcomingModalComponent extends Component {
       comments: [],
       followers: 0,
       dataSource: this.ds.cloneWithRows([]),
+      isContributor: null,
       isNotificationsOn: null,
+      isWatcher: null,
       loading: true,
-      status: null,
       toggling: false
     };
   }
@@ -60,11 +60,6 @@ export default class UpcomingModalComponent extends Component {
       })).then(() => {
         this.setState({ comment: '' });
         this.getDetails();
-        socket.emit('commented', {
-          commenter: session.username,
-          creator: this.props.event.username,
-          title: this.props.event.title
-        });
       }).catch(() => { });
     }
   }
@@ -77,8 +72,9 @@ export default class UpcomingModalComponent extends Component {
           dataSource: this.ds.cloneWithRows(data.comments),
           followers: data.followers,
           loading: false,
-          isNotificationsOn: data.isNotificationsOn,
-          status: data.status
+          isContributor: data.contributor ? data.contributor.isContributor : null,
+          isNotificationsOn: data.contributor ? data.contributor.isNotificationsOn : null,
+          isWatcher: data.contributor ? data.contributor.isWatcher : null
         });
       }).catch(() => { });
   }
@@ -100,8 +96,6 @@ export default class UpcomingModalComponent extends Component {
       }
 
       request.then(() => this.setState({
-        followers: this.state.isNotificationsOn === 1 ?
-          this.state.followers - 1 : this.state.followers + 1,
         isNotificationsOn: this.state.isNotificationsOn === 1 ? 0 : 1,
         toggling: false
       })).catch(error => this.setState({ toggling: false }));
@@ -180,8 +174,7 @@ export default class UpcomingModalComponent extends Component {
                 }
 
                 {
-                  !this.state.loading && this.props.event.username !== session.username &&
-                  (this.props.event.audience === 0 || this.state.status !== null) &&
+                  !this.state.loading &&
                   <TouchableHighlight
                     onPress={this.toggleNotifications}
                     underlayColor='transparent'>
@@ -196,7 +189,11 @@ export default class UpcomingModalComponent extends Component {
                         fontSize: 12,
                         fontWeight: 'bold'
                       }}>
-                        {!this.state.isNotificationsOn ? 'Turn On Notifications' : 'Turn Off Notifications'}
+                        {
+                          this.state.isNotificationsOn === null ? 'Follow' :
+                            this.state.isNotificationsOn === 0 ? 'Turn On Notifications' :
+                              'Turn Off Notifications'
+                        }
                       </Text>
                     </View>
                   </TouchableHighlight>

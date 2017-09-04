@@ -34,8 +34,7 @@ class HttpService {
             'Authorization': `Bearer ${catchToken}`
           }
         });
-      })
-      .then(response => this.handleResponse(response))
+      }).then(response => this.handleResponse(response))
       .catch(error => Promise.reject(error));
   }
 
@@ -52,35 +51,33 @@ class HttpService {
       .catch(error => Promise.reject(error));
   }
 
-  post(url, body, isAndroid) {
+  post(url, body) {
     return AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         return fetch(`${this.ip}${url}`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': isAndroid ? 'multipart/form-data' : 'application/json'
+            'Content-Type': 'application/json'
           },
           body: body
         });
-      })
-      .then(response => this.handleResponse(response))
+      }).then(response => this.handleResponse(response))
       .catch(error => Promise.reject(error));
   }
 
-  put(url, body, isAndroid) {
+  put(url, body) {
     return AsyncStorage.getItem('catchToken')
       .then(catchToken => {
         return fetch(`${this.ip}${url}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${catchToken}`,
-            'Content-Type': isAndroid ? 'multipart/form-data' : 'application/json'
+            'Content-Type': 'application/json'
           },
           body: body
         });
-      })
-      .then(response => this.handleResponse(response))
+      }).then(response => this.handleResponse(response))
       .catch(error => Promise.reject(error));
   }
 }

@@ -13,7 +13,6 @@ import { Icon } from 'react-native-elements';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class ProfileDetailsComponent extends Component {
   constructor(props) {
@@ -38,7 +37,6 @@ export default class ProfileDetailsComponent extends Component {
           .then(() => {
             this.props.user.isContact = true;
             this.setState({ loading: false });
-            socket.emit('contacted', { contact: this.props.user.username, username: session.username });
           }).catch(error => {
             this.setState({ loading: false });
             Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');

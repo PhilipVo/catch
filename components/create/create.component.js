@@ -26,7 +26,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import Modal from 'react-native-modalbox';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import SendSMS from 'react-native-sms';
-// import { ProcessingManager } from 'react-native-video-processing';
 import { NavigationActions } from 'react-navigation';
 import { MessageBarManager } from 'react-native-message-bar';
 import { Observable } from 'rxjs/Observable';
@@ -34,7 +33,6 @@ import { Observable } from 'rxjs/Observable';
 import http from '../../services/http.service';
 import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class CreateComponent extends Component {
   constructor(props) {
@@ -142,8 +140,6 @@ export default class CreateComponent extends Component {
               stylesheetExtra: { backgroundColor: '#f74434' },
               viewTopInset: 20
             });
-
-            socket.emit('event');
 
             // Send out SMS invites:
             const recipients = Object.keys(this.numbers);
@@ -268,7 +264,7 @@ export default class CreateComponent extends Component {
 
     this.subscription = Observable.create(observer => {
       Contacts.getContactsMatchingString(term, (error, contacts) => {
-        if (error) console.log(error)
+        if (error) { }
         else observer.next(contacts)
       });
     }).subscribe(contacts => {

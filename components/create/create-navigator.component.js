@@ -7,7 +7,6 @@ import TabComponent from '../common/tab.component';
 
 module.exports = class CreateNavigatorComponent extends Component {
   componentWillReceiveProps(nextProps) {
-    console.log('got nextProps', nextProps)
     if (nextProps.navigation.state.params)
       this.reset('CreatePreviewComponent', nextProps.navigation.state.params);
   }

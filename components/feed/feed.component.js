@@ -31,18 +31,18 @@ export default class FeedComponent extends Component {
       upcoming: [],
     };
 
-    this.onNotification = notification.subject.subscribe(notification => this.getMyevent());
+    this.onNotification = notification.subject.subscribe(notification => this.getPublicEvents());
   }
 
   componentDidMount() {
-    this.getEvents();
+    this.getPublicEvents();
   }
 
   componentWillUnmount() {
     this.onNotification.unsubscribe();
   }
 
-  getEvents = () => {
+  getPublicEvents = () => {
     http.get('/api/events/get-public-events')
       .then(events => {
         this.setState({

@@ -19,7 +19,6 @@ import { Observable } from 'rxjs/Observable';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class InviteModalComponent extends Component {
   constructor(props) {
@@ -44,67 +43,47 @@ export default class InviteModalComponent extends Component {
       }).catch(() => { });
   }
 
-  complete = () => {
-    if (Object.keys(this.contributors).length + Object.keys(this.numbers).length == 0)
-      return Alert.alert('No contributors were added.');
-
-    if (!this.state.inviting) {
-      this.setState({ inviting: true });
-
+  invite = (rowData, rowID) => {
+    const data = this.state.data.slice();
+    if (rowData.contact) {
       http.post(`/api/contributors`, JSON.stringify({
-        contributors: Object.keys(this.contributors),
+        contributor: rowData.contact,
         event: this.props.event
       })).then(() => {
-        const recipients = Object.keys(this.numbers);
-        if (recipients.length > 0) return SendSMS.send({
-          body: `${session.username} invited you as a contributor for ${this.props.event.title}! itms-apps://itunes.apple.com/app/id1246628137`,
-          recipients: recipients,
-          successTypes: ['sent', 'queued']
-        }, (completed, cancelled, error) => { });
-
-        socket.emit('contributor requested', {
-          title: this.props.event.title,
-          username: this.props.event.username
+        data[rowID].status = 'Invite sent!';
+        this.setState({
+          data: data,
+          dataSource: this.ds.cloneWithRows(data)
         });
-
-        this.props.hideModal();
       }).catch(error => {
-        Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
-        this.props.hideModal();
+        data[rowID].status = 'Invite failed...';
+        this.setState({
+          data: data,
+          dataSource: this.ds.cloneWithRows(data)
+        });
       });
-    }
-  }
-
-  invite = (rowData, rowID) => {
-    // Add contributor if not already invited:
-    if (!rowData.invited) {
-      const _data = this.state.data.slice();
-      _data[rowID].invited = true;
-      if (rowData.contact) this.contributors[rowData.contact] = true;
-      else {
-        try { this.numbers[rowData.phoneNumbers[0].number] = true }
-        catch (error) { }
-      }
-
-      this.setState({
-        data: _data,
-        dataSource: this.ds.cloneWithRows(_data)
-      });
-    }
-    // Else remove contributor: 
-    else {
-      const _data = this.state.data.slice();
-      _data[rowID].invited = false;
-      if (rowData.contact) delete this.contributors[rowData.contact];
-      else {
-        try { delete this.numbers[rowData.phoneNumbers[0].number] }
-        catch (error) { }
-      }
-
-      this.setState({
-        data: _data,
-        dataSource: this.ds.cloneWithRows(_data)
-      });
+    } else {
+      try {
+        SendSMS.send({
+          body: `${session.username} invited you as a contributor for ${this.props.event.title}! itms-apps://itunes.apple.com/app/id1246628137`,
+          recipients: [rowData.phoneNumbers[0].number],
+          successTypes: ['sent', 'queued']
+        }, (completed, cancelled, error) => {
+          if (completed) {
+            data[rowID].status = 'Invite sent!';
+            this.setState({
+              data: data,
+              dataSource: this.ds.cloneWithRows(data)
+            });
+          } else {
+            data[rowID].status = 'Invite failed...';
+            this.setState({
+              data: data,
+              dataSource: this.ds.cloneWithRows(data)
+            });
+          }
+        });
+      } catch (error) { }
     }
   }
 
@@ -120,18 +99,14 @@ export default class InviteModalComponent extends Component {
           .then(data => observer.next(data))
           .catch(() => { });
       else Contacts.getContactsMatchingString(term, (error, contacts) => {
-        if (error) console.log(error)
-        else observer.next(contacts)
+        if (error) { }
+        else observer.next(contacts);
       });
     }).subscribe(contacts => {
-      let _data = this.contacts.slice();
-
-      if (contacts.length > 0) _data = _data.concat([{ isBreak: true }]);
-      _data = _data.concat(JSON.parse(JSON.stringify(contacts)));
-
+      const data = JSON.parse(JSON.stringify(contacts));
       this.setState({
-        data: _data,
-        dataSource: this.ds.cloneWithRows(_data),
+        data: data,
+        dataSource: this.ds.cloneWithRows(data),
         loading: false
       });
     });
@@ -143,28 +118,35 @@ export default class InviteModalComponent extends Component {
         isOpen={true}
         onClosed={this.props.hideModal}
         style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}
-        swipeToClose={true}>
+        swipeToClose={false}>
         <View style={{ flex: 1, marginTop: 20 }}>
           <View style={{ flex: 10 }}>
-            <Text style={{ color: 'white', fontSize: 12, textAlign: 'center' }}>
-              Invite contributors to
-              </Text>
-            <Text style={{
-              color: 'white',
-              fontSize: 16,
-              fontWeight: 'bold',
-              textAlign: 'center'
-            }}>
-              {this.props.event.title}
-            </Text>
 
-            <View style={{
-              alignSelf: 'center',
-              height: 0.5,
-              backgroundColor: 'black',
-              marginVertical: 10,
-              width: 250
-            }} />
+            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+              <View style={{ flex: 1 }}>
+                <Icon
+                  color='white'
+                  name='clear'
+                  onPress={this.props.hideModal}
+                  size={20}
+                  style={{ alignSelf: 'flex-start' }}
+                  underlayColor='transparent' />
+              </View>
+              <View style={{ flex: 2 }}>
+                <Text style={{ color: 'white', fontSize: 12, textAlign: 'center' }}>
+                  Invite contributors to
+              </Text>
+                <Text style={{
+                  color: 'white',
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  textAlign: 'center'
+                }}>
+                  {this.props.event.title}
+                </Text>
+              </View>
+              <View style={{ flex: 1 }} />
+            </View>
 
             <TextInput
               autoCapitalize='none'
@@ -173,10 +155,13 @@ export default class InviteModalComponent extends Component {
               placeholder='search address book'
               placeholderTextColor='gray'
               style={{
-                borderColor: 'gray',
+                borderColor: 'white',
                 borderWidth: 0.5,
+                color: 'white',
                 fontSize: 14,
-                height: 25,
+                height: 30,
+                marginHorizontal: 50,
+                marginTop: 20,
                 padding: 5,
                 textAlign: 'center'
               }} />
@@ -189,59 +174,56 @@ export default class InviteModalComponent extends Component {
                     dataSource={this.state.dataSource}
                     removeClippedSubviews={false}
                     renderRow={(rowData, sectionID, rowID) => (
+                      <View style={{
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        padding: 5
+                      }}>
 
-                      rowData.isBreak ?
-                        <Text style={{
-                          fontSize: 16,
-                          padding: 10,
-                          textAlign: 'center'
-                        }}>
-                          From address book:
-                          </Text> :
-                        <View style={{
-                          alignItems: 'center',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          padding: 5
-                        }}>
+                        {
+                          rowData.contact ?
+                            <Text style={{ color: 'white', fontSize: 16 }}>
+                              {rowData.contact}
+                            </Text> :
+                            <Text style={{ color: 'white', fontSize: 16 }}>
+                              {rowData.givenName} {rowData.familyName}
+                            </Text>
+                        }
 
+                        <TouchableHighlight
+                          onPress={() => this.invite(rowData, rowID)}
+                          underlayColor='transparent'>
                           {
-                            rowData.contact ?
-                              <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
-                              <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                            rowData.status ?
+                              <Text
+                                style={{
+                                  alignItems: 'center',
+                                  color: '#f74434',
+                                  padding: 5
+                                }}>
+                                {rowData.status}
+                              </Text> :
+                              <Text
+                                onPress={() => this.invite(rowData, rowID)}
+                                style={{
+                                  alignItems: 'center',
+                                  borderColor: 'white',
+                                  borderRadius: 5,
+                                  borderWidth: 0.5,
+                                  color: 'white',
+                                  padding: 5
+                                }}>
+                                Invite
+                              </Text>
                           }
-
-                          <TouchableHighlight
-                            onPress={() => this.invite(rowData, rowID)}
-                            underlayColor='transparent'>
-                            {
-                              rowData.invited || (rowData.phoneNumbers[0] &&
-                                this.numbers[[rowData.phoneNumbers[0].number]]) ?
-                                <View style={{
-                                  alignItems: 'center',
-                                  backgroundColor: '#f74434',
-                                  borderWidth: 0.5,
-                                  borderRadius: 5,
-                                  flexDirection: 'row',
-                                  paddingHorizontal: 10
-                                }}>
-                                  <Text>Invited</Text>
-                                  <Icon name='add' />
-                                </View> :
-                                <View style={{
-                                  alignItems: 'center',
-                                  borderWidth: 0.5,
-                                  borderRadius: 5,
-                                  flexDirection: 'row',
-                                  paddingHorizontal: 10
-                                }}>
-                                  <Text>Invite</Text>
-                                  <Icon name='add' />
-                                </View>
-                            }
-                          </TouchableHighlight>
-                        </View>
-                    )} /> : null
+                        </TouchableHighlight>
+                      </View>
+                    )}
+                    style={{ padding: 20 }} /> :
+                  <Text style={{ color: 'gray', textAlign: 'center' }}>
+                    No contacts found
+                  </Text>
             }
           </View>
         </View>

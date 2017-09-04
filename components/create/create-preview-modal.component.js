@@ -14,8 +14,6 @@ import Modal from 'react-native-modalbox';
 
 import http from '../../services/http.service';
 import s3 from '../../services/s3.service';
-// import session from '../../services/session.service';
-// import socket from '../../services/socket.service';
 
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
@@ -54,13 +52,6 @@ export default class CreatePreviewModalComponent extends Component {
                 viewTopInset: 20
               });
 
-              // if (event.username !== session.username) {
-              //   socket.emit('contributed', {
-              //     contributor: session.username,
-              //     creator: event.username,
-              //     title: event.title
-              //   });
-              // }
             }).catch(() => {
               http.delete(`/api/stories/${storyId}`)
                 .catch(() => { });
@@ -80,10 +71,8 @@ export default class CreatePreviewModalComponent extends Component {
             viewTopInset: 20
           });
 
-          // this.props.goBack();
           this.props.reset();
         }).catch((error) => {
-          console.log(error)
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
@@ -91,7 +80,6 @@ export default class CreatePreviewModalComponent extends Component {
 
   next = () => {
     this.props.pause();
-    console.log(this.props.key)
     this.props.navigate('CreateComponent', {
       duration: this.props.duration,
       isVideo: this.props.isVideo,

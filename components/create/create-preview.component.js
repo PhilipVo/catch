@@ -41,6 +41,7 @@ export default class CreatePreviewComponent extends Component {
               ignoreSilentSwitch={'obey'}
               paused={this.state.paused}
               playWhenInactive={true}
+              repeat={true}
               source={{ uri: params.story }}
               style={styles.background} /> :
             <Image style={styles.background} source={{ uri: params.story }} />

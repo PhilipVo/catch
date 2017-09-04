@@ -207,7 +207,7 @@ export default class AccountFriendsComponent extends Component {
                   /> :
                   <Text style={{ color: 'gray', textAlign: 'center' }}>
                     No contacts found
-                </Text>
+                  </Text>
             }
           </View>
 

@@ -14,7 +14,6 @@ import TimerMixin from 'react-timer-mixin';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
-import socket from '../../services/socket.service';
 
 export default class UpcomingListComponent extends Component {
   constructor(props) {
@@ -22,6 +21,7 @@ export default class UpcomingListComponent extends Component {
 
     this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
+      data: this.props.screenProps.upcoming,
       dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
       now: Date.now(),
       requesting: false
@@ -41,23 +41,25 @@ export default class UpcomingListComponent extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      data: nextProps.screenProps.upcoming,
       dataSource: this.ds.cloneWithRows(nextProps.screenProps.upcoming),
       now: Date.now()
     });
   }
 
-  requestToContribute = rowData => {
+  requestToContribute = (rowData, rowID) => {
     if (!this.state.requesting) {
       this.setState({ requesting: true });
 
       http.post('/api/contributors/request-to-contribute', JSON.stringify(rowData))
         .then(() => {
-          socket.emit('contributor requested', {
-            creator: rowData.username,
-            title: rowData.title
+          const data = this.state.data.slice();
+          data[rowID].isContributor = 0;
+          this.setState({
+            data: data,
+            dataSource: this.ds.cloneWithRows(data),
+            requesting: false
           });
-          rowData.status = 2;
-          this.setState({ requesting: false });
         }).catch(() => { });
     }
   }
@@ -68,12 +70,13 @@ export default class UpcomingListComponent extends Component {
 
       http.post('/api/contributors/request-to-watch', JSON.stringify(rowData))
         .then(() => {
-          socket.emit('watcher requested', {
-            creator: rowData.username,
-            title: rowData.title
+          const data = this.state.data.slice();
+          data[rowID].isWatcher = 0;
+          this.setState({
+            data: data,
+            dataSource: this.ds.cloneWithRows(data),
+            requesting: false
           });
-          rowData.status = 0;
-          this.setState({ requesting: false });
         }).catch(() => { });
     }
   }
@@ -104,14 +107,14 @@ export default class UpcomingListComponent extends Component {
                         <View style={{ flexDirection: 'row' }}>
                           <Icon color='purple' name='star' size={15} />
                           <Text style={{ fontSize: 12 }}>You created this event</Text>
-                        </View> : rowData.status === 0 ?
-                          <Text style={{ fontSize: 12 }}>You've requested to watch</Text> :
-                          rowData.status === 1 ?
-                            <Text style={{ fontSize: 12 }}>You're watching this event</Text> :
-                            rowData.status === 2 ?
-                              <Text style={{ fontSize: 12 }}>You've requested to contribute</Text> :
-                              rowData.status === 3 ?
-                                <Text style={{ fontSize: 12 }}>You're a contributor</Text> : null
+                        </View> : rowData.isContributor === 1 ?
+                          <Text style={{ fontSize: 12 }}>You're a contributor</Text> :
+                          rowData.isContributor === 0 ?
+                            <Text style={{ fontSize: 12 }}>You've requested to contribute</Text> :
+                            rowData.isWatcher === 1 ?
+                              <Text style={{ fontSize: 12 }}>You're watching this event</Text> :
+                              rowData.isWatcher === 0 ?
+                                <Text style={{ fontSize: 12 }}>You've requested to watch</Text> : null
                     }
 
                     {
@@ -155,9 +158,9 @@ export default class UpcomingListComponent extends Component {
                   rowData.username !== session.username &&
                   <View style={{ alignItems: 'center' }}>
                     {
-                      (rowData.status === null || rowData.status < 2) &&
+                      (rowData.isContributor === null) &&
                       <TouchableHighlight
-                        onPress={() => this.requestToContribute(rowData)}
+                        onPress={() => this.requestToContribute(rowData, rowID)}
                         style={{
                           alignItems: 'center',
                           backgroundColor: '#f74434',
@@ -174,9 +177,9 @@ export default class UpcomingListComponent extends Component {
                     }
 
                     {
-                      rowData.status === null && rowData.audience === 1 &&
+                      rowData.audience === 1 && rowData.isWatcher === null &&
                       <TouchableHighlight
-                        onPress={() => this.requestToWatch(rowData)}
+                        onPress={() => this.requestToWatch(rowData, rowID)}
                         style={{
                           alignItems: 'center',
                           backgroundColor: '#f74434',
@@ -205,7 +208,7 @@ export default class UpcomingListComponent extends Component {
                     onPress={() => this.props.screenProps.setEvent('invited', rowData)}
                     size={25} />
                   {
-                    (rowData.status === 3 || rowData.username === session.username) &&
+                    (rowData.isContributor === 1 || rowData.username === session.username) &&
                     <Icon
                       name='group-add'
                       onPress={() => this.props.screenProps.setEvent('invite', rowData)}
