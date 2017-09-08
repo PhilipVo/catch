@@ -50,7 +50,7 @@ export default class InviteModalComponent extends Component {
         contributor: rowData.contact,
         event: this.props.event
       })).then(() => {
-        data[rowID].status = 'Invite sent!';
+        data[rowID].status = 'Invited!';
         this.setState({
           data: data,
           dataSource: this.ds.cloneWithRows(data)
@@ -70,7 +70,7 @@ export default class InviteModalComponent extends Component {
           successTypes: ['sent', 'queued']
         }, (completed, cancelled, error) => {
           if (completed) {
-            data[rowID].status = 'Invite sent!';
+            data[rowID].status = 'Invited!';
             this.setState({
               data: data,
               dataSource: this.ds.cloneWithRows(data)

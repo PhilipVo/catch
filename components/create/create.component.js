@@ -168,7 +168,7 @@ export default class CreateComponent extends Component {
                     viewTopInset: 20
                   });
                 }).catch(error => {
-                  http.delete(`/api/stories/${storyId}`)
+                  http.delete(`/api/stories/${data.storyId}`)
                     .catch(() => { });
 
                   MessageBarManager.showAlert({
