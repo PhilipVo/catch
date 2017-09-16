@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, AsyncStorage, Dimensions, Image, View } from 'react-native';
+import { AppRegistry, AsyncStorage, Image, View } from 'react-native';
 import { MessageBar, MessageBarManager } from 'react-native-message-bar';
 
 import session from './services/session.service';

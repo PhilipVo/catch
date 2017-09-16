@@ -4,7 +4,6 @@ import { LoginManager } from 'react-native-fbsdk';
 
 import http from './http.service';
 import notification from './notification.service';
-// notification.subject.subscribe(notification => console.log('+++++++++++++++++++++++++++++++NOTIFICATION SERVICE++++++++++++++++++++++++', notification));
 
 class SessionService {
   constructor() {
