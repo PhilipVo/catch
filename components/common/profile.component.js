@@ -35,7 +35,7 @@ export default class ProfileComponent extends Component {
   }
 
   getInfo = () => {
-    http.get(`/api/users/get-info-for-user/${this.props.navigation.state.params.username}`)
+    return http.get(`/api/users/get-info-for-user/${this.props.navigation.state.params.username}`)
       .then(data => {
         this.setState({
           loading: false,
@@ -110,6 +110,7 @@ export default class ProfileComponent extends Component {
                 ref={navigator => this.navigator = navigator}
                 screenProps={{
                   past: this.state.past,
+                  onRefresh: this.getInfo,
                   setEvent: this.setEvent,
                   upcoming: this.state.upcoming
                 }} />

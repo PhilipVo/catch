@@ -33,19 +33,15 @@ export default class AccountComponent extends Component {
       user: {},
     };
 
-    this.onNotification = notification.subject.subscribe(notification => this.getMyInfo());
+    notification.refreshAccount = this.getMyInfo;
   }
 
   componentDidMount() {
     this.getMyInfo();
   }
 
-  componentWillUnmount() {
-    this.onNotification.unsubscribe();
-  }
-
   getMyInfo = () => {
-    http.get('/api/users/get-my-info')
+    return http.get('/api/users/get-my-info')
       .then(data => {
         this.setState(() => {
           return {
@@ -132,6 +128,7 @@ export default class AccountComponent extends Component {
                   loading: this.state.loading,
                   navigate: this.props.navigation.navigate,
                   notifications: this.state.notifications,
+                  onRefresh: this.getMyInfo,
                   past: this.state.past,
                   setEvent: this.setEvent,
                   tabComponent: this.props.screenProps.tabComponent,

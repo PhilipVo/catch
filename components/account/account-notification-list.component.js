@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   Image,
-  ListView,
   Text,
   StyleSheet,
   TouchableHighlight,
@@ -18,39 +18,46 @@ export default class AccountNotificationListComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       accepting: false,
-      dataSource: this.ds.cloneWithRows(this.props.screenProps.notifications)
+      data: this.props.screenProps.notifications
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ dataSource: this.ds.cloneWithRows(nextProps.screenProps.notifications) });
+    this.setState({ data: nextProps.screenProps.notifications });
   }
 
-  acceptContributor = rowData => {
+  acceptContributor = (item, index) => {
     if (!this.state.accepting) {
       this.setState({ accepting: true });
 
-      http.put(`/api/contributors/accept-contributor`, JSON.stringify(rowData))
+      http.put(`/api/contributors/accept-contributor`, JSON.stringify(item))
         .then(() => {
-          rowData.action = 1;
-          this.setState({ accepting: false });
+          const data = this.state.data.slice();
+          data[index].action = 1;
+          this.setState({
+            accepting: false,
+            data: data
+          });
         }).catch(error => {
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
     }
   }
 
-  acceptWatcher = rowData => {
+  acceptWatcher = (item, index) => {
     if (!this.state.accepting) {
       this.setState({ accepting: true });
 
-      http.put(`/api/contributors/accept-watcher`, JSON.stringify(rowData))
+      http.put(`/api/contributors/accept-watcher`, JSON.stringify(item))
         .then(() => {
-          rowData.action = 1;
-          this.setState({ accepting: false });
+          const data = this.state.data.slice();
+          data[index].action = 1;
+          this.setState({
+            accepting: false,
+            data: data
+          });
         }).catch(error => {
           Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
         });
@@ -71,40 +78,41 @@ export default class AccountNotificationListComponent extends Component {
           <ActivityIndicator style={{ alignSelf: 'center' }} />
         </View> :
         this.props.screenProps.notifications.length > 0 ?
-          <ListView
-            dataSource={this.state.dataSource}
-            removeClippedSubviews={false}
-            renderRow={(rowData, sectionID, rowID) => (
+          <FlatList
+            data={this.state.data}
+            extraData={this.state}
+            keyExtractor={item => item.id}
+            renderItem={({ item, index }) => (
               <View style={{ alignItems: 'center', flexDirection: 'row', paddingVertical: 5 }}>
 
                 {/* Profile picture */}
                 <TouchableHighlight
-                  onPress={() => this.viewUser(rowData.notifier)}
+                  onPress={() => this.viewUser(item.notifier)}
                   style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}
                   underlayColor='transparent'>
                   <Image
                     style={{ borderRadius: 15, height: 30, width: 30 }}
-                    source={{ uri: `${http.s3}/users/${rowData.notifier}` }} />
+                    source={{ uri: `${http.s3}/users/${item.notifier}` }} />
                 </TouchableHighlight>
 
                 {/* Middle text */}
                 <View style={{ flex: 4, justifyContent: 'center' }}>
                   <Text style={{ fontSize: 13 }}>
                     {
-                      rowData.type === 'commented' ?
-                        `${rowData.notifier} commented on ${rowData.title}` :
-                        rowData.type === 'contacted' ?
-                          `${rowData.notifier} added you as a contact` :
-                          rowData.type === 'contributed' ?
-                            `${rowData.notifier} added to ${rowData.title}` :
-                            rowData.type === 'contributor accepted' ?
-                              `You can now add to ${rowData.title}` :
-                              rowData.type === 'contributor requested' ?
-                                `Can ${rowData.notifier} add to ${rowData.title}?` :
-                                rowData.type === 'watch accepted' ?
-                                  `You can now view ${rowData.title}` :
-                                  rowData.type === 'watch requested' ?
-                                    `Can ${rowData.notifier} watch ${rowData.title}?` : null
+                      item.type === 'commented' ?
+                        `${item.notifier} commented on ${item.title}` :
+                        item.type === 'contacted' ?
+                          `${item.notifier} added you as a contact` :
+                          item.type === 'contributed' ?
+                            `${item.notifier} added to ${item.title}` :
+                            item.type === 'contributor accepted' ?
+                              `You can now add to ${item.title}` :
+                              item.type === 'contributor requested' ?
+                                `Can ${item.notifier} add to ${item.title}?` :
+                                item.type === 'watch accepted' ?
+                                  `You can now view ${item.title}` :
+                                  item.type === 'watch requested' ?
+                                    `Can ${item.notifier} watch ${item.title}?` : null
                     }
                   </Text>
                 </View>
@@ -112,19 +120,19 @@ export default class AccountNotificationListComponent extends Component {
                 {/* Actions */}
                 <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
                   {
-                    rowData.type === 'contributor requested' && rowData.action === 0 ?
+                    item.type === 'contributor requested' && item.action === 0 ?
                       <Icon
                         name='add-circle-outline'
-                        onPress={() => this.acceptContributor(rowData)} /> :
-                      rowData.type === 'contributor requested' && rowData.action === 1 ?
+                        onPress={() => this.acceptContributor(item, index)} /> :
+                      item.type === 'contributor requested' && item.action === 1 ?
                         <Icon
                           color='#f74434'
                           name='check-circle' /> :
-                        rowData.type === 'watch requested' && rowData.action === 0 ?
+                        item.type === 'watch requested' && item.action === 0 ?
                           <Icon
                             name='add-circle-outline'
-                            onPress={() => this.acceptWatcher(rowData)} /> :
-                          rowData.type === 'watch requested' && rowData.action === 1 ?
+                            onPress={() => this.acceptWatcher(item, index)} /> :
+                          item.type === 'watch requested' && item.action === 1 ?
                             <Icon
                               color='#f74434'
                               name='check-circle' /> : null

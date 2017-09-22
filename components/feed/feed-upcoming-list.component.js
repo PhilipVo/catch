@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Image,
-  ListView,
+  FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -17,18 +18,15 @@ import http from '../../services/http.service';
 export default class FeedUpcomingListComponent extends Component {
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
-      now: Date.now()
+      data: this.props.screenProps.upcoming,
+      now: Date.now(),
+      refreshing: false
     };
 
     // Update timers every 60 seconds:
     this.interval = TimerMixin.setInterval(() => {
-      this.setState({
-        dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
-        now: Date.now()
-      })
+      this.setState(() => ({ now: Date.now() }));
     }, 60000);
   }
 
@@ -37,10 +35,23 @@ export default class FeedUpcomingListComponent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      dataSource: this.ds.cloneWithRows(nextProps.screenProps.upcoming),
+    this.setState(() => ({
+      data: nextProps.screenProps.upcoming,
       now: Date.now()
-    });
+    }));
+  }
+
+  onRefresh = () => {
+    if (!this.state.refreshing) {
+      this.setState({ refreshing: true });
+      this.props.screenProps.onRefresh()
+        .then(() => {
+          this.setState({
+            now: Date.now(),
+            refreshing: false
+          });
+        }).catch(() => this.setState({ refreshing: false }));
+    }
   }
 
   render() {
@@ -50,38 +61,45 @@ export default class FeedUpcomingListComponent extends Component {
           <ActivityIndicator style={{ alignSelf: 'center' }} />
         </View> :
         this.props.screenProps.upcoming.length > 0 ?
-          <ListView
-            dataSource={this.state.dataSource}
-            removeClippedSubviews={false}
-            renderRow={(rowData, sectionID, rowID) => (
-              new Date(rowData.date).getTime() > this.state.now ?
+          <FlatList
+            data={this.state.data}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl
+                enabled={!this.state.refreshing}
+                onRefresh={this.onRefresh}
+                refreshing={this.state.refreshing}
+                size={RefreshControl.SIZE.SMALL} />
+            }
+            renderItem={({ item }) => (
+              new Date(item.date).getTime() > this.state.now ?
                 <TouchableHighlight
-                  onPress={() => this.props.screenProps.setEvent('upcoming', rowData)}
+                  onPress={() => this.props.screenProps.setEvent('upcoming', item)}
                   underlayColor='transparent'>
                   <Image
-                    source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
+                    source={{ uri: `${http.s3}/events/${item.id}/cover` }}
                     style={styles.coverImage}>
-                    <Text style={styles.eventText}>{rowData.title}</Text>
+                    <Text style={styles.eventText}>{item.title}</Text>
 
                     {/* Timer */}
                     <View style={{ flexDirection: 'row' }}>
                       <View style={{ alignItems: 'center' }}>
                         <Text style={styles.timerText}>
-                          {moment(rowData.date).diff(this.state.now, 'days')}
+                          {moment(item.date).diff(this.state.now, 'days')}
                         </Text>
                         <Text style={styles.timerText}>Days</Text>
                       </View>
                       <Text style={styles.timerText}>:</Text>
                       <View style={{ alignItems: 'center' }}>
                         <Text style={styles.timerText}>
-                          {moment(rowData.date).diff(this.state.now, 'hours') % 24}
+                          {moment(item.date).diff(this.state.now, 'hours') % 24}
                         </Text>
                         <Text style={styles.timerText}>Hrs</Text>
                       </View>
                       <Text style={styles.timerText}>:</Text>
                       <View style={{ alignItems: 'center' }}>
                         <Text style={styles.timerText}>
-                          {moment(rowData.date).diff(this.state.now, 'minutes') % 60}
+                          {moment(item.date).diff(this.state.now, 'minutes') % 60}
                         </Text>
                         <Text style={styles.timerText}>Mins</Text>
                       </View>
@@ -89,16 +107,16 @@ export default class FeedUpcomingListComponent extends Component {
                   </Image>
                 </TouchableHighlight> :
                 <TouchableHighlight
-                  onPress={() => this.props.screenProps.setEvent('past', rowData)}
+                  onPress={() => this.props.screenProps.setEvent('past', item)}
                   underlayColor='transparent'>
                   <Image
-                    source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
+                    source={{ uri: `${http.s3}/events/${item.id}/cover` }}
                     style={styles.image}>
                     <Text style={styles.timer}>
-                      {moment(rowData.date).fromNow().toString()}
+                      {moment(item.date).fromNow().toString()}
                     </Text>
                     <View style={styles.view}>
-                      <Text style={styles.text}>{rowData.title}</Text>
+                      <Text style={styles.text}>{item.title}</Text>
                       <Icon color='white' name='play-circle-outline' size={33} />
                     </View>
                   </Image>

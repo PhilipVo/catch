@@ -5,10 +5,10 @@ import {
   Alert,
   Animated,
   Dimensions,
+  FlatList,
   Image,
   Keyboard,
   KeyboardAvoidingView,
-  ListView,
   Platform,
   Text,
   TextInput,
@@ -31,14 +31,12 @@ export default class PastModalComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.onLoadCalled = false;
     this.timerBarStopped = true;
 
     this.state = {
       comment: '',
       comments: [],
-      dataSource: this.ds.cloneWithRows([]),
       done: false,
       index: 0,
       item: null,
@@ -57,7 +55,6 @@ export default class PastModalComponent extends Component {
         if (data.stories.length > 0) {
           this.setState({
             comments: data.comments,
-            dataSource: this.ds.cloneWithRows(data.comments),
             item: data.stories[0],
             loading: false,
             stories: data.stories
@@ -65,7 +62,6 @@ export default class PastModalComponent extends Component {
         } else {
           this.setState({
             comments: data.comments,
-            dataSource: this.ds.cloneWithRows(data.comments),
             loading: false
           });
         }
@@ -75,13 +71,19 @@ export default class PastModalComponent extends Component {
       });
   }
 
+  componentDidUpdate() {
+    setTimeout(() => {
+      if (this._flatList) this._flatList.scrollToEnd();
+    }, 1000);
+  }
+
   comment = () => {
     if (this.state.comment.length > 0) {
       http.post('/api/comments', JSON.stringify({
         comment: this.state.comment,
-        username: this.props.event.username,
         eventId: this.props.event.id,
-        title: this.props.event.title
+        title: this.props.event.title,
+        username: this.props.event.username
       })).then(() => {
         const _comments = this.state.comments.slice();
         _comments.push({
@@ -92,7 +94,6 @@ export default class PastModalComponent extends Component {
         this.setState({
           comment: '',
           comments: _comments,
-          dataSource: this.ds.cloneWithRows(_comments)
         });
       }).catch(() => { });
     }
@@ -395,26 +396,31 @@ export default class PastModalComponent extends Component {
                         </Text>
 
                       <View style={{ flex: 5 }}>
-                        <ListView
-                          dataSource={this.state.dataSource}
-                          enableEmptySections={true}
-                          ref={listView => this._listView = listView}
-                          removeClippedSubviews={false}
-                          renderRow={(rowData, sectionID, rowID) => (
+                        <FlatList
+                          data={this.state.comments}
+                          extraData={this.state}
+                          keyExtractor={(item, index) => `${index}`}
+                          ref={flatList => this._flatList = flatList}
+                          renderItem={({ item }) => (
                             <View style={styles.commentView}>
                               <TouchableHighlight
-                                onPress={() => this.viewUser(rowData.username)}>
+                                onPress={() => this.viewUser(item.username)}>
                                 <Image
-                                  source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                                  source={{ uri: `${http.s3}/users/${item.username}` }}
                                   style={styles.commentImage} />
                               </TouchableHighlight>
-                              <TouchableHighlight>
-                                <Text style={styles.comment}>{rowData.comment}</Text>
+                              <TouchableHighlight style={{ flex: 1 }}>
+                                <View style={{ backgroundColor: 'rgba(255,255,255,0.6)', flex: 1, minHeight: 50 }}>
+                                  <Text style={styles.commentor}>
+                                    {item.username} - {moment(item.createdAt).fromNow()}
+                                  </Text>
+                                  <Text style={styles.comment}>{item.comment}</Text>
+                                </View>
                               </TouchableHighlight>
                             </View>
                           )} />
                       </View>
-                      <View style={{ flex: 1, justifyContent: 'center' }}>
+                      <View style={styles.textInputView}>
                         <TextInput
                           autoCapitalize='sentences'
                           autoCorrect={true}
@@ -423,7 +429,7 @@ export default class PastModalComponent extends Component {
                           onSubmitEditing={this.comment}
                           placeholder='comment'
                           returnKeyType='send'
-                          style={styles.modalTextInput}
+                          style={{ height: 40 }}
                           value={this.state.comment} />
                       </View>
 
@@ -529,15 +535,16 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   comment: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'white',
-    minHeight: 50,
-    minWidth: 50,
-    padding: 10
+    padding: 5,
   },
   commentImage: {
     height: 50,
     width: 50
+  },
+  commentor: {
+    fontSize: 10,
+    paddingHorizontal: 5,
+    paddingTop: 5
   },
   commentView: {
     flexDirection: 'row',
@@ -560,14 +567,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     width: null
   },
-  modalTextInput: {
-    backgroundColor: 'white',
-    borderColor: 'gray',
-    borderRadius: 5,
-    borderWidth: 1,
-    height: 40,
-    padding: 10
-  },
   poster: {
     backgroundColor: 'transparent',
     color: 'white',
@@ -582,6 +581,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 50,
     width: 300
+  },
+  textInputView: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderRadius: 5,
+    borderWidth: 1,
+    height: 40,
+    justifyContent: 'center',
+    padding: 10
   },
   top: {
     flex: 1,

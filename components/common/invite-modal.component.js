@@ -1,11 +1,10 @@
 const Contacts = require('react-native-contacts');
-
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   Keyboard,
-  ListView,
   Text,
   TextInput,
   TouchableHighlight,
@@ -24,10 +23,8 @@ export default class InviteModalComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: [],
-      dataSource: this.ds.cloneWithRows([]),
       loading: true
     };
   }
@@ -37,50 +34,37 @@ export default class InviteModalComponent extends Component {
       .then(data => {
         this.setState({
           data: data,
-          dataSource: this.ds.cloneWithRows(data),
           loading: false
         });
       }).catch(() => { });
   }
 
-  invite = (rowData, rowID) => {
+  invite = (item, index) => {
     const data = this.state.data.slice();
-    if (rowData.contact) {
+    if (item.contact) {
       http.post(`/api/contributors`, JSON.stringify({
-        contributor: rowData.contact,
+        contributor: item.contact,
         event: this.props.event
       })).then(() => {
-        data[rowID].status = 'Invited!';
-        this.setState({
-          data: data,
-          dataSource: this.ds.cloneWithRows(data)
-        });
+        data[index].status = 'Invited!';
+        this.setState({ data: data });
       }).catch(error => {
-        data[rowID].status = 'Invite failed...';
-        this.setState({
-          data: data,
-          dataSource: this.ds.cloneWithRows(data)
-        });
+        data[index].status = 'Invite failed...';
+        this.setState({ data: data });
       });
     } else {
       try {
         SendSMS.send({
           body: `${session.username} invited you as a contributor for ${this.props.event.title}! itms-apps://itunes.apple.com/app/id1246628137`,
-          recipients: [rowData.phoneNumbers[0].number],
+          recipients: [item.phoneNumbers[0].number],
           successTypes: ['sent', 'queued']
         }, (completed, cancelled, error) => {
           if (completed) {
-            data[rowID].status = 'Invited!';
-            this.setState({
-              data: data,
-              dataSource: this.ds.cloneWithRows(data)
-            });
+            data[index].status = 'Invited!';
+            this.setState({ data: data });
           } else {
-            data[rowID].status = 'Invite failed...';
-            this.setState({
-              data: data,
-              dataSource: this.ds.cloneWithRows(data)
-            });
+            data[index].status = 'Invite failed...';
+            this.setState({ data: data });
           }
         });
       } catch (error) { }
@@ -170,10 +154,11 @@ export default class InviteModalComponent extends Component {
               this.state.loading ?
                 <ActivityIndicator /> :
                 this.state.data.length > 0 ?
-                  <ListView
-                    dataSource={this.state.dataSource}
-                    removeClippedSubviews={false}
-                    renderRow={(rowData, sectionID, rowID) => (
+                  <FlatList
+                    data={this.state.data}
+                    extraData={this.state}
+                    keyExtractor={(item, index) => `${index}`}
+                    renderItem={({ item, index }) => (
                       <View style={{
                         alignItems: 'center',
                         flexDirection: 'row',
@@ -182,30 +167,30 @@ export default class InviteModalComponent extends Component {
                       }}>
 
                         {
-                          rowData.contact ?
+                          item.contact ?
                             <Text style={{ color: 'white', fontSize: 16 }}>
-                              {rowData.contact}
+                              {item.contact}
                             </Text> :
                             <Text style={{ color: 'white', fontSize: 16 }}>
-                              {rowData.givenName} {rowData.familyName}
+                              {item.givenName} {item.familyName}
                             </Text>
                         }
 
                         <TouchableHighlight
-                          onPress={() => this.invite(rowData, rowID)}
+                          onPress={() => this.invite(item, index)}
                           underlayColor='transparent'>
                           {
-                            rowData.status ?
+                            item.status ?
                               <Text
                                 style={{
                                   alignItems: 'center',
                                   color: '#f74434',
                                   padding: 5
                                 }}>
-                                {rowData.status}
+                                {item.status}
                               </Text> :
                               <Text
-                                onPress={() => this.invite(rowData, rowID)}
+                                onPress={() => this.invite(item, index)}
                                 style={{
                                   alignItems: 'center',
                                   borderColor: 'white',

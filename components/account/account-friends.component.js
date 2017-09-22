@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
+  FlatList,
   Image,
   Keyboard,
-  ListView,
   Text,
   TextInput,
   TouchableHighlight,
@@ -19,10 +19,8 @@ export default class AccountFriendsComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: [],
-      dataSource: this.ds.cloneWithRows([]),
       loading: true,
     };
   }
@@ -32,7 +30,6 @@ export default class AccountFriendsComponent extends Component {
       .then(data => {
         this.setState({
           data: data,
-          dataSource: this.ds.cloneWithRows(data),
           loading: false,
         });
       }).catch(error => { });
@@ -54,39 +51,24 @@ export default class AccountFriendsComponent extends Component {
           observer.next(data);
         }).catch(error => { });
     }).subscribe(data => {
-      this.setState({
-        data: data,
-        dataSource: this.ds.cloneWithRows(data),
-      });
+      this.setState({ data: data });
     });
   }
 
-  toggleContact = (rowData, rowID) => {
-    if (rowData.contact) http.delete(`/api/contacts/${rowData.contact}`)
+  toggleContact = (item, index) => {
+    if (item.contact) http.delete(`/api/contacts/${item.contact}`)
       .then(() => {
         const _data = this.state.data.slice();
-        _data[rowID].username = rowData.contact;
-        delete _data[rowID].contact;
-
-        this.setState(() => {
-          return {
-            data: _data,
-            dataSource: this.ds.cloneWithRows(_data)
-          };
-        });
+        _data[index].username = item.contact;
+        delete _data[index].contact;
+        this.setState(() => ({ data: _data }));
       }).catch(error => { });
-    else http.post('/api/contacts', JSON.stringify({ contact: rowData.username }))
+    else http.post('/api/contacts', JSON.stringify({ contact: item.username }))
       .then(() => {
         const _data = this.state.data.slice();
-        _data[rowID].contact = rowData.username;
-        delete _data[rowID].username;
-
-        this.setState(() => {
-          return {
-            data: _data,
-            dataSource: this.ds.cloneWithRows(_data)
-          };
-        });
+        _data[index].contact = item.username;
+        delete _data[index].username;
+        this.setState(() => ({ data: _data }));
       }).catch(error => { });
   }
 
@@ -144,10 +126,11 @@ export default class AccountFriendsComponent extends Component {
               this.state.loading ?
                 <ActivityIndicator /> :
                 this.state.data.length > 0 ?
-                  <ListView
-                    dataSource={this.state.dataSource}
-                    removeClippedSubviews={false}
-                    renderRow={(rowData, sectionID, rowID) => (
+                  <FlatList
+                    data={this.state.data}
+                    extraData={this.state}
+                    keyExtractor={(item, index) => `${index}`}
+                    renderItem={({ item, index }) => (
                       <View style={{
                         alignItems: 'center',
                         flexDirection: 'row',
@@ -157,46 +140,46 @@ export default class AccountFriendsComponent extends Component {
 
                         {/* Profile picture */}
                         <TouchableHighlight
-                          onPress={() => this.viewUser(rowData.contact ? rowData.contact : rowData.username)}
+                          onPress={() => this.viewUser(item.contact ? item.contact : item.username)}
                           style={{ flex: 1 }}
                           underlayColor='transparent'>
                           <Image
                             style={{ borderRadius: 20, height: 40, width: 40 }}
-                            source={{ uri: `${http.s3}/users/${rowData.contact ? rowData.contact : rowData.username}` }} />
+                            source={{ uri: `${http.s3}/users/${item.contact ? item.contact : item.username}` }} />
                         </TouchableHighlight>
 
                         {/* Middle text */}
                         <View style={{ flex: 4 }}>
                           <Text
-                            onPress={() => this.viewUser(rowData.contact ? rowData.contact : rowData.username)}
+                            onPress={() => this.viewUser(item.contact ? item.contact : item.username)}
                             style={{ fontSize: 14, marginLeft: 10 }}
                             underlayColor='transparent'>
-                            {rowData.contact ? rowData.contact : rowData.username}
+                            {item.contact ? item.contact : item.username}
                           </Text>
                         </View>
 
                         {/* Actions */}
                         <View style={{ flex: 2 }}>
                           <TouchableHighlight
-                            onPress={() => this.toggleContact(rowData, rowID)}
+                            onPress={() => this.toggleContact(item, index)}
                             style={{
                               alignSelf: 'center',
-                              backgroundColor: rowData.contact ? '#f74434' : 'transparent',
+                              backgroundColor: item.contact ? '#f74434' : 'transparent',
                               borderWidth: 1,
                               borderRadius: 3,
-                              borderColor: rowData.contact ? '#f74434' : 'gray',
+                              borderColor: item.contact ? '#f74434' : 'gray',
                               padding: 5
                             }}
-                            underlayColor={rowData.contact ? '#f74434' : 'transparent'}>
+                            underlayColor={item.contact ? '#f74434' : 'transparent'}>
                             <View style={{
                               alignItems: 'center',
                               flexDirection: 'row'
                             }}>
                               <Text style={{
-                                color: rowData.contact ? 'white' : 'black',
+                                color: item.contact ? 'white' : 'black',
                                 fontWeight: 'bold'
                               }}>
-                                {rowData.contact ? 'Following' : 'Follow'}
+                                {item.contact ? 'Following' : 'Follow'}
                               </Text>
                             </View>
                           </TouchableHighlight>

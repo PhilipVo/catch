@@ -40,8 +40,10 @@ module.exports = class CameraComponent extends Component {
 
   capture = () => {
     this.camera.capture(this.captureOptions)
-      .then(data => this.props.navigation.navigate('CreateNavigatorComponent', { story: data.path }))
-      .catch(() => { });
+      .then(data => this.props.navigation.navigate('CreateNavigatorComponent', {
+        isVideo: false,
+        story: data.path
+      })).catch(() => { });
   }
 
   onZoomChanged = () => { }

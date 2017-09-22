@@ -6,9 +6,9 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  FlatList,
   Image,
   Keyboard,
-  ListView,
   Platform,
   SegmentedControlIOS,
   StatusBar,
@@ -31,6 +31,7 @@ import { MessageBarManager } from 'react-native-message-bar';
 import { Observable } from 'rxjs/Observable';
 
 import http from '../../services/http.service';
+import notification from '../../services/notification.service';
 import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
 
@@ -38,7 +39,6 @@ export default class CreateComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.contributors = {};
     this.numbers = {};
     this.contacts = [];
@@ -49,7 +49,6 @@ export default class CreateComponent extends Component {
       cover: null,
       coverError: false,
       data: [],
-      dataSource: this.ds.cloneWithRows([]),
       date: Date.now(),
       description: '',
       error: null,
@@ -84,125 +83,125 @@ export default class CreateComponent extends Component {
     http.get('/api/contacts')
       .then(data => {
         this.contacts = data;
-        this.setState({
-          data: data,
-          dataSource: this.ds.cloneWithRows(data)
-        });
+        this.setState({ data: data });
       }).catch(() => { });
   }
 
   complete = () => {
-    this.setState({
-      coverError: false,
-      error: null,
-      saving: true,
-      titleError: false
-    });
-
-    if (!this.state.cover)
-      return this.setState({
-        coverError: true,
-        saving: false
-      });
-
-    if (this.state.title.length === 0)
-      return this.setState({
-        saving: false,
-        titleError: true
-      });
-
-    const event = {
-      audience: this.state.audience,
-      contributors: this.contributors,
-      date: this.state.date,
-      description: this.state.description,
-      isVideo: this.props.navigation.state.params ?
-        this.props.navigation.state.params.isVideo : null,
-      story: this.props.navigation.state.params ?
-        this.props.navigation.state.params.story : null,
-      title: this.state.title
-    };
-
-    http.post('/api/events', JSON.stringify(event))
-      .then(data => {
-        // Upload cover:
-        const file = {
-          name: 'cover',
-          type: 'image/jpeg',
-          uri: this.state.cover
-        };
-
-        s3.put(file, `events/${data.eventId}/`)
-          .then(() => {
-            MessageBarManager.showAlert({
-              alertType: 'custom',
-              message: 'Cover image successfully uploaded!',
-              stylesheetExtra: { backgroundColor: '#f74434' },
-              viewTopInset: 20
-            });
-
-            // Send out SMS invites:
-            const recipients = Object.keys(this.numbers);
-            if (recipients.length > 0) return SendSMS.send({
-              body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
-              recipients: recipients,
-              successTypes: ['sent', 'queued']
-            }, (completed, cancelled, error) => {
-              if (error) this.setState({ saving: false });
-            });
-
-            // Upload story:
-            if (data.storyId) {
-              const file = {
-                name: data.storyId,
-                type: event.isVideo ? 'video/mp4' : 'image/jpeg',
-                uri: event.story
-              };
-
-              s3.put(file, `events/${data.eventId}/`)
-                .then(() => {
-                  MessageBarManager.showAlert({
-                    alertType: 'custom',
-                    message: `${event.isVideo ? 'Video' : 'Picture'} successfully uploaded!`,
-                    stylesheetExtra: { backgroundColor: '#f74434' },
-                    viewTopInset: 20
-                  });
-                }).catch(error => {
-                  http.delete(`/api/stories/${data.storyId}`)
-                    .catch(() => { });
-
-                  MessageBarManager.showAlert({
-                    alertType: 'custom',
-                    message: `${event.isVideo ? 'Video' : 'Picture'} failed to upload.`,
-                    stylesheetExtra: { backgroundColor: 'yellow' },
-                    viewTopInset: 20
-                  });
-                });
-            }
-          }).catch(error => {
-            http.delete(`/api/events/${data.eventId}`)
-              .catch(() => { });
-
-            MessageBarManager.showAlert({
-              alertType: 'custom',
-              message: 'Event failed to save.',
-              stylesheetExtra: { backgroundColor: 'yellow' },
-              viewTopInset: 20
-            });
-          });
-
-        MessageBarManager.showAlert({
-          alertType: 'custom',
-          message: `Now uploading your event...`,
-          stylesheetExtra: { backgroundColor: '#f74434' },
-          viewTopInset: 20
+    if (!this.state.saving) {
+      if (!this.state.cover)
+        return this.setState({
+          coverError: true,
+          saving: false
         });
 
-        this.props.screenProps.reset();
-      }).catch(error => {
-        this.setState({ saving: false });
-        Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+      if (this.state.title.length === 0)
+        return this.setState({
+          saving: false,
+          titleError: true
+        });
+
+      this.setState({
+        coverError: false,
+        error: null,
+        saving: true,
+        titleError: false
       });
+
+      const event = {
+        audience: this.state.audience,
+        contributors: this.contributors,
+        date: this.state.date,
+        description: this.state.description,
+        isVideo: this.props.navigation.state.params ?
+          this.props.navigation.state.params.isVideo : null,
+        story: this.props.navigation.state.params ?
+          this.props.navigation.state.params.story : null,
+        title: this.state.title
+      };
+
+      http.post('/api/events', JSON.stringify(event))
+        .then(data => {
+          // Upload cover:
+          const file = {
+            name: 'cover',
+            type: 'image/jpeg',
+            uri: this.state.cover
+          };
+
+          s3.put(file, `events/${data.eventId}/`)
+            .then(() => {
+              // Notify user of successful upload:
+              MessageBarManager.showAlert({
+                alertType: 'custom',
+                message: 'Cover image successfully uploaded!',
+                stylesheetExtra: { backgroundColor: '#f74434' },
+                viewTopInset: 20
+              });
+
+              // Refresh account and feed:
+              notification.refreshAccount();
+              notification.refreshFeed();
+
+              // Send out SMS invites:
+              const recipients = Object.keys(this.numbers);
+              if (recipients.length > 0) return SendSMS.send({
+                body: `${session.username} invited you as a contributor for Catch! itms-apps://itunes.apple.com/app/id1246628137`,
+                recipients: recipients,
+                successTypes: ['sent', 'queued']
+              }, (completed, cancelled, error) => { });
+
+              // Upload story:
+              if (data.storyId) {
+                const file = {
+                  name: data.storyId,
+                  type: event.isVideo ? 'video/mp4' : 'image/jpeg',
+                  uri: event.story
+                };
+
+                s3.put(file, `events/${data.eventId}/`)
+                  .then(() => {
+                    MessageBarManager.showAlert({
+                      alertType: 'custom',
+                      message: `${event.isVideo ? 'Video' : 'Picture'} successfully uploaded!`,
+                      stylesheetExtra: { backgroundColor: '#f74434' },
+                      viewTopInset: 20
+                    });
+                  }).catch(error => {
+                    http.delete(`/api/stories/${data.storyId}`).catch(() => { });
+
+                    MessageBarManager.showAlert({
+                      alertType: 'custom',
+                      message: `${event.isVideo ? 'Video' : 'Picture'} failed to upload.`,
+                      stylesheetExtra: { backgroundColor: 'yellow' },
+                      viewTopInset: 20
+                    });
+                  });
+              }
+            }).catch(error => {
+              http.delete(`/api/events/${data.eventId}`).catch(() => { });
+
+              MessageBarManager.showAlert({
+                alertType: 'custom',
+                message: 'Event failed to save.',
+                stylesheetExtra: { backgroundColor: 'yellow' },
+                viewTopInset: 20
+              });
+            });
+
+          MessageBarManager.showAlert({
+            alertType: 'custom',
+            message: `Now uploading your event...`,
+            stylesheetExtra: { backgroundColor: '#f74434' },
+            viewTopInset: 20
+          });
+
+          this.props.screenProps.reset();
+        }).catch(error => {
+          this.setState({ saving: false });
+          Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
+        });
+    }
   }
 
   goBack = () => {
@@ -214,36 +213,30 @@ export default class CreateComponent extends Component {
     }
   }
 
-  invite = (rowData, rowID) => {
+  invite = (item, index) => {
     // Add contributor if not already invited:
-    if (!rowData.invited) {
+    if (!item.invited) {
       const _data = this.state.data.slice();
-      _data[rowID].invited = true;
-      if (rowData.contact) this.contributors[rowData.contact] = true;
+      _data[index].invited = true;
+      if (item.contact) this.contributors[item.contact] = true;
       else {
-        try { this.numbers[rowData.phoneNumbers[0].number] = true }
+        try { this.numbers[item.phoneNumbers[0].number] = true }
         catch (error) { }
       }
 
-      this.setState({
-        data: _data,
-        dataSource: this.ds.cloneWithRows(_data)
-      });
+      this.setState({ data: _data });
     }
     // Else remove contributor:
     else {
       const _data = this.state.data.slice();
-      _data[rowID].invited = false;
-      if (rowData.contact) delete this.contributors[rowData.contact];
+      _data[index].invited = false;
+      if (item.contact) delete this.contributors[item.contact];
       else {
-        try { delete this.numbers[rowData.phoneNumbers[0].number] }
+        try { delete this.numbers[item.phoneNumbers[0].number] }
         catch (error) { }
       }
 
-      this.setState({
-        data: _data,
-        dataSource: this.ds.cloneWithRows(_data)
-      });
+      this.setState({ data: _data });
     }
   }
 
@@ -275,7 +268,6 @@ export default class CreateComponent extends Component {
 
       this.setState({
         data: _data,
-        dataSource: this.ds.cloneWithRows(_data),
         loading: false
       });
     });
@@ -457,12 +449,13 @@ export default class CreateComponent extends Component {
 
                 {
                   this.state.data.length > 0 ?
-                    <ListView
-                      dataSource={this.state.dataSource}
-                      removeClippedSubviews={false}
-                      renderRow={(rowData, sectionID, rowID) => (
+                    <FlatList
+                      data={this.state.data}
+                      extraData={this.state}
+                      keyExtractor={(item, index) => `${index}`}
+                      renderItem={({ item, index }) => (
 
-                        rowData.isBreak ?
+                        item.isBreak ?
                           <Text style={{
                             fontSize: 16,
                             padding: 10,
@@ -478,17 +471,17 @@ export default class CreateComponent extends Component {
                           }}>
 
                             {
-                              rowData.contact ?
-                                <Text style={{ fontSize: 16 }}>{rowData.contact}</Text> :
-                                <Text style={{ fontSize: 16 }}>{rowData.givenName} {rowData.familyName}</Text>
+                              item.contact ?
+                                <Text style={{ fontSize: 16 }}>{item.contact}</Text> :
+                                <Text style={{ fontSize: 16 }}>{item.givenName} {item.familyName}</Text>
                             }
 
                             <TouchableHighlight
-                              onPress={() => this.invite(rowData, rowID)}
+                              onPress={() => this.invite(item, index)}
                               underlayColor='transparent'>
                               {
-                                rowData.invited || (rowData.phoneNumbers &&
-                                  this.numbers[[rowData.phoneNumbers[0].number]]) ?
+                                item.invited || (item.phoneNumbers && item.phoneNumbers[0] &&
+                                  this.numbers[[item.phoneNumbers[0].number]]) ?
                                   <View style={{
                                     alignItems: 'center',
                                     backgroundColor: '#f74434',

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  ListView,
+  FlatList,
   Text,
   TouchableHighlight,
   View
@@ -15,10 +15,8 @@ export default class InvitedModalComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: [],
-      dataSource: this.ds.cloneWithRows([]),
       loading: true,
     };
   }
@@ -28,7 +26,6 @@ export default class InvitedModalComponent extends Component {
       .then(data => {
         this.setState({
           data: data,
-          dataSource: this.ds.cloneWithRows(data),
           loading: false,
         });
       }).catch(error => {
@@ -63,11 +60,11 @@ export default class InvitedModalComponent extends Component {
             this.state.loading ?
               <ActivityIndicator /> :
               this.state.data.length > 0 ?
-                <ListView
-                  dataSource={this.state.dataSource}
-                  removeClippedSubviews={false}
-                  renderRow={(rowData, sectionID, rowID) => (
-                    <Text style={{ fontSize: 16, textAlign: 'center' }}>{rowData.username}</Text>
+                <FlatList
+                  data={this.state.data}
+                  keyExtractor={item => item.username}
+                  renderItem={({ item }) => (
+                    <Text style={{ fontSize: 16, textAlign: 'center' }}>{item.username}</Text>
                   )}
                 /> :
                 <Text style={{ color: 'gray', textAlign: 'center' }}>

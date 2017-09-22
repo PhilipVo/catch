@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  FlatList,
   Image,
   Keyboard,
   KeyboardAvoidingView,
-  ListView,
   Platform,
   StatusBar,
   StyleSheet,
@@ -26,12 +26,10 @@ import session from '../../services/session.service';
 export default class UpcomingModalComponent extends Component {
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       comment: '',
       comments: [],
       followers: 0,
-      dataSource: this.ds.cloneWithRows([]),
       isContributor: null,
       isNotificationsOn: null,
       isWatcher: null,
@@ -46,7 +44,7 @@ export default class UpcomingModalComponent extends Component {
 
   componentDidUpdate() {
     setTimeout(() => {
-      if (this._listView) this._listView.scrollToEnd();
+      if (this._flatList) this._flatList.scrollToEnd();
     }, 1000);
   }
 
@@ -69,7 +67,6 @@ export default class UpcomingModalComponent extends Component {
       .then(data => {
         this.setState({
           comments: data.comments,
-          dataSource: this.ds.cloneWithRows(data.comments),
           followers: data.followers,
           loading: false,
           isContributor: data.contributor ? data.contributor.isContributor : null,
@@ -201,26 +198,31 @@ export default class UpcomingModalComponent extends Component {
               </View>
             </View>
 
-            <Text style={styles.modalText3}>{this.props.event.description}</Text>
-            <Text style={styles.modalText4}>Comments</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.modalText3}>{this.props.event.description}</Text>
+              <Text style={styles.modalText4}>Comments</Text>
+            </View>
 
             { // Comments:
               this.state.loading ?
                 <ActivityIndicator style={{ alignSelf: 'center' }} /> :
-                <ListView
-                  dataSource={this.state.dataSource}
-                  enableEmptySections={true}
-                  ref={listView => this._listView = listView}
-                  removeClippedSubviews={false}
-                  renderRow={(rowData, sectionID, rowID) => (
+                <FlatList
+                  data={this.state.comments}
+                  extraData={this.state}
+                  keyExtractor={(item, index) => `${index}`}
+                  ref={flatList => this._flatList = flatList}
+                  renderItem={({ item }) => (
                     <View style={styles.commentView}>
-                      <TouchableHighlight onPress={() => this.viewUser(rowData.username)}>
+                      <TouchableHighlight onPress={() => this.viewUser(item.username)}>
                         <Image
-                          source={{ uri: `${http.s3}/users/${rowData.username}` }}
+                          source={{ uri: `${http.s3}/users/${item.username}` }}
                           style={styles.commentImage} />
                       </TouchableHighlight>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.comment}>{rowData.comment}</Text>
+                      <View style={{ backgroundColor: 'white', flex: 1, minHeight: 50 }}>
+                        <Text style={styles.commentor}>
+                          {item.username} - {moment(item.createdAt).fromNow()}
+                        </Text>
+                        <Text style={styles.comment}>{item.comment}</Text>
                       </View>
                     </View>
                   )} />
@@ -231,7 +233,7 @@ export default class UpcomingModalComponent extends Component {
               flexDirection: 'row',
               justifyContent: 'space-between'
             }}>
-              <View style={{ flex: 6 }}>
+              <View style={styles.textInputView}>
                 <TextInput
                   autoCapitalize='sentences'
                   autoCorrect={true}
@@ -240,7 +242,7 @@ export default class UpcomingModalComponent extends Component {
                   onSubmitEditing={this.comment}
                   placeholder='comment'
                   returnKeyType='send'
-                  style={styles.modalTextInput}
+                  style={{ height: 40 }}
                   value={this.state.comment} />
               </View>
               <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
@@ -261,14 +263,16 @@ export default class UpcomingModalComponent extends Component {
 
 const styles = StyleSheet.create({
   comment: {
-    backgroundColor: 'white',
-    minHeight: 50,
-    padding: 10,
-    width: null
+    padding: 5,
   },
   commentImage: {
     height: 50,
     width: 50
+  },
+  commentor: {
+    fontSize: 10,
+    paddingLeft: 5,
+    paddingTop: 5
   },
   commentView: {
     flex: 1,
@@ -307,15 +311,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10
   },
-  modalTextInput: {
-    backgroundColor: 'white',
-    borderColor: 'gray',
-    borderRadius: 5,
-    borderWidth: 1,
-    height: 40,
-    marginTop: 5,
-    padding: 10
-  },
   modalView0: {
     flex: 3,
     padding: 20
@@ -330,6 +325,17 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 12,
     textAlign: 'center',
+  },
+  textInputView: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderRadius: 5,
+    borderWidth: 1,
+    flex: 6,
+    height: 40,
+    justifyContent: 'center',
+    marginTop: 5,
+    padding: 10
   },
   timerText: {
     color: 'white',

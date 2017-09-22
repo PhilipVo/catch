@@ -1,17 +1,20 @@
 import { AsyncStorage } from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import { Subject } from 'rxjs/Subject';
 
 import http from './http.service';
 
 class NotificationService {
   constructor() {
-    this.subject = new Subject();
+    this.refreshAccount;
+    this.refreshFeed;
 
     // Configure notifications:        
     PushNotification.configure({
       onNotification: notification => {
-        this.subject.onNext(notification);
+        try {
+          this.refreshAccount();
+          this.refreshFeed();
+        } catch (error) { }
       },
       onRegister: device => {
         AsyncStorage.setItem('deviceToken', device.token);

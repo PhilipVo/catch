@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Alert,
-  ListView,
+  FlatList,
   Platform,
   StyleSheet,
   Text,
@@ -18,15 +18,14 @@ import s3 from '../../services/s3.service';
 export default class CreatePreviewModalComponent extends Component {
   constructor(props) {
     super(props);
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
-      dataSource: this.ds.cloneWithRows(this.props.events),
+      data: this.props.events,
       saving: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ dataSource: this.ds.cloneWithRows(nextProps.events) });
+    this.setState({ data: nextProps.events });
   }
 
   complete = event => {
@@ -128,20 +127,20 @@ export default class CreatePreviewModalComponent extends Component {
 
           {
             this.props.events.length > 0 ?
-              <ListView
-                dataSource={this.state.dataSource}
-                removeClippedSubviews={false}
-                renderRow={(rowData, sectionID, rowID) => (
+              <FlatList
+                data={this.state.data}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => (
                   <View style={styles.eventView}>
                     <TouchableHighlight
-                      onPress={() => this.complete(rowData)}
+                      onPress={() => this.complete(item)}
                       underlayColor='transparent'>
-                      <Text style={styles.eventText}>{rowData.title}</Text>
+                      <Text style={styles.eventText}>{item.title}</Text>
                     </TouchableHighlight>
                     <Icon
                       color='white'
                       name='add-circle-outline'
-                      onPress={() => this.complete(rowData)}
+                      onPress={() => this.complete(item)}
                       underlayColor='transparent' />
                   </View>
                 )} /> :

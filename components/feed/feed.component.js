@@ -31,19 +31,15 @@ export default class FeedComponent extends Component {
       upcoming: [],
     };
 
-    this.onNotification = notification.subject.subscribe(notification => this.getPublicEvents());
+    notification.refreshFeed = this.getPublicEvents;
   }
 
   componentDidMount() {
     this.getPublicEvents();
   }
 
-  componentWillUnmount() {
-    this.onNotification.unsubscribe();
-  }
-
   getPublicEvents = () => {
-    http.get('/api/events/get-public-events')
+    return http.get('/api/events/get-public-events')
       .then(events => {
         this.setState({
           loading: false,
@@ -104,6 +100,7 @@ export default class FeedComponent extends Component {
               ref={navigator => this.navigator = navigator}
               screenProps={{
                 loading: this.state.loading,
+                onRefresh: this.getPublicEvents,
                 past: this.state.past,
                 setEvent: this.setEvent,
                 upcoming: this.state.upcoming

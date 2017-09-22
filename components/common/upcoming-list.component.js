@@ -2,8 +2,9 @@ const moment = require('moment');
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
+  FlatList,
   Image,
-  ListView,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -19,19 +20,15 @@ export default class UpcomingListComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
       data: this.props.screenProps.upcoming,
-      dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
       now: Date.now(),
+      refreshing: false,
       requesting: false
     }
 
     this.interval = TimerMixin.setInterval(() => {
-      this.setState({
-        dataSource: this.ds.cloneWithRows(this.props.screenProps.upcoming),
-        now: Date.now()
-      });
+      this.setState(() => ({ now: Date.now() }));
     }, 60000);
   }
 
@@ -40,43 +37,53 @@ export default class UpcomingListComponent extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
+    this.setState(() => ({
       data: nextProps.screenProps.upcoming,
-      dataSource: this.ds.cloneWithRows(nextProps.screenProps.upcoming),
       now: Date.now()
-    });
+    }));
   }
 
-  requestToContribute = (rowData, rowID) => {
+  onRefresh = () => {
+    if (!this.state.refreshing) {
+      this.setState({ refreshing: true });
+      this.props.screenProps.onRefresh()
+        .then(() => {
+          this.setState({
+            now: Date.now(),
+            refreshing: false
+          });
+        }).catch(() => this.setState({ refreshing: false }));
+    }
+  }
+
+  requestToContribute = (item, index) => {
     if (!this.state.requesting) {
       this.setState({ requesting: true });
 
-      http.post('/api/contributors/request-to-contribute', JSON.stringify(rowData))
+      http.post('/api/contributors/request-to-contribute', JSON.stringify(item))
         .then(() => {
           const data = this.state.data.slice();
-          data[rowID].isContributor = 0;
-          this.setState({
+          data[index].isContributor = 0;
+          this.setState(() => ({
             data: data,
-            dataSource: this.ds.cloneWithRows(data),
             requesting: false
-          });
+          }));
         }).catch(() => { });
     }
   }
 
-  requestToWatch = rowData => {
+  requestToWatch = (item, index) => {
     if (!this.state.requesting) {
       this.setState({ requesting: true });
 
-      http.post('/api/contributors/request-to-watch', JSON.stringify(rowData))
+      http.post('/api/contributors/request-to-watch', JSON.stringify(item))
         .then(() => {
           const data = this.state.data.slice();
-          data[rowID].isWatcher = 0;
-          this.setState({
+          data[index].isWatcher = 0;
+          this.setState(() => ({
             data: data,
-            dataSource: this.ds.cloneWithRows(data),
             requesting: false
-          });
+          }));
         }).catch(() => { });
     }
   }
@@ -88,39 +95,47 @@ export default class UpcomingListComponent extends Component {
           <ActivityIndicator style={{ alignSelf: 'center' }} />
         </View> :
         this.props.screenProps.upcoming.length > 0 ?
-          <ListView
-            dataSource={this.state.dataSource}
-            removeClippedSubviews={false}
-            renderRow={(rowData, sectionID, rowID) => (
+          <FlatList
+            data={this.state.data}
+            extraData={this.state}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl
+                enabled={!this.state.refreshing}
+                onRefresh={this.onRefresh}
+                refreshing={this.state.refreshing}
+                size={RefreshControl.SIZE.SMALL} />
+            }
+            renderItem={({ item, index }) => (
               <View style={{ marginBottom: 20 }}>
                 <Image
-                  source={{ uri: `${http.s3}/events/${rowData.id}/cover` }}
+                  source={{ uri: `${http.s3}/events/${item.id}/cover` }}
                   style={styles.image} />
 
                 {/* Header */}
                 <View style={styles.header}>
                   <View>
-                    <Text style={{ fontSize: 16 }}>{rowData.title}</Text>
+                    <Text style={{ fontSize: 16 }}>{item.title}</Text>
 
                     {
-                      rowData.username === session.username ?
+                      item.username === session.username ?
                         <View style={{ flexDirection: 'row' }}>
                           <Icon color='purple' name='star' size={15} />
                           <Text style={{ fontSize: 12 }}>You created this event</Text>
-                        </View> : rowData.isContributor === 1 ?
+                        </View> : item.isContributor === 1 ?
                           <Text style={{ fontSize: 12 }}>You're a contributor</Text> :
-                          rowData.isContributor === 0 ?
+                          item.isContributor === 0 ?
                             <Text style={{ fontSize: 12 }}>You've requested to contribute</Text> :
-                            rowData.isWatcher === 1 ?
+                            item.isWatcher === 1 ?
                               <Text style={{ fontSize: 12 }}>You're watching this event</Text> :
-                              rowData.isWatcher === 0 ?
+                              item.isWatcher === 0 ?
                                 <Text style={{ fontSize: 12 }}>You've requested to watch</Text> : null
                     }
 
                     {
-                      rowData.username === session.username &&
+                      item.username === session.username &&
                       <Text
-                        onPress={() => this.props.screenProps.setEvent('delete', rowData)}
+                        onPress={() => this.props.screenProps.setEvent('delete', item)}
                         style={{ color: 'red', fontSize: 12, fontWeight: 'bold' }}
                         underlayColor='transparent'>
                         Delete event
@@ -133,21 +148,21 @@ export default class UpcomingListComponent extends Component {
                   <View style={{ flexDirection: 'row' }}>
                     <View style={{ alignItems: 'center' }}>
                       <Text style={{ color: 'red' }}>
-                        {moment(rowData.date).diff(this.state.now, 'days')}
+                        {moment(item.date).diff(this.state.now, 'days')}
                       </Text>
                       <Text style={{ color: 'red' }}>Days</Text>
                     </View>
                     <Text style={{ color: 'red' }}>:</Text>
                     <View style={{ alignItems: 'center' }}>
                       <Text style={{ color: 'red' }}>
-                        {moment(rowData.date).diff(this.state.now, 'hours') % 24}
+                        {moment(item.date).diff(this.state.now, 'hours') % 24}
                       </Text>
                       <Text style={{ color: 'red' }}>Hrs</Text>
                     </View>
                     <Text style={{ color: 'red' }}>:</Text>
                     <View style={{ alignItems: 'center' }}>
                       <Text style={{ color: 'red' }}>
-                        {moment(rowData.date).diff(this.state.now, 'minutes') % 60}
+                        {moment(item.date).diff(this.state.now, 'minutes') % 60}
                       </Text>
                       <Text style={{ color: 'red' }}>Mins</Text>
                     </View>
@@ -155,12 +170,12 @@ export default class UpcomingListComponent extends Component {
                 </View>
 
                 { // Request buttons:
-                  rowData.username !== session.username &&
+                  item.username !== session.username &&
                   <View style={{ alignItems: 'center' }}>
                     {
-                      (rowData.isContributor === null) &&
+                      (item.isContributor === null) &&
                       <TouchableHighlight
-                        onPress={() => this.requestToContribute(rowData, rowID)}
+                        onPress={() => this.requestToContribute(item, index)}
                         style={{
                           alignItems: 'center',
                           backgroundColor: '#f74434',
@@ -177,9 +192,9 @@ export default class UpcomingListComponent extends Component {
                     }
 
                     {
-                      rowData.audience === 1 && rowData.isWatcher === null &&
+                      item.audience === 1 && item.isWatcher === null &&
                       <TouchableHighlight
-                        onPress={() => this.requestToWatch(rowData, rowID)}
+                        onPress={() => this.requestToWatch(item, index)}
                         style={{
                           alignItems: 'center',
                           backgroundColor: '#f74434',
@@ -196,22 +211,22 @@ export default class UpcomingListComponent extends Component {
                   </View>
                 }
 
-                <Text style={styles.description}>{rowData.description}</Text>
+                <Text style={styles.description}>{item.description}</Text>
 
                 <View style={styles.iconView}>
                   <Icon
                     name='chat-bubble-outline'
-                    onPress={() => this.props.screenProps.setEvent('upcoming', rowData)}
+                    onPress={() => this.props.screenProps.setEvent('upcoming', item)}
                     size={25} />
                   <Icon
                     name='people-outline'
-                    onPress={() => this.props.screenProps.setEvent('invited', rowData)}
+                    onPress={() => this.props.screenProps.setEvent('invited', item)}
                     size={25} />
                   {
-                    (rowData.isContributor === 1 || rowData.username === session.username) &&
+                    (item.isContributor === 1 || item.username === session.username) &&
                     <Icon
                       name='group-add'
-                      onPress={() => this.props.screenProps.setEvent('invite', rowData)}
+                      onPress={() => this.props.screenProps.setEvent('invite', item)}
                       size={25} />
                   }
                 </View>
