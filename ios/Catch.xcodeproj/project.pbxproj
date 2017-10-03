@@ -801,6 +801,7 @@
 				59CC045D9D5A4F7997907202 /* Resources */,
 				84190DEC1F0878E9003A93E1 /* Frameworks */,
 				848743F81F08969800E6681E /* Catch-Bridging-Header.h */,
+				84E716071F81AB390072D735 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -925,6 +926,23 @@
 				848DCEB51F0F2AE3008388B4 /* libART-tvOS.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		84E716071F81AB390072D735 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				DFC1AF45B13042E195A0B953 /* libRCTCamera.a */,
+				B5C78690C31F460F8D95A1A3 /* libRNVectorIcons.a */,
+				D9F7EA7206E4473687846F1D /* libRCTVideo.a */,
+				3DB80D298EFC4BB0A26C8A50 /* libimageCropPicker.a */,
+				A0701958A7E747C386DE6CE2 /* FBSDKCoreKit.framework */,
+				48EAE902916C4400ADF90985 /* FBSDKShareKit.framework */,
+				188A540D815F47D9887CFF8D /* FBSDKLoginKit.framework */,
+				364D215C4395413E8E84C5DA /* libRCTContacts.a */,
+				A7D521BFD9B14346BF462D8A /* libSendSMS.a */,
+				F88FE6941F1E48AD92808632 /* libGPUImage.a */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		84F68C191EEB5CDD0081C86A /* Products */ = {

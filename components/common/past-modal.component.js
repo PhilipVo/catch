@@ -40,7 +40,8 @@ export default class PastModalComponent extends Component {
       done: false,
       index: 0,
       item: null,
-      loading: true,
+			loading: true,
+			onLoad: false,
       shared: false,
       showComments: false,
       stories: [],
@@ -127,6 +128,8 @@ export default class PastModalComponent extends Component {
   }
 
   onLoad = data => {
+		this.setState({onLoad: false});
+
     this.onLoadCalled = true;
     this.duration = data.duration ? parseInt(data.duration * 1000, 10) : 4000;
 
@@ -281,7 +284,6 @@ export default class PastModalComponent extends Component {
           this.state.loading ?
             <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
               <ActivityIndicator />
-              <Text>Loading...</Text>
             </View> : !this.state.item ?
               <View style={styles.empty}>
                 <Text style={{ color: 'white' }}>No posts were added to this event</Text>
@@ -293,7 +295,7 @@ export default class PastModalComponent extends Component {
                       ignoreSilentSwitch={"obey"}
                       onBuffer={this.onBuffer}
                       onLoad={this.onLoad}
-                      onLoadStart={this.onLoadStart}
+                      onLoadStart={() => this.setState({onLoad: true})}
                       onProgress={this.onProgress}
                       paused={this.state.pause}
                       playInBackground={false}
@@ -305,6 +307,7 @@ export default class PastModalComponent extends Component {
                       style={styles.background} /> :
                     <Image
                       onLoad={this.onLoad}
+                      onLoadStart={() => this.setState({onLoad: true})}
                       source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
                       style={styles.background} />
                 }
@@ -369,6 +372,21 @@ export default class PastModalComponent extends Component {
                   underlayColor='transparent'>
                   <View />
                 </TouchableHighlight>
+
+                {
+                  this.state.onLoad &&
+                  <View style={{
+                    alignItems: 'center',
+										bottom: 0,
+                    left: 0,
+										justifyContent: 'center',
+                    position: 'absolute',
+                    right: 0,
+                    top: 0
+                  }}>
+										<ActivityIndicator />
+									</View>
+								}
 
                 {
                   this.state.showComments &&
