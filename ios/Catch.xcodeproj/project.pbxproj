@@ -68,7 +68,6 @@
 		CDE9BA28C2544FBFB21C3A3C /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FA523DB13A043C395D78191 /* Entypo.ttf */; };
 		D6C7C3538A604F8AB16E5A09 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0701958A7E747C386DE6CE2 /* FBSDKCoreKit.framework */; };
 		DBD78847F1D0475498BCB84C /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7978128B70504DF485399941 /* MaterialIcons.ttf */; };
-		E2409F13CF5A424CBC635DD3 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F88FE6941F1E48AD92808632 /* libGPUImage.a */; };
 		F2A5B7DFE98C47BB943854F5 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B5C78690C31F460F8D95A1A3 /* libRNVectorIcons.a */; };
 /* End PBXBuildFile section */
 
@@ -496,7 +495,6 @@
 				26D970383EBD4749B003319E /* FBSDKLoginKit.framework in Frameworks */,
 				428E5B32D8504C0683762866 /* libRCTContacts.a in Frameworks */,
 				288A1AC361884AEE8309D02B /* libSendSMS.a in Frameworks */,
-				E2409F13CF5A424CBC635DD3 /* libGPUImage.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
