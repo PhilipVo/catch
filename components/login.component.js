@@ -187,9 +187,6 @@ module.exports = class LoginComponent extends Component {
 							{/* Error*/}
 							{this.state.error && <Text style={styles.error}>{this.state.error}</Text>}
 
-							{/* Forgot password */}
-							<Text style={styles.forgot}>Forgot password?</Text>
-
 							{/* Login button*/}
 							<TouchableHighlight
 								disabled={this.state.disabled}
@@ -325,7 +322,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#f74434',
 		borderRadius: 5,
 		height: 40,
-		justifyContent: 'center'
+		justifyContent: 'center',
+		marginTop: 30
 	},
 	or: {
 		backgroundColor: 'transparent',
