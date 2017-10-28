@@ -21,7 +21,7 @@ module.exports = class FTUEComponent extends Component {
 			<TouchableWithoutFeedback onPress={this.next}>
 				<Image
 					source={images[`${this.state.i}`]}
-					style={{ alignSelf: 'stretch', flex: 1, width: null }} >
+					style={{ flex: 1, resizeMode: 'stretch', width: null }} >
 					<StatusBar barStyle='light-content' hidden={false} />
 				</Image>
 			</TouchableWithoutFeedback>
