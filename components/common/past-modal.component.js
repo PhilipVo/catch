@@ -24,6 +24,8 @@ import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
 import TimerMixin from 'react-timer-mixin';
 
+import ReportModalComponent from './report-modal.component';
+
 import http from '../../services/http.service';
 import session from '../../services/session.service';
 
@@ -44,6 +46,7 @@ export default class PastModalComponent extends Component {
 			onLoad: false,
 			shared: false,
 			showComments: false,
+			showReportModal: false,
 			stories: [],
 			timerDownAnimation: new Animated.Value(1),
 			timerUpAnimation: new Animated.Value(0)
@@ -123,8 +126,10 @@ export default class PastModalComponent extends Component {
 	}
 
 	onBuffer = buffer => {
-		if (this.onLoadCalled && buffer.isBuffering) this.stopTimerBar();
-		else if (this.onLoadCalled && this.timerBarStopped && !this.state.showComments) this.startTimerBar();
+		if (this.onLoadCalled && buffer.isBuffering)
+			this.stopTimerBar();
+		else if (this.onLoadCalled && this.timerBarStopped && !this.state.showComments && !this.state.showReportModal)
+			this.startTimerBar();
 	}
 
 	onLoad = data => {
@@ -238,6 +243,22 @@ export default class PastModalComponent extends Component {
 			this.stopTimerBar();
 			this.setState({
 				showComments: true,
+				pause: true
+			});
+		}
+	}
+
+	toggleShowReportModal = () => {
+		if (this.state.showReportModal) {
+			this.setState({
+				showReportModal: false,
+				pause: false
+			});
+			this.startTimerBar();
+		} else {
+			this.stopTimerBar();
+			this.setState({
+				showReportModal: true,
 				pause: true
 			});
 		}
@@ -411,7 +432,7 @@ export default class PastModalComponent extends Component {
 													fontWeight: 'bold'
 												}}>
 												Close comments
-                        </Text>
+											</Text>
 
 											<View style={{ flex: 5 }}>
 												<FlatList
@@ -457,19 +478,41 @@ export default class PastModalComponent extends Component {
 
 								{ // Comments
 									!this.state.showComments &&
-									<View style={styles.bottom}>
-										<Icon
-											color='white'
-											name='arrow-up'
-											onPress={this.toggleComments}
-											size={30}
-											type='simple-line-icon' />
-										<Text
-											onPress={this.toggleComments}
-											style={styles.username}>
-											comments
-                    </Text>
+									<View style={{ flexDirection: 'row' }}>
+										<View style={{ flex: 1 }} />
+
+										<View style={styles.bottom}>
+											<Icon
+												color='white'
+												name='arrow-up'
+												onPress={this.toggleComments}
+												size={30}
+												type='simple-line-icon' />
+											<Text
+												onPress={this.toggleComments}
+												style={[styles.username, { textAlign: 'center' }]}>
+												comments
+											</Text>
+										</View>
+
+										<View style={{ alignItems: 'flex-end', flex: 1, justifyContent: 'flex-end' }}>
+											{
+												this.props.event.username !== session.username &&
+												<Text
+													onPress={this.toggleShowReportModal}
+													style={{ backgroundColor: 'transparent', color: 'red', fontSize: 12, padding: 20 }}>
+													Report
+												</Text>
+											}
+										</View>
 									</View>
+								}
+
+								{	// Report
+									this.state.showReportModal &&
+									<ReportModalComponent
+										event={this.props.event}
+										hideModal={this.toggleShowReportModal} />
 								}
 
 								{ // Share to Facebook:

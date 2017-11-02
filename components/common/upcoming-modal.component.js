@@ -35,7 +35,7 @@ export default class UpcomingModalComponent extends Component {
 			isNotificationsOn: null,
 			isWatcher: null,
 			loading: true,
-			modal: null,
+			showReportModal: false,
 			toggling: false
 		};
 	}
@@ -206,7 +206,9 @@ export default class UpcomingModalComponent extends Component {
 								<Text style={styles.modalText4}>Comments</Text>
 								{
 									this.props.event.username != session.username &&
-									<Text onPress={() => this.setState({ modal: 'report' })} style={styles.report}>
+									<Text
+										onPress={() => this.setState({ showReportModal: true })}
+										style={styles.report}>
 										Report
 									</Text>
 								}
@@ -267,11 +269,10 @@ export default class UpcomingModalComponent extends Component {
 					</View>
 
 					{ // Modals
-						this.state.modal === 'report' ?
-							<ReportModalComponent
-								event={this.props.event}
-								hideModal={() => this.setState({ modal: null })} /> :
-							null
+						this.state.showReportModal &&
+						<ReportModalComponent
+							event={this.props.event}
+							hideModal={() => this.setState({ showReportModal: false })} />
 					}
 				</KeyboardAvoidingView>
 			</Modal>
