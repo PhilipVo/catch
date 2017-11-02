@@ -204,9 +204,12 @@ export default class UpcomingModalComponent extends Component {
 							<Text style={styles.modalText3}>{this.props.event.description}</Text>
 							<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 								<Text style={styles.modalText4}>Comments</Text>
-								<Text onPress={() => this.setState({ modal: 'report' })} style={styles.report}>
-									Report
-								</Text>
+								{
+									this.props.event.username != session.username &&
+									<Text onPress={() => this.setState({ modal: 'report' })} style={styles.report}>
+										Report
+									</Text>
+								}
 							</View>
 
 							{ // Comments:

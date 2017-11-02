@@ -29,8 +29,11 @@ export default class Catch extends Component {
 
 		AsyncStorage.getItem('catchToken')
 			.then(catchToken => {
-				if (catchToken) return session.setSession(catchToken)
-					.then(this.checkEULA);
+				if (catchToken) {
+					return session.setSession(catchToken)
+						.then(this.checkEULA)
+						.catch(error => { throw error });
+				}
 				else this.setState({ mode: 2 });
 			}).catch(() => { });
 	}

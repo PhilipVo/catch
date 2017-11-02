@@ -8,46 +8,52 @@ import AccountSettingsComponent from './account-settings.component';
 import ProfileComponent from '../common/profile.component';
 import TabComponent from '../common/tab.component';
 
+import ResetService from '../../services/reset.service';
+
 module.exports = class AccountNavigatorComponent extends Component {
-  reset = () => {
-    this.navigator.dispatch(NavigationActions.reset({
-      actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
-      index: 0
-    }));
-  }
+	componentDidMount() {
+		ResetService.resetAccount = this.reset;
+	}
 
-  shouldComponentUpdate() {
-    return false;
-  }
+	reset = () => {
+		this.navigator.dispatch(NavigationActions.reset({
+			actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
+			index: 0
+		}));
+	}
 
-  render() {
-    return (
-      <AccountNavigator
-        ref={nav => this.navigator = nav}
-        screenProps={{
-          logout: this.props.screenProps.logout,
-          navigate: this.props.navigation.navigate,
-          reset: this.reset,
-          tabComponent: <TabComponent
-            navigate={this.props.navigation.navigate}
-            reset={this.reset}
-            tab='account' />
-        }} />
-    );
-  }
+	shouldComponentUpdate() {
+		return false;
+	}
+
+	render() {
+		return (
+			<AccountNavigator
+				ref={nav => this.navigator = nav}
+				screenProps={{
+					logout: this.props.screenProps.logout,
+					navigate: this.props.navigation.navigate,
+					reset: this.reset,
+					tabComponent: <TabComponent
+						navigate={this.props.navigation.navigate}
+						reset={this.reset}
+						tab='account' />
+				}} />
+		);
+	}
 }
 
 const AccountNavigator = StackNavigator(
-  {
-    AccountComponent: { screen: AccountComponent },
-    AccountFriendsComponent: { screen: AccountFriendsComponent },
-    AccountPictureComponent: { screen: AccountPictureComponent },
-    AccountSettingsComponent: { screen: AccountSettingsComponent },
-    ProfileComponent: { screen: ProfileComponent }
-  },
-  {
-    cardStyle: { backgroundColor: 'white' },
-    headerMode: 'none',
-    initialRouteName: 'AccountComponent'
-  }
+	{
+		AccountComponent: { screen: AccountComponent },
+		AccountFriendsComponent: { screen: AccountFriendsComponent },
+		AccountPictureComponent: { screen: AccountPictureComponent },
+		AccountSettingsComponent: { screen: AccountSettingsComponent },
+		ProfileComponent: { screen: ProfileComponent }
+	},
+	{
+		cardStyle: { backgroundColor: 'white' },
+		headerMode: 'none',
+		initialRouteName: 'AccountComponent'
+	}
 );

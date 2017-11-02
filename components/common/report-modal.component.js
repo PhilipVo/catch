@@ -4,6 +4,7 @@ import Modal from 'react-native-modalbox';
 import { MessageBarManager } from 'react-native-message-bar';
 
 import http from '../../services/http.service';
+import reset from '../../services/reset.service';
 
 export default class ReportModalComponent extends Component {
 	report = () => {
@@ -15,11 +16,13 @@ export default class ReportModalComponent extends Component {
 					stylesheetExtra: { backgroundColor: '#f74434' },
 					viewTopInset: 20
 				});
-				this.props.hideModal();
+				reset.resetAccount();
+				reset.resetFeed();
 			}).catch(() => {
 				MessageBarManager.showAlert({
 					alertType: 'custom',
 					message: 'Failed to send report.',
+					messageStyle: { color: 'black' },
 					stylesheetExtra: { backgroundColor: 'yellow' },
 					viewTopInset: 20
 				});
@@ -38,7 +41,8 @@ export default class ReportModalComponent extends Component {
 					<Text style={{ fontSize: 16, textAlign: 'center' }}>Report Inappropriate Content</Text>
 					<Text style={{ marginTop: 20 }}>
 						Would you like to flag this post for inappropriate content (i.e. nudity, pornography,
-						offensive language)? Inappropriate content will be removed and users continuing to violate
+						offensive language)? You will no longer be able to view this event in your feed.
+						Inappropriate content will be removed and users continuing to violate
 						the terms of agreement will be banned.
 					</Text>
 					<Text
