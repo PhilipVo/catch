@@ -57,6 +57,10 @@ export default class PastModalComponent extends Component {
 		http.get(`/api/events/get-contributions-for-event/${this.props.event.id}`)
 			.then(data => {
 				if (data.stories.length > 0) {
+					data.stories.forEach(story => {
+						Image.prefetch(`${http.s3}/events/${this.props.event.id}/${story.id}`);
+					});
+
 					this.setState({
 						comments: data.comments,
 						item: data.stories[0],

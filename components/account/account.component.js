@@ -32,8 +32,6 @@ export default class AccountComponent extends Component {
 			upcoming: [],
 			user: {},
 		};
-
-		notification.refreshAccount = this.getMyInfo;
 	}
 
 	componentDidMount() {

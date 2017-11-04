@@ -8,18 +8,17 @@ import AccountSettingsComponent from './account-settings.component';
 import ProfileComponent from '../common/profile.component';
 import TabComponent from '../common/tab.component';
 
-import ResetService from '../../services/reset.service';
+import { resetAccount, setResetAccount } from '../../services/navigate.service';
 
 module.exports = class AccountNavigatorComponent extends Component {
 	componentDidMount() {
-		ResetService.resetAccount = this.reset;
-	}
-
-	reset = () => {
-		this.navigator.dispatch(NavigationActions.reset({
-			actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
-			index: 0
-		}));
+		setResetAccount(() => {
+			this.navigator.dispatch(NavigationActions.reset({
+				actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
+				index: 0
+			}));
+		});
+		console.log('reset', resetAccount)
 	}
 
 	shouldComponentUpdate() {
@@ -33,11 +32,7 @@ module.exports = class AccountNavigatorComponent extends Component {
 				screenProps={{
 					logout: this.props.screenProps.logout,
 					navigate: this.props.navigation.navigate,
-					reset: this.reset,
-					tabComponent: <TabComponent
-						navigate={this.props.navigation.navigate}
-						reset={this.reset}
-						tab='account' />
+					tabComponent: <TabComponent tab='account' />
 				}} />
 		);
 	}

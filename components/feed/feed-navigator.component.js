@@ -10,17 +10,15 @@ import ResetService from '../../services/reset.service';
 
 module.exports = class FeedNavigatorComponent extends Component {
 	componentDidMount() {
-		ResetService.resetFeed = this.reset;
+		ResetService.resetFeed = () => this.navigator.dispatch(NavigationActions.reset({
+			actions: [NavigationActions.navigate({ routeName: 'FeedComponent' })],
+			index: 0
+		}));;
 	}
 
 	shouldComponentUpdate() {
 		return false;
 	}
-
-	reset = () => this.navigator.dispatch(NavigationActions.reset({
-		actions: [NavigationActions.navigate({ routeName: 'FeedComponent' })],
-		index: 0
-	}));
 
 	render() {
 		return (
@@ -29,10 +27,7 @@ module.exports = class FeedNavigatorComponent extends Component {
 				screenProps={{
 					logout: this.props.screenProps.logout,
 					navigate: this.props.navigation.navigate,
-					tabComponent: <TabComponent
-						navigate={this.props.navigation.navigate}
-						reset={this.reset}
-						tab='feed' />
+					tabComponent: <TabComponent tab='feed' />
 				}} />
 		);
 	}

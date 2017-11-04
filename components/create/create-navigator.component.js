@@ -5,49 +5,54 @@ import CreateComponent from './create.component';
 import CreatePreviewComponent from './create-preview.component';
 import TabComponent from '../common/tab.component';
 
+import ResetService from '../../services/reset.service';
+
 module.exports = class CreateNavigatorComponent extends Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.navigation.state.params)
-      this.reset('CreatePreviewComponent', nextProps.navigation.state.params);
-  }
+	componentDidMount() {
+		ResetService.resetCreate = () => {
+			this.props.navigation.navigate('CameraComponent');
+			this.reset('CreateComponent');
+		}
+	}
 
-  shouldComponentUpdate() {
-    return false;
-  }
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.navigation.state.params)
+			this.reset('CreatePreviewComponent', nextProps.navigation.state.params);
+	}
 
-  reset = (routeName, params) => {
-    this.navigator.dispatch(NavigationActions.reset({
-      actions: [NavigationActions.navigate({ routeName: routeName, params: params })],
-      index: 0
-    }));
-  }
+	shouldComponentUpdate() {
+		return false;
+	}
 
-  render() {
-    return (
-      <CreateNavigator
-        ref={nav => this.navigator = nav}
-        screenProps={{
-          navigate: this.props.navigation.navigate,
-          reset: () => {
-            this.props.navigation.navigate('CameraComponent');
-            this.reset('CreateComponent');
-          },
-          tabComponent: <TabComponent
-            navigate={this.props.navigation.navigate}
-            tab='create' />
-        }} />
-    );
-  }
+	reset = (routeName, params) => {
+		this.navigator.dispatch(NavigationActions.reset({
+			actions: [NavigationActions.navigate({ routeName: routeName, params: params })],
+			index: 0
+		}));
+	}
+
+	render() {
+		return (
+			<CreateNavigator
+				ref={nav => this.navigator = nav}
+				screenProps={{
+					navigate: this.props.navigation.navigate,
+					tabComponent: <TabComponent
+						navigate={this.props.navigation.navigate}
+						tab='create' />
+				}} />
+		);
+	}
 }
 
 const CreateNavigator = StackNavigator(
-  {
-    CreateComponent: { screen: CreateComponent },
-    CreatePreviewComponent: { screen: CreatePreviewComponent }
-  },
-  {
-    cardStyle: { backgroundColor: 'white' },
-    headerMode: 'none',
-    initialRouteName: 'CreateComponent',
-  }
+	{
+		CreateComponent: { screen: CreateComponent },
+		CreatePreviewComponent: { screen: CreatePreviewComponent }
+	},
+	{
+		cardStyle: { backgroundColor: 'white' },
+		headerMode: 'none',
+		initialRouteName: 'CreateComponent',
+	}
 );

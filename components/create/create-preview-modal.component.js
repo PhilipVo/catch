@@ -11,9 +11,11 @@ import {
 import { Divider, Icon } from 'react-native-elements';
 import { MessageBarManager } from 'react-native-message-bar';
 import Modal from 'react-native-modalbox';
+import RNFS from 'react-native-fs';
 
 import http from '../../services/http.service';
 import s3 from '../../services/s3.service';
+import vrate from '../../services/vrate.service';
 
 export default class CreatePreviewModalComponent extends Component {
 	constructor(props) {
@@ -33,7 +35,19 @@ export default class CreatePreviewModalComponent extends Component {
 			this.setState({ saving: true });
 
 			event.isVideo = this.props.isVideo;
-			http.post('/api/stories/', JSON.stringify(event))
+
+			RNFS.readFile(this.props.story, 'base64')
+				.then(data => {
+					MessageBarManager.showAlert({
+						alertType: 'custom',
+						message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
+						stylesheetExtra: { backgroundColor: '#f74434' },
+						viewTopInset: 20
+					});
+
+					this.props.reset();
+					return vrate(data);
+				}).then(() => http.post('/api/stories/', JSON.stringify(event)))
 				.then(storyId => {
 					// Upload story:
 					const file = {
@@ -64,14 +78,6 @@ export default class CreatePreviewModalComponent extends Component {
 							});
 						});
 
-					MessageBarManager.showAlert({
-						alertType: 'custom',
-						message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
-						stylesheetExtra: { backgroundColor: '#f74434' },
-						viewTopInset: 20
-					});
-
-					this.props.reset();
 				}).catch((error) => {
 					Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
 				});

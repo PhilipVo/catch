@@ -30,8 +30,6 @@ export default class FeedComponent extends Component {
 			tab: 'FeedUpcomingListComponent',
 			upcoming: [],
 		};
-
-		notification.refreshFeed = this.getPublicEvents;
 	}
 
 	componentDidMount() {

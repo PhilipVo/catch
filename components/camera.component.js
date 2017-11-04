@@ -40,10 +40,11 @@ module.exports = class CameraComponent extends Component {
 
 	capture = () => {
 		this.camera.capture(this.captureOptions)
-			.then(data => console.log(data)).catch(() => { });
+			.then(data => this.props.navigation.navigate('CreateNavigatorComponent', {
+				isVideo: false,
+				story: data.path
+			})).catch(() => { });
 	}
-
-	onZoomChanged = () => { }
 
 	record = () => {
 		this.refs.circle.performLinearAnimation(100, 8000);
@@ -77,9 +78,9 @@ module.exports = class CameraComponent extends Component {
 		return (
 			<Camera
 				flashMode={this.state.flashMode}
+				onZoomChanged={() => { }}
 				orientation='portrait'
 				mirrorImage={this.state.mirror}
-				onZoomChanged={this.onZoomChanged}
 				ref={cam => this.camera = cam}
 				style={styles.camera}
 				type={this.state.type}>
@@ -154,11 +155,6 @@ module.exports = class CameraComponent extends Component {
 }
 
 const styles = StyleSheet.create({
-	camera: {
-		flex: 1,
-		height: Dimensions.get('window').height,
-		width: Dimensions.get('window').width
-	},
 	button: {
 		borderRadius: 45,
 		height: 90,
@@ -167,6 +163,11 @@ const styles = StyleSheet.create({
 	buttonView: {
 		flex: 1,
 		justifyContent: 'flex-end'
+	},
+	camera: {
+		flex: 1,
+		height: Dimensions.get('window').height,
+		width: Dimensions.get('window').width
 	},
 	flip: {
 		alignItems: 'flex-start',

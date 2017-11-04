@@ -29,11 +29,13 @@ import SendSMS from 'react-native-sms';
 import { NavigationActions } from 'react-navigation';
 import { MessageBarManager } from 'react-native-message-bar';
 import { Observable } from 'rxjs/Observable';
+import RNFS from 'react-native-fs';
 
 import http from '../../services/http.service';
-import notification from '../../services/notification.service';
+import reset from '../../services/reset.service';
 import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
+import vrate from '../../services/vrate.service';
 
 export default class CreateComponent extends Component {
 	constructor(props) {
@@ -120,7 +122,25 @@ export default class CreateComponent extends Component {
 				title: this.state.title
 			};
 
-			http.post('/api/events', JSON.stringify(event))
+			// Reset and handle tasks in the background:
+			MessageBarManager.showAlert({
+				alertType: 'custom',
+				message: `Now uploading your event...`,
+				stylesheetExtra: { backgroundColor: '#f74434' },
+				viewTopInset: 20
+			});
+			reset.resetCreate();
+
+			const rateCover = RNFS.readFile(this.state.cover, 'base64')
+				.then(data => vrate(data))
+				.catch(error => { throw error });
+
+			const rateStory = event.story ? RNFS.readFile(event.story, 'base64')
+				.then(data => vrate(data))
+				.catch(error => { throw error }) : null;
+
+			Promise.all([rateCover, rateStory])
+				.then(() => http.post('/api/events', JSON.stringify(event)))
 				.then(data => {
 					// Upload cover:
 					const file = {
@@ -140,8 +160,8 @@ export default class CreateComponent extends Component {
 							});
 
 							// Refresh account and feed:
-							notification.refreshAccount();
-							notification.refreshFeed();
+							reset.resetAccount();
+							reset.resetFeed();
 
 							// Send out SMS invites:
 							const recipients = Object.keys(this.numbers);
@@ -191,14 +211,6 @@ export default class CreateComponent extends Component {
 							});
 						});
 
-					MessageBarManager.showAlert({
-						alertType: 'custom',
-						message: `Now uploading your event...`,
-						stylesheetExtra: { backgroundColor: '#f74434' },
-						viewTopInset: 20
-					});
-
-					this.props.screenProps.reset();
 				}).catch(error => {
 					this.setState({ saving: false });
 					Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
@@ -211,7 +223,7 @@ export default class CreateComponent extends Component {
 			this.props.navigation.state.params.play()
 			this.props.navigation.goBack();
 		} catch (error) {
-			this.props.screenProps.reset();
+			reset.resetCreate();
 		}
 	}
 
