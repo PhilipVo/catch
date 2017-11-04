@@ -2,32 +2,34 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+import navigation from '../../services/navigation.service';
+
 const TabComponent = props => {
 	return (
-		<View style={props.tab === 'camera' ? styles.tab1 : styles.tab2}>
+		<View style={props.tab === 'Camera' ? styles.tab1 : styles.tab2}>
 			<Icon
-				color={props.tab === 'feed' ? 'black' : 'gray'}
+				color={props.tab === 'Feed' ? 'black' : 'gray'}
 				name='calendar'
 				onPress={() => {
-					if (props.tab === 'feed') props.reset();
-					else props.navigate('FeedNavigatorComponent');
+					if (props.tab === 'Feed') navigation.resetFeed();
+					else navigation.navigate('Feed');
 				}}
 				size={30}
 				type='simple-line-icon'
 				underlayColor='transparent' />
 			<Icon
-				color={props.tab === 'camera' ? 'transparent' : 'gray'}
+				color={props.tab === 'Camera' ? 'transparent' : 'gray'}
 				name='plus'
-				onPress={() => { props.navigate('CameraComponent') }}
+				onPress={() => { navigation.navigate('Camera') }}
 				size={30}
 				type='simple-line-icon'
 				underlayColor='transparent' />
 			<Icon
-				color={props.tab === 'account' ? 'black' : 'gray'}
+				color={props.tab === 'Account' ? 'black' : 'gray'}
 				name='user'
 				onPress={() => {
-					if (props.tab === 'account') props.reset();
-					else props.navigate('AccountNavigatorComponent')
+					if (props.tab === 'Account') navigation.resetAccount();
+					else navigation.navigate('Account')
 				}}
 				size={30}
 				type='simple-line-icon'
@@ -52,4 +54,4 @@ const styles = StyleSheet.create({
 	}
 });
 
-export default TabComponent;
+module.exports = TabComponent;

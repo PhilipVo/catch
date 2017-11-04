@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { AppRegistry, AsyncStorage, Image, View } from 'react-native';
 import { MessageBar, MessageBarManager } from 'react-native-message-bar';
 
+import navigation from './services/navigation.service';
 import session from './services/session.service';
 
 console.ignoredYellowBox = [
@@ -25,6 +26,10 @@ export default class Catch extends Component {
 	}
 
 	componentDidMount() {
+		navigation.login = this.checkEULA;
+		navigation.logout = () => this.setState({ mode: 2 });
+		navigation.register = () => this.setState({ mode: 3 });
+
 		MessageBarManager.registerMessageBar(this.refs.alert);
 
 		AsyncStorage.getItem('catchToken')
@@ -49,26 +54,25 @@ export default class Catch extends Component {
 	componentWillUpdate(nextProps, nextState) {
 		// Conditionally load components ('lazy loading'):
 		if (nextState.mode === 1) {
-			const AccountNavigatorComponent = require('./components/account/account-navigator.component');
-			// const CameraComponent = require('./components/camera.component');
-			// const CreateNavigatorComponent = require('./components/create/create-navigator.component');
-			// const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
+			const Account = require('./components/account/account-navigator.component');
+			const Camera = require('./components/camera.component');
+			const Create = require('./components/create/create-navigator.component');
+			const Feed = require('./components/feed/feed-navigator.component');
 
 			this.Navigator = require('react-navigation').TabNavigator(
 				{
-					AccountNavigatorComponent: { screen: AccountNavigatorComponent },
-					// CameraComponent: { screen: CameraComponent },
-					// CreateNavigatorComponent: { screen: CreateNavigatorComponent },
-					// FeedNavigatorComponent: { screen: FeedNavigatorComponent },
+					Account: { screen: Account },
+					Camera: { screen: Camera },
+					Create: { screen: Create },
+					Feed: { screen: Feed },
 				},
 				{
 					headerMode: 'none',
-					// initialRouteName: 'FeedNavigatorComponent',
+					initialRouteName: 'Feed',
 					navigationOptions: { tabBarVisible: false }
 				}
 			);
 
-			this.screenProps = { logout: () => this.setState({ mode: 2 }) };
 		} else if (nextState.mode === 2) {
 			const FacebookRegisterComponent = require('./components/facebook-register.component');
 			const LoginComponent = require('./components/login.component');
@@ -84,11 +88,6 @@ export default class Catch extends Component {
 					initialRouteName: 'LoginComponent'
 				}
 			);
-
-			this.screenProps = {
-				login: this.checkEULA,
-				register: () => this.setState({ mode: 3 })
-			};
 		} else if (nextState.mode === 3) {
 			const EULAComponent = require('./components/ftue/eula.component');
 			const FTUEComponent = require('./components/ftue/ftue.component');
@@ -104,8 +103,6 @@ export default class Catch extends Component {
 					initialRouteName: 'EULAComponent'
 				}
 			);
-
-			this.screenProps = { login: this.checkEULA };
 		}
 	}
 
@@ -119,7 +116,7 @@ export default class Catch extends Component {
 				{
 					this.state.mode === 0 ?
 						<Image style={{ flex: 1, width: null }} source={require('./images/splash.png')} /> :
-						<this.Navigator screenProps={this.screenProps} />
+						<this.Navigator />
 				}
 
 				<MessageBar ref='alert' />

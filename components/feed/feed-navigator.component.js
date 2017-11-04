@@ -4,13 +4,12 @@ import { Icon } from 'react-native-elements';
 
 import FeedComponent from './feed.component';
 import ProfileComponent from '../common/profile.component';
-import TabComponent from '../common/tab.component';
 
-import ResetService from '../../services/reset.service';
+import navigation from '../../services/navigation.service';
 
 module.exports = class FeedNavigatorComponent extends Component {
 	componentDidMount() {
-		ResetService.resetFeed = () => this.navigator.dispatch(NavigationActions.reset({
+		navigation.resetFeed = () => this.navigator.dispatch(NavigationActions.reset({
 			actions: [NavigationActions.navigate({ routeName: 'FeedComponent' })],
 			index: 0
 		}));;
@@ -23,12 +22,7 @@ module.exports = class FeedNavigatorComponent extends Component {
 	render() {
 		return (
 			<FeedNavigator
-				ref={nav => this.navigator = nav}
-				screenProps={{
-					logout: this.props.screenProps.logout,
-					navigate: this.props.navigation.navigate,
-					tabComponent: <TabComponent tab='feed' />
-				}} />
+				ref={nav => this.navigator = nav} />
 		);
 	}
 }

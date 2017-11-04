@@ -12,6 +12,8 @@ import Camera from 'react-native-camera';
 import { Icon } from 'react-native-elements';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
+import navigation from '../services/navigation.service';
+
 import TabComponent from './common/tab.component';
 
 module.exports = class CameraComponent extends Component {
@@ -40,21 +42,15 @@ module.exports = class CameraComponent extends Component {
 
 	capture = () => {
 		this.camera.capture(this.captureOptions)
-			.then(data => this.props.navigation.navigate('CreateNavigatorComponent', {
-				isVideo: false,
-				story: data.path
-			})).catch(() => { });
+			.then(data => navigation.navigate('Create', { isVideo: false, story: data.path }))
+			.catch(() => { });
 	}
 
 	record = () => {
 		this.refs.circle.performLinearAnimation(100, 8000);
 		this.camera.capture(this.recordOptions)
-			.then(data => {
-				this.props.navigation.navigate('CreateNavigatorComponent', {
-					isVideo: true,
-					story: data.path
-				});
-			}).catch(() => { });
+			.then(data => navigation.navigate('Create', { isVideo: true, story: data.path }))
+			.catch(() => { });
 	}
 
 	stop = () => {
@@ -88,12 +84,12 @@ module.exports = class CameraComponent extends Component {
 				{/* Skip button */}
 				<View style={styles.skipView}>
 					<Text
-						onPress={() => this.props.navigation.navigate('CreateNavigatorComponent')}
+						onPress={() => navigation.navigate('Create')}
 						style={styles.skipText}>Skip  </Text>
 					<Icon
 						color='rgba(255,255,255,0.5)'
 						name='angle-right'
-						onPress={() => this.props.navigation.navigate('CreateNavigatorComponent')}
+						onPress={() => navigation.navigate('Create')}
 						size={33}
 						type='font-awesome'
 						underlayColor='transparent' />
@@ -148,7 +144,7 @@ module.exports = class CameraComponent extends Component {
 					</View>
 				</View>
 
-				<TabComponent navigate={this.props.navigation.navigate} tab='camera' />
+				<TabComponent tab='Camera' />
 			</Camera>
 		);
 	}

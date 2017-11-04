@@ -3,18 +3,20 @@ import { StatusBar, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { NavigationActions, TabNavigator } from 'react-navigation';
 
-import BlockModalComponent from '../common/block-modal.component';
-import DeleteModalComponent from '../common/delete-modal.component';
-import FriendsModalComponent from '../common/friends-modal.component';
-import InviteModalComponent from '../common/invite-modal.component';
-import InvitedModalComponent from '../common/invited-modal.component';
-import PastListComponent from '../common/past-list.component';
+import BlockModalComponent from './block-modal.component';
+import DeleteModalComponent from './delete-modal.component';
+import FriendsModalComponent from './friends-modal.component';
+import InviteModalComponent from './invite-modal.component';
+import InvitedModalComponent from './invited-modal.component';
+import TabComponent from './tab.component';
+import PastListComponent from './past-list.component';
 import PastModalComponent from './past-modal.component';
 import ProfileDetailsComponent from './profile-details.component';
-import UpcomingListComponent from '../common/upcoming-list.component';
-import UpcomingModalComponent from '../common/upcoming-modal.component';
+import UpcomingListComponent from './upcoming-list.component';
+import UpcomingModalComponent from './upcoming-modal.component';
 
 import http from '../../services/http.service';
+import navigation from '../../services/navigation.service';
 
 export default class ProfileComponent extends Component {
 	constructor(props) {
@@ -64,13 +66,6 @@ export default class ProfileComponent extends Component {
 		});
 	}
 
-	viewUser = username => {
-		this.props.navigation.navigate('ProfileComponent', {
-			tabComponent: this.props.navigation.state.params.tabComponent,
-			username: username
-		});
-	}
-
 	render() {
 		const { params } = this.props.navigation.state;
 		return (
@@ -84,7 +79,6 @@ export default class ProfileComponent extends Component {
 							goBack={this.props.navigation.goBack}
 							navigate={this.props.navigation.navigate}
 							setEvent={this.setEvent}
-							tabComponent={params.tabComponent}
 							user={this.state.user} />
 
 						{/* Top tab bar */}
@@ -118,18 +112,13 @@ export default class ProfileComponent extends Component {
 						</View>
 
 					</View>
-					{params.tabComponent}
+					<TabComponent tab={navigation.tab} />
 				</View>
 
 				{ // Modals
 					this.state.modal === 'block' ?
 						<BlockModalComponent
 							hideModal={this.hideModal}
-							onBlock={() => {
-								this.hideModal();
-								this.props.navigation.goBack();
-								this.props.refresh();
-							}}
 							username={this.state.event} /> :
 						this.state.modal === 'delete' ?
 							<DeleteModalComponent
@@ -139,20 +128,17 @@ export default class ProfileComponent extends Component {
 							this.state.modal === 'friends' ?
 								<FriendsModalComponent
 									hideModal={this.hideModal}
-									username={this.state.event}
-									viewUser={this.viewUser} /> :
+									username={this.state.event} /> :
 								this.state.modal === 'past' ?
 									<PastModalComponent
 										event={this.state.event}
 										hideModal={this.hideModal}
-										navigate={this.props.navigation.navigate}
-										tabComponent={params.tabComponent} /> :
+										navigate={this.props.navigation.navigate} /> :
 									this.state.modal === 'upcoming' ?
 										<UpcomingModalComponent
 											event={this.state.event}
 											hideModal={this.hideModal}
-											navigate={this.props.navigation.navigate}
-											tabComponent={params.tabComponent} /> :
+											navigate={this.props.navigation.navigate} /> :
 										this.state.modal === 'invite' ?
 											<InviteModalComponent
 												event={this.state.event}

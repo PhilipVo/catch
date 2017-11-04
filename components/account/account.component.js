@@ -83,7 +83,6 @@ export default class AccountComponent extends Component {
 							getMyInfo={this.getMyInfo}
 							navigate={this.props.navigation.navigate}
 							setEvent={this.setEvent}
-							tabComponent={this.props.screenProps.tabComponent}
 							user={this.state.user} />
 
 						{/* Top tab bar */}
@@ -122,13 +121,13 @@ export default class AccountComponent extends Component {
 									onRefresh: this.getMyInfo,
 									past: this.state.past,
 									setEvent: this.setEvent,
-									tabComponent: this.props.screenProps.tabComponent,
 									upcoming: this.state.upcoming
 								}} />
 						</View>
 
 					</View>
-					{this.props.screenProps.tabComponent}
+
+					<TabComponent tab='Account' />
 				</View>
 
 				{ // Modals
@@ -141,14 +140,12 @@ export default class AccountComponent extends Component {
 							<UpcomingModalComponent
 								event={this.state.event}
 								hideModal={this.hideModal}
-								navigate={this.props.navigation.navigate}
-								tabComponent={this.props.screenProps.tabComponent} /> :
+								navigate={this.props.navigation.navigate} /> :
 							this.state.modal === 'past' ?
 								<PastModalComponent
 									event={this.state.event}
 									hideModal={this.hideModal}
-									navigate={this.props.navigation.navigate}
-									tabComponent={this.props.screenProps.tabComponent} /> :
+									navigate={this.props.navigation.navigate} /> :
 								this.state.modal === 'invite' ?
 									<InviteModalComponent
 										event={this.state.event}

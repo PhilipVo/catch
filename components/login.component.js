@@ -17,6 +17,7 @@ import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import { LoginManager, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
+import navigation from '../services/navigation.service';
 import session from '../services/session.service';
 
 module.exports = class LoginComponent extends Component {
@@ -60,7 +61,7 @@ module.exports = class LoginComponent extends Component {
 										})],
 										index: 0
 									}));
-								} else return this.props.screenProps.login();
+								} else return navigation.login();
 							}).catch(error => {
 								this.setState({
 									disabled: false,
@@ -92,7 +93,7 @@ module.exports = class LoginComponent extends Component {
 
 			if (this.state.mode === 'login') {
 				session.login(this.user)
-					.then(() => this.props.screenProps.login())
+					.then(() => navigation.login())
 					.catch(error => {
 						this.setState({
 							disabled: false,
@@ -102,7 +103,7 @@ module.exports = class LoginComponent extends Component {
 					});
 			} else {
 				session.register(this.user)
-					.then(() => this.props.screenProps.register())
+					.then(() => navigation.register())
 					.catch(error => {
 						this.setState({
 							disabled: false,

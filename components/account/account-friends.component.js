@@ -14,6 +14,7 @@ import { Icon } from 'react-native-elements';
 import { Observable } from 'rxjs/Observable';
 
 import http from '../../services/http.service';
+import navigation from '../../services/navigation.service';
 
 export default class AccountFriendsComponent extends Component {
 	constructor(props) {
@@ -72,13 +73,6 @@ export default class AccountFriendsComponent extends Component {
 			}).catch(error => { });
 	}
 
-	viewUser = username => {
-		this.props.navigation.navigate('ProfileComponent', {
-			tabComponent: this.props.screenProps.tabComponent,
-			username: username
-		});
-	}
-
 	render() {
 		return (
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -94,7 +88,7 @@ export default class AccountFriendsComponent extends Component {
 						<View style={{ flex: 1 }}>
 							<Icon
 								name='angle-left'
-								onPress={() => this.props.screenProps.reset()}
+								onPress={navigation.resetAccount}
 								size={40}
 								type='font-awesome'
 								underlayColor='transparent' />
@@ -140,7 +134,11 @@ export default class AccountFriendsComponent extends Component {
 
 												{/* Profile picture */}
 												<TouchableHighlight
-													onPress={() => this.viewUser(item.contact ? item.contact : item.username)}
+													onPress={() => {
+														this.props.navigation.navigate('ProfileComponent', {
+															username: item.contact ? item.contact : item.username
+														});
+													}}
 													style={{ flex: 1 }}
 													underlayColor='transparent'>
 													<Image
@@ -151,7 +149,11 @@ export default class AccountFriendsComponent extends Component {
 												{/* Middle text */}
 												<View style={{ flex: 4 }}>
 													<Text
-														onPress={() => this.viewUser(item.contact ? item.contact : item.username)}
+														onPress={() => {
+															this.props.navigation.navigate('ProfileComponent', {
+																username: item.contact ? item.contact : item.username
+															});
+														}}
 														style={{ fontSize: 14, marginLeft: 10 }}
 														underlayColor='transparent'>
 														{item.contact ? item.contact : item.username}

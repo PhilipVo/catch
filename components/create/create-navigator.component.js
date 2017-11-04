@@ -5,42 +5,37 @@ import CreateComponent from './create.component';
 import CreatePreviewComponent from './create-preview.component';
 import TabComponent from '../common/tab.component';
 
-import ResetService from '../../services/reset.service';
+import navigation from '../../services/navigation.service';
 
 module.exports = class CreateNavigatorComponent extends Component {
 	componentDidMount() {
-		ResetService.resetCreate = () => {
-			this.props.navigation.navigate('CameraComponent');
-			this.reset('CreateComponent');
+		navigation.resetCreate = () => {
+			navigation.navigate('Camera');
+			this.navigator.dispatch(NavigationActions.reset({
+				actions: [NavigationActions.navigate({ routeName: 'CreateComponent' })],
+				index: 0
+			}));
 		}
 	}
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.navigation.state.params)
-			this.reset('CreatePreviewComponent', nextProps.navigation.state.params);
+			this.navigator.dispatch(NavigationActions.reset({
+				actions: [NavigationActions.navigate({
+					routeName: 'CreatePreviewComponent',
+					params: nextProps.navigation.state.params
+				})],
+				index: 0
+			}));
 	}
 
 	shouldComponentUpdate() {
 		return false;
 	}
 
-	reset = (routeName, params) => {
-		this.navigator.dispatch(NavigationActions.reset({
-			actions: [NavigationActions.navigate({ routeName: routeName, params: params })],
-			index: 0
-		}));
-	}
-
 	render() {
 		return (
-			<CreateNavigator
-				ref={nav => this.navigator = nav}
-				screenProps={{
-					navigate: this.props.navigation.navigate,
-					tabComponent: <TabComponent
-						navigate={this.props.navigation.navigate}
-						tab='create' />
-				}} />
+			<CreateNavigator ref={nav => this.navigator = nav} />
 		);
 	}
 }

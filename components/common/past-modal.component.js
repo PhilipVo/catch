@@ -268,14 +268,6 @@ export default class PastModalComponent extends Component {
 		}
 	}
 
-	viewUser = username => {
-		// this.props.hideModal();
-		this.props.navigate('ProfileComponent', {
-			tabComponent: this.props.tabComponent,
-			username: username
-		});
-	}
-
 	render() {
 		let bars = [];
 		for (let i = 0; i < this.state.stories.length; i++) {
@@ -349,18 +341,30 @@ export default class PastModalComponent extends Component {
 										justifyContent: 'space-between'
 									}}>
 										<Text
-											onPress={() => this.viewUser(this.state.item.username)}
+											onPress={() => {
+												this.props.navigate('ProfileComponent', {
+													username: this.state.item.username
+												})
+											}}
 											style={styles.poster}>
 											{this.state.item.username !== this.props.event.username && this.state.item.username}
 										</Text>
 										<Text
-											onPress={() => this.viewUser(this.props.event.username)}
+											onPress={() => {
+												this.props.navigate('ProfileComponent', {
+													username: this.props.event.username
+												})
+											}}
 											style={styles.title}>
 											{this.props.event.title}
 										</Text>
 									</View>
 									<Text
-										onPress={() => this.viewUser(this.props.event.username)}
+										onPress={() => {
+											this.props.navigate('ProfileComponent', {
+												username: this.props.event.username
+											})
+										}}
 										style={{
 											backgroundColor: 'transparent',
 											color: 'white',
@@ -447,7 +451,11 @@ export default class PastModalComponent extends Component {
 													renderItem={({ item }) => (
 														<View style={styles.commentView}>
 															<TouchableHighlight
-																onPress={() => this.viewUser(item.username)}>
+																onPress={() => {
+																	this.props.navigate('ProfileComponent', {
+																		username: item.username
+																	})
+																}}>
 																<Image
 																	source={{ uri: `${http.s3}/users/${item.username}` }}
 																	style={styles.commentImage} />

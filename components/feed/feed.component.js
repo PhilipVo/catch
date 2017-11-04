@@ -13,6 +13,7 @@ import { NavigationActions, TabNavigator } from 'react-navigation';
 import FeedUpcomingListComponent from './feed-upcoming-list.component';
 import PastListComponent from '../common/past-list.component';
 import PastModalComponent from '../common/past-modal.component';
+import TabComponent from '../common/tab.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
@@ -45,10 +46,7 @@ export default class FeedComponent extends Component {
 					upcoming: events.upcoming
 				});
 			}).catch(error => {
-				if (error === 'Your account has been banned.') {
-					session.logout();
-					this.props.screenProps.logout();
-				}
+				if (error === 'Your account has been banned.') session.logout();
 			});
 	}
 
@@ -110,7 +108,7 @@ export default class FeedComponent extends Component {
 							}} />
 
 					</View>
-					{this.props.screenProps.tabComponent}
+					<TabComponent tab='Feed' />
 				</View>
 
 				{ // Modals
@@ -118,14 +116,12 @@ export default class FeedComponent extends Component {
 						<PastModalComponent
 							event={this.state.event}
 							hideModal={this.hideModal}
-							navigate={this.props.navigation.navigate}
-							tabComponent={this.props.screenProps.tabComponent} /> :
+							navigate={this.props.navigation.navigate} /> :
 						this.state.modal === 'upcoming' ?
 							<UpcomingModalComponent
 								event={this.state.event}
 								hideModal={this.hideModal}
-								navigate={this.props.navigation.navigate}
-								tabComponent={this.props.screenProps.tabComponent} /> :
+								navigate={this.props.navigation.navigate} /> :
 							null
 				}
 

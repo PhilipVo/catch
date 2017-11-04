@@ -64,13 +64,6 @@ export default class AccountNotificationListComponent extends Component {
 		}
 	}
 
-	viewUser = username => {
-		this.props.screenProps.navigate('ProfileComponent', {
-			tabComponent: this.props.screenProps.tabComponent,
-			username: username
-		});
-	}
-
 	render() {
 		return (
 			this.props.screenProps.loading ?
@@ -87,7 +80,11 @@ export default class AccountNotificationListComponent extends Component {
 
 								{/* Profile picture */}
 								<TouchableHighlight
-									onPress={() => this.viewUser(item.notifier)}
+									onPress={() => {
+										this.props.screenProps.navigate('ProfileComponent', {
+											username: item.notifier
+										});
+									}}
 									style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}
 									underlayColor='transparent'>
 									<Image

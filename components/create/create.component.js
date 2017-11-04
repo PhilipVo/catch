@@ -32,7 +32,7 @@ import { Observable } from 'rxjs/Observable';
 import RNFS from 'react-native-fs';
 
 import http from '../../services/http.service';
-import reset from '../../services/reset.service';
+import navigation from '../../services/navigation.service';
 import s3 from '../../services/s3.service';
 import session from '../../services/session.service';
 import vrate from '../../services/vrate.service';
@@ -129,7 +129,7 @@ export default class CreateComponent extends Component {
 				stylesheetExtra: { backgroundColor: '#f74434' },
 				viewTopInset: 20
 			});
-			reset.resetCreate();
+			navigation.resetCreate();
 
 			const rateCover = RNFS.readFile(this.state.cover, 'base64')
 				.then(data => vrate(data))
@@ -160,8 +160,8 @@ export default class CreateComponent extends Component {
 							});
 
 							// Refresh account and feed:
-							reset.resetAccount();
-							reset.resetFeed();
+							navgiation.resetAccount();
+							navgiation.resetFeed();
 
 							// Send out SMS invites:
 							const recipients = Object.keys(this.numbers);
@@ -223,7 +223,7 @@ export default class CreateComponent extends Component {
 			this.props.navigation.state.params.play()
 			this.props.navigation.goBack();
 		} catch (error) {
-			reset.resetCreate();
+			navgiation.resetCreate();
 		}
 	}
 

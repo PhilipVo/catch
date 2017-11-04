@@ -5,6 +5,8 @@ import {
 	TouchableWithoutFeedback
 } from 'react-native';
 
+import navigation from '../../services/navigation.service';
+
 module.exports = class FTUEComponent extends Component {
 	constructor(props) {
 		super(props);
@@ -13,7 +15,7 @@ module.exports = class FTUEComponent extends Component {
 
 	next = () => {
 		if (this.state.i < 5) this.setState({ i: this.state.i + 1 });
-		else this.props.screenProps.login();
+		else navigation.login();
 	}
 
 	render() {

@@ -3,6 +3,7 @@ import { AsyncStorage } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk';
 
 import http from './http.service';
+import navigation from './navigation.service';
 import notification from './notification.service';
 
 class SessionService {
@@ -18,6 +19,7 @@ class SessionService {
 				return AsyncStorage.setItem('catchToken', catchToken);
 			}).then(() => AsyncStorage.getItem('catchToken'))
 			.then(catchToken => this.setSession(catchToken))
+			.then(navigation.register)
 			.catch(error => error.isNew ? Promise.resolve(true) : Promise.reject(error));
 	}
 
@@ -28,6 +30,7 @@ class SessionService {
 			.then(catchToken => {
 				this.setSession(catchToken);
 				this.isFacebookUser = true;
+				navigation.register();
 			}).catch(error => Promise.reject(error));
 	}
 
@@ -36,6 +39,7 @@ class SessionService {
 			.then(catchToken => AsyncStorage.setItem('catchToken', catchToken))
 			.then(() => AsyncStorage.getItem('catchToken'))
 			.then(catchToken => this.setSession(catchToken))
+			.then(navigation.login)
 			.catch(error => Promise.reject(error));
 	}
 
@@ -46,6 +50,7 @@ class SessionService {
 				if (this.isFacebookUser) LoginManager.logOut();
 				this.isFacebookUser = undefined;
 				this.username = undefined;
+				navigation.logout();
 			}).catch(error => Promise.reject(error));
 	}
 
@@ -54,6 +59,7 @@ class SessionService {
 			.then(catchToken => AsyncStorage.setItem('catchToken', catchToken))
 			.then(() => AsyncStorage.getItem('catchToken'))
 			.then(catchToken => this.setSession(catchToken))
+			.then(navigation.register)
 			.catch(error => Promise.reject(error));
 	}
 

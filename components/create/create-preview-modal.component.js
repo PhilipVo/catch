@@ -14,6 +14,7 @@ import Modal from 'react-native-modalbox';
 import RNFS from 'react-native-fs';
 
 import http from '../../services/http.service';
+import navigation from '../../services/navigation.service';
 import s3 from '../../services/s3.service';
 import vrate from '../../services/vrate.service';
 
@@ -45,7 +46,8 @@ export default class CreatePreviewModalComponent extends Component {
 						viewTopInset: 20
 					});
 
-					this.props.reset();
+					navgiation.resetCreate();
+
 					return vrate(data);
 				}).then(() => http.post('/api/stories/', JSON.stringify(event)))
 				.then(storyId => {

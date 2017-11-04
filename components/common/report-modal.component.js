@@ -16,8 +16,8 @@ export default class ReportModalComponent extends Component {
 					stylesheetExtra: { backgroundColor: '#f74434' },
 					viewTopInset: 20
 				});
-				resetAccount();
-				resetFeed();
+				navigation.resetAccount();
+				navigation.resetFeed();
 			}).catch(() => {
 				MessageBarManager.showAlert({
 					alertType: 'custom',

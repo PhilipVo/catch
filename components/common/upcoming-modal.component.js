@@ -19,7 +19,6 @@ import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 
 import ReportModalComponent from './report-modal.component';
-import TabComponent from './tab.component';
 
 import http from '../../services/http.service';
 import session from '../../services/session.service';
@@ -101,13 +100,6 @@ export default class UpcomingModalComponent extends Component {
 		}
 	}
 
-	viewUser = username => {
-		this.props.navigate('ProfileComponent', {
-			tabComponent: this.props.tabComponent,
-			username: username
-		});
-	}
-
 	render() {
 		return (
 			<Modal
@@ -153,7 +145,11 @@ export default class UpcomingModalComponent extends Component {
 						<View style={styles.modalView1}>
 							<View>
 								<Text
-									onPress={() => this.viewUser(this.props.event.username)}
+									onPress={() => {
+										this.props.navigate('ProfileComponent', {
+											username: this.props.event.username
+										});
+									}}
 									style={styles.username}>
 									{this.props.event.username}
 								</Text>
@@ -224,7 +220,11 @@ export default class UpcomingModalComponent extends Component {
 										ref={flatList => this._flatList = flatList}
 										renderItem={({ item }) => (
 											<View style={styles.commentView}>
-												<TouchableHighlight onPress={() => this.viewUser(item.username)}>
+												<TouchableHighlight onPress={() => {
+													this.props.navigate('ProfileComponent', {
+														username: item.username
+													});
+												}}>
 													<Image
 														source={{ uri: `${http.s3}/users/${item.username}` }}
 														style={styles.commentImage} />
