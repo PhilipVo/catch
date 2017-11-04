@@ -50,20 +50,20 @@ export default class Catch extends Component {
 		// Conditionally load components ('lazy loading'):
 		if (nextState.mode === 1) {
 			const AccountNavigatorComponent = require('./components/account/account-navigator.component');
-			const CameraComponent = require('./components/camera.component');
-			const CreateNavigatorComponent = require('./components/create/create-navigator.component');
-			const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
+			// const CameraComponent = require('./components/camera.component');
+			// const CreateNavigatorComponent = require('./components/create/create-navigator.component');
+			// const FeedNavigatorComponent = require('./components/feed/feed-navigator.component');
 
 			this.Navigator = require('react-navigation').TabNavigator(
 				{
 					AccountNavigatorComponent: { screen: AccountNavigatorComponent },
-					CameraComponent: { screen: CameraComponent },
-					CreateNavigatorComponent: { screen: CreateNavigatorComponent },
-					FeedNavigatorComponent: { screen: FeedNavigatorComponent },
+					// CameraComponent: { screen: CameraComponent },
+					// CreateNavigatorComponent: { screen: CreateNavigatorComponent },
+					// FeedNavigatorComponent: { screen: FeedNavigatorComponent },
 				},
 				{
 					headerMode: 'none',
-					initialRouteName: 'FeedNavigatorComponent',
+					// initialRouteName: 'FeedNavigatorComponent',
 					navigationOptions: { tabBarVisible: false }
 				}
 			);

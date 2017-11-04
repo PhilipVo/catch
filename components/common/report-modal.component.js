@@ -4,7 +4,7 @@ import Modal from 'react-native-modalbox';
 import { MessageBarManager } from 'react-native-message-bar';
 
 import http from '../../services/http.service';
-import reset from '../../services/reset.service';
+import navigation from '../../services/navigation.service';
 
 export default class ReportModalComponent extends Component {
 	report = () => {
@@ -16,8 +16,8 @@ export default class ReportModalComponent extends Component {
 					stylesheetExtra: { backgroundColor: '#f74434' },
 					viewTopInset: 20
 				});
-				reset.resetAccount();
-				reset.resetFeed();
+				resetAccount();
+				resetFeed();
 			}).catch(() => {
 				MessageBarManager.showAlert({
 					alertType: 'custom',

@@ -8,16 +8,18 @@ import AccountSettingsComponent from './account-settings.component';
 import ProfileComponent from '../common/profile.component';
 import TabComponent from '../common/tab.component';
 
-import { resetAccount, setResetAccount } from '../../services/navigate.service';
+import navigation from '../../services/navigation.service';
 
 module.exports = class AccountNavigatorComponent extends Component {
 	componentDidMount() {
-		setResetAccount(() => {
-			this.navigator.dispatch(NavigationActions.reset({
-				actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
-				index: 0
-			}));
-		});
+		// setNavigate(this.props.navigation.navigate);
+
+		// setResetAccount(() => {
+		// 	this.navigator.dispatch(NavigationActions.reset({
+		// 		actions: [NavigationActions.navigate({ routeName: 'AccountComponent' })],
+		// 		index: 0
+		// 	}));
+		// });
 		console.log('reset', resetAccount)
 	}
 
@@ -40,15 +42,15 @@ module.exports = class AccountNavigatorComponent extends Component {
 
 const AccountNavigator = StackNavigator(
 	{
-		AccountComponent: { screen: AccountComponent },
-		AccountFriendsComponent: { screen: AccountFriendsComponent },
+		// AccountComponent: { screen: AccountComponent },
+		// AccountFriendsComponent: { screen: AccountFriendsComponent },
 		AccountPictureComponent: { screen: AccountPictureComponent },
-		AccountSettingsComponent: { screen: AccountSettingsComponent },
-		ProfileComponent: { screen: ProfileComponent }
+		// AccountSettingsComponent: { screen: AccountSettingsComponent },
+		// ProfileComponent: { screen: ProfileComponent }
 	},
 	{
 		cardStyle: { backgroundColor: 'white' },
 		headerMode: 'none',
-		initialRouteName: 'AccountComponent'
+		// initialRouteName: 'AccountComponent'
 	}
 );

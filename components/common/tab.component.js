@@ -2,8 +2,6 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-import reset from '../../services/reset.service';
-
 const TabComponent = props => {
 	return (
 		<View style={props.tab === 'camera' ? styles.tab1 : styles.tab2}>
@@ -11,7 +9,7 @@ const TabComponent = props => {
 				color={props.tab === 'feed' ? 'black' : 'gray'}
 				name='calendar'
 				onPress={() => {
-					if (props.tab === 'feed') reset.resetFeed();
+					if (props.tab === 'feed') props.reset();
 					else props.navigate('FeedNavigatorComponent');
 				}}
 				size={30}
@@ -28,7 +26,7 @@ const TabComponent = props => {
 				color={props.tab === 'account' ? 'black' : 'gray'}
 				name='user'
 				onPress={() => {
-					if (props.tab === 'account') reset.resetAccount();
+					if (props.tab === 'account') props.reset();
 					else props.navigate('AccountNavigatorComponent')
 				}}
 				size={30}

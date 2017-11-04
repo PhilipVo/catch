@@ -2,17 +2,15 @@ import { AsyncStorage } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
 import http from './http.service';
-import reset from './reset.service';
+import navigation from './navigation.service';
 
 class NotificationService {
 	constructor() {
 		// Configure notifications:        
 		PushNotification.configure({
 			onNotification: notification => {
-				try {
-					reset.resetAccount();
-					reset.resetFeed();
-				} catch (error) { }
+				navigation.resetAccount();
+				navigation.resetFeed();
 			},
 			onRegister: device => {
 				AsyncStorage.setItem('deviceToken', device.token);

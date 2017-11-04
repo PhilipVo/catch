@@ -3,14 +3,14 @@ import { Text, View } from 'react-native';
 import Modal from 'react-native-modalbox';
 
 import http from '../../services/http.service';
-import reset from '../../services/reset.service';
+import { resetAccount, resetFeed } from '../../services/navigation.service';
 
 export default class BlockModalComponent extends Component {
 	block = () => {
 		http.get(`/api/blocks/block-user/${this.props.username}`)
 			.then(() => {
-				reset.resetAccount();
-				reset.resetFeed();
+				resetAccount();
+				resetFeed();
 			}).catch(() => { });
 	}
 
