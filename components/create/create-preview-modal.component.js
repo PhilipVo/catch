@@ -37,19 +37,23 @@ export default class CreatePreviewModalComponent extends Component {
 
 			event.isVideo = this.props.isVideo;
 
-			RNFS.readFile(this.props.story, 'base64')
-				.then(data => {
-					MessageBarManager.showAlert({
-						alertType: 'custom',
-						message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
-						stylesheetExtra: { backgroundColor: '#f74434' },
-						viewTopInset: 20
-					});
+			new Promise((resolve, reject) => {
+				if (!this.props.isVideo)
+					return RNFS.readFile(this.props.story, 'base64')
+						.then(data => {
+							MessageBarManager.showAlert({
+								alertType: 'custom',
+								message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
+								stylesheetExtra: { backgroundColor: '#f74434' },
+								viewTopInset: 20
+							});
 
-					navgiation.resetCreate();
+							navigation.resetCreate();
 
-					return vrate(data);
-				}).then(() => http.post('/api/stories/', JSON.stringify(event)))
+							return vrate(data);
+						}).catch(error => { throw error });
+				return resolve();
+			}).then(() => http.post('/api/stories/', JSON.stringify(event)))
 				.then(storyId => {
 					// Upload story:
 					const file = {

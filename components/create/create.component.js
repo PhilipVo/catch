@@ -135,7 +135,7 @@ export default class CreateComponent extends Component {
 				.then(data => vrate(data))
 				.catch(error => { throw error });
 
-			const rateStory = event.story ? RNFS.readFile(event.story, 'base64')
+			const rateStory = event.story && !event.isVideo ? RNFS.readFile(event.story, 'base64')
 				.then(data => vrate(data))
 				.catch(error => { throw error }) : null;
 
@@ -160,8 +160,8 @@ export default class CreateComponent extends Component {
 							});
 
 							// Refresh account and feed:
-							navgiation.resetAccount();
-							navgiation.resetFeed();
+							navigation.resetAccount();
+							navigation.resetFeed();
 
 							// Send out SMS invites:
 							const recipients = Object.keys(this.numbers);
@@ -223,7 +223,7 @@ export default class CreateComponent extends Component {
 			this.props.navigation.state.params.play()
 			this.props.navigation.goBack();
 		} catch (error) {
-			navgiation.resetCreate();
+			navigation.resetCreate();
 		}
 	}
 

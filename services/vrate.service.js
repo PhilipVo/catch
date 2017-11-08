@@ -8,9 +8,10 @@ export default function (payload) {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json'
 		},
-		body: JSON.stringify({ payload: 'https://vrate.net/images/vratelogo3.45d93685.png' })
+		body: JSON.stringify({ payload: payload })
 	}).then(data => http.handleResponse(data))
 		.then(data => {
+			console.log(data)
 			if (data.RatingCode === 'V03' && data.Confidence === 'High')
 				return Promise.reject('Upload failed: media contains inapproproate content.');
 			return Promise.resolve();
