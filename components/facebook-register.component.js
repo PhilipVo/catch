@@ -49,7 +49,6 @@ module.exports = class FacebookRegisterComponent extends Component {
 			});
 
 			session.facebookRegister(this.user)
-				.then(() => this.props.screenProps.register())
 				.catch(error => {
 					this.setState({
 						disabled: false,

@@ -39,10 +39,11 @@ export default class CreatePreviewComponent extends Component {
 				{
 					params.isVideo ?
 						<Video
-							ignoreSilentSwitch={'obey'}
+							ignoreSilentSwitch='obey'
 							paused={this.state.paused}
 							playWhenInactive={true}
 							repeat={true}
+							resizeMode='cover'
 							source={{ uri: params.story }}
 							style={styles.background} /> :
 						<Image style={styles.background} source={{ uri: params.story }} />

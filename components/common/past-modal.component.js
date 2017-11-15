@@ -309,7 +309,7 @@ export default class PastModalComponent extends Component {
 								{
 									this.state.item.type === 1 ?
 										<Video
-											ignoreSilentSwitch={"obey"}
+											ignoreSilentSwitch='obey'
 											onBuffer={this.onBuffer}
 											onLoad={this.onLoad}
 											onLoadStart={() => this.setState({ onLoad: true })}
@@ -319,7 +319,7 @@ export default class PastModalComponent extends Component {
 											playWhenInactive={true}
 											ref={ref => this.player = ref}
 											repeat={false}
-											resizeMode="cover"
+											resizeMode='cover'
 											source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
 											style={styles.background} /> :
 										<Image

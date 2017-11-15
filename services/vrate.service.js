@@ -11,7 +11,6 @@ export default function (payload) {
 		body: JSON.stringify({ payload: payload })
 	}).then(data => http.handleResponse(data))
 		.then(data => {
-			console.log(data)
 			if (data.RatingCode === 'V03' && data.Confidence === 'High')
 				return Promise.reject('Upload failed: media contains inapproproate content.');
 			return Promise.resolve();

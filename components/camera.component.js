@@ -73,6 +73,7 @@ module.exports = class CameraComponent extends Component {
 	render() {
 		return (
 			<Camera
+				captureOptions='1080p'
 				flashMode={this.state.flashMode}
 				onZoomChanged={() => { }}
 				orientation='portrait'

@@ -19,7 +19,7 @@ class SessionService {
 				return AsyncStorage.setItem('catchToken', catchToken);
 			}).then(() => AsyncStorage.getItem('catchToken'))
 			.then(catchToken => this.setSession(catchToken))
-			.then(navigation.register)
+			.then(navigation.login)
 			.catch(error => error.isNew ? Promise.resolve(true) : Promise.reject(error));
 	}
 

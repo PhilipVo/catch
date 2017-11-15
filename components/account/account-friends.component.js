@@ -52,6 +52,7 @@ export default class AccountFriendsComponent extends Component {
 					observer.next(data);
 				}).catch(error => { });
 		}).subscribe(data => {
+			console.log(data)
 			this.setState({ data: data });
 		});
 	}

@@ -17,7 +17,6 @@ import { Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import { LoginManager, GraphRequest, GraphRequestManager } from 'react-native-fbsdk';
 
-import navigation from '../services/navigation.service';
 import session from '../services/session.service';
 
 module.exports = class LoginComponent extends Component {
@@ -36,6 +35,16 @@ module.exports = class LoginComponent extends Component {
 			password: '',
 			username: ''
 		};
+	}
+
+	componentWillMount() {
+		if (Platform.OS === 'android') {
+			styles.inputBorder = undefined;
+			styles.inputText = {
+				color: 'white',
+				fontSize: 16
+			};
+		}
 	}
 
 	facebookLogin = () => {
@@ -61,7 +70,7 @@ module.exports = class LoginComponent extends Component {
 										})],
 										index: 0
 									}));
-								} else return navigation.login();
+								}
 							}).catch(error => {
 								this.setState({
 									disabled: false,
@@ -81,6 +90,7 @@ module.exports = class LoginComponent extends Component {
 				});
 			});
 		}
+
 	}
 
 	login = () => {
@@ -93,7 +103,6 @@ module.exports = class LoginComponent extends Component {
 
 			if (this.state.mode === 'login') {
 				session.login(this.user)
-					.then(() => navigation.login())
 					.catch(error => {
 						this.setState({
 							disabled: false,
@@ -103,7 +112,6 @@ module.exports = class LoginComponent extends Component {
 					});
 			} else {
 				session.register(this.user)
-					.then(() => navigation.register())
 					.catch(error => {
 						this.setState({
 							disabled: false,
@@ -121,15 +129,6 @@ module.exports = class LoginComponent extends Component {
 			this.setState({ mode: 'login' });
 	}
 
-	componentWillMount() {
-		if (Platform.OS === 'android') {
-			styles.inputBorder = undefined;
-			styles.inputText = {
-				color: 'white',
-				fontSize: 16
-			};
-		}
-	}
 	render() {
 		return (
 			<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
