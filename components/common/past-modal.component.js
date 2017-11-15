@@ -303,7 +303,26 @@ export default class PastModalComponent extends Component {
 							<ActivityIndicator />
 						</View> : !this.state.item ?
 							<View style={styles.empty}>
-								<Text style={{ color: 'white' }}>No posts were added to this event</Text>
+								<View style={{ flex: 1 }}></View>
+								<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+									<Text style={{ color: 'white' }}>No posts were added to this event</Text>
+								</View>
+								<View style={{ alignItems: 'flex-end', flex: 1, justifyContent: 'flex-end' }}>
+									{
+										this.props.event.username !== session.username &&
+										<Text
+											onPress={this.toggleShowReportModal}
+											style={{ backgroundColor: 'transparent', color: 'red', fontSize: 12, padding: 20 }}>
+											Report
+										</Text>
+									}
+								</View>
+								{	// Report
+									this.state.showReportModal &&
+									<ReportModalComponent
+										event={this.props.event}
+										hideModal={this.toggleShowReportModal} />
+								}
 							</View> :
 							<View style={{ backgroundColor: '#f74434', flex: 1 }}>
 								{
@@ -624,11 +643,9 @@ const styles = StyleSheet.create({
 		padding: 2
 	},
 	empty: {
-		alignItems: 'center',
 		bottom: 0,
 		backgroundColor: 'rgb(30,30,30)',
 		flex: 1,
-		justifyContent: 'center',
 		left: 0,
 		position: 'absolute',
 		right: 0,
