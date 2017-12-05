@@ -68,7 +68,6 @@ export default class AccountSettingsComponent extends Component {
 						saving: false
 					});
 				}).catch(error => {
-					console.log(error)
 					this.setState({ saving: false });
 					Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
 				});

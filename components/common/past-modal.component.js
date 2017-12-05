@@ -110,7 +110,6 @@ export default class PastModalComponent extends Component {
 	}
 
 	nextItem = () => {
-		console.log('calling next item1')
 		clearTimeout(this.timer);
 		const nextItem = this.state.stories[this.state.index + 1];
 		if (nextItem) {
@@ -124,16 +123,11 @@ export default class PastModalComponent extends Component {
 	}
 
 	onLoad = () => {
-		console.log('onload called')
 		clearTimeout(this.timer);
-		this.timer = setTimeout(() => {
-			console.log('calling timeout')
-			this.nextItem();
-		}, 4000);
+		this.timer = setTimeout(() => this.nextItem(), 4000);
 	}
 
 	previousItem = () => {
-		console.log('previous')
 		clearTimeout(this.timer);
 		const previousItem = this.state.stories[this.state.index - 1];
 		if (previousItem)
@@ -230,6 +224,7 @@ export default class PastModalComponent extends Component {
 								}
 							</View> :
 							<View style={{ backgroundColor: '#f74434', flex: 1 }}>
+
 								<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }}>
 									<ActivityIndicator color='white' />
 								</View>

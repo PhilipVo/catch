@@ -46,7 +46,7 @@ export default class ProfileComponent extends Component {
 					upcoming: data.upcoming,
 					user: data.user,
 				});
-			}).catch(error => console.log(error));
+			}).catch(() => { });
 	}
 
 	hideModal = () => this.setState({
