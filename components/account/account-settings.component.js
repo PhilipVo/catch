@@ -47,8 +47,10 @@ export default class AccountSettingsComponent extends Component {
 
 	updatePassword = () => {
 		Keyboard.dismiss();
-		if (this.passwords.password !== this.passwords.confirm)
+		if (this.passwords.password !== this.passwords.confirm) {
 			Alert.alert('Error', 'Passwords do not match.');
+			return;
+		}
 
 		if (!this.state.saving) {
 			this.setState({ saving: true });
@@ -66,6 +68,7 @@ export default class AccountSettingsComponent extends Component {
 						saving: false
 					});
 				}).catch(error => {
+					console.log(error)
 					this.setState({ saving: false });
 					Alert.alert('Error', typeof error === 'string' ? error : 'Oops, something went wrong.');
 				});

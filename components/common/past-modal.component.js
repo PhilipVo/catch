@@ -21,7 +21,6 @@ import { ShareDialog } from 'react-native-fbsdk';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
-import TimerMixin from 'react-timer-mixin';
 
 import ReportModalComponent from './report-modal.component';
 
@@ -112,6 +111,7 @@ export default class PastModalComponent extends Component {
 
 	nextItem = () => {
 		console.log('calling next item1')
+		clearTimeout(this.timer);
 		const nextItem = this.state.stories[this.state.index + 1];
 		if (nextItem) {
 			this.setState({
@@ -134,13 +134,13 @@ export default class PastModalComponent extends Component {
 
 	previousItem = () => {
 		console.log('previous')
-		clearTimeout(this.timer);		
+		clearTimeout(this.timer);
 		const previousItem = this.state.stories[this.state.index - 1];
 		if (previousItem)
 			this.setState({
 				index: this.state.index - 1,
 				item: previousItem
-			});	
+			});
 		else if (this.state.item.type === 1) this.player.seek(0);
 		else this.onLoad();
 	}
@@ -171,12 +171,11 @@ export default class PastModalComponent extends Component {
 
 			if (this.state.item.type !== 1) this.timer = setTimeout(this.nextItem, 4000);
 		} else {
+			clearTimeout(this.timer);
 			this.setState({
 				showComments: true,
 				pause: true
 			});
-			
-			if (this.state.item.type !== 1) clearTimeout(this.timer);
 		}
 	}
 
@@ -186,7 +185,10 @@ export default class PastModalComponent extends Component {
 				showReportModal: false,
 				pause: false
 			});
+
+			if (this.state.item.type !== 1) this.timer = setTimeout(this.nextItem, 4000);
 		} else {
+			clearTimeout(this.timer);
 			this.setState({
 				showReportModal: true,
 				pause: true
@@ -204,9 +206,7 @@ export default class PastModalComponent extends Component {
 
 				{
 					this.state.loading ?
-						<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-							<ActivityIndicator />
-						</View> : !this.state.item ?
+						<View /> : !this.state.item ?
 							<View style={styles.empty}>
 								<View style={{ flex: 1 }}></View>
 								<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
@@ -230,6 +230,10 @@ export default class PastModalComponent extends Component {
 								}
 							</View> :
 							<View style={{ backgroundColor: '#f74434', flex: 1 }}>
+								<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }}>
+									<ActivityIndicator color='white' />
+								</View>
+
 								{
 									this.state.item.type === 1 ?
 										<Video
