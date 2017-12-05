@@ -38,6 +38,7 @@ export default class CreatePreviewModalComponent extends Component {
 			event.isVideo = this.props.isVideo;
 
 			new Promise((resolve, reject) => {
+				navigation.resetCreate();
 				if (!this.props.isVideo)
 					return RNFS.readFile(this.props.story, 'base64')
 						.then(data => {
@@ -47,12 +48,8 @@ export default class CreatePreviewModalComponent extends Component {
 								stylesheetExtra: { backgroundColor: '#f74434' },
 								viewTopInset: 20
 							});
-
-							navigation.resetCreate();
-
 							return vrate(data);
 						}).catch(error => { throw error });
-				return resolve();
 			}).then(() => http.post('/api/stories/', JSON.stringify(event)))
 				.then(storyId => {
 					// Upload story:

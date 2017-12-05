@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import {
 	ActivityIndicator,
 	Alert,
-	Animated,
 	Dimensions,
 	FlatList,
 	Image,
@@ -33,8 +32,7 @@ export default class PastModalComponent extends Component {
 	constructor(props) {
 		super(props);
 
-		this.onLoadCalled = false;
-		this.timerBarStopped = true;
+		this.timer;
 
 		this.state = {
 			comment: '',
@@ -43,13 +41,11 @@ export default class PastModalComponent extends Component {
 			index: 0,
 			item: null,
 			loading: true,
-			onLoad: false,
+			pause: false,
 			shared: false,
 			showComments: false,
 			showReportModal: false,
-			stories: [],
-			timerDownAnimation: new Animated.Value(1),
-			timerUpAnimation: new Animated.Value(0)
+			stories: []
 		};
 	}
 
@@ -85,111 +81,68 @@ export default class PastModalComponent extends Component {
 		}, 1000);
 	}
 
+	componentWillUnmount() {
+		clearTimeout(this.timer);
+	}
+
 	comment = () => {
 		if (this.state.comment.length > 0) {
-			http.post('/api/comments', JSON.stringify({
+			const newComment = {
 				comment: this.state.comment,
+				username: session.username,
+				createdAt: Date.now()
+			};
+
+			const _comments = this.state.comments.slice();
+			_comments.push(newComment);
+
+			this.setState({
+				comment: '',
+				comments: _comments,
+			});
+
+			http.post('/api/comments', JSON.stringify({
+				comment: newComment.comment,
 				eventId: this.props.event.id,
 				title: this.props.event.title,
 				username: this.props.event.username
-			})).then(() => {
-				const _comments = this.state.comments.slice();
-				_comments.push({
-					comment: this.state.comment,
-					username: session.username
-				});
-
-				this.setState({
-					comment: '',
-					comments: _comments,
-				});
-			}).catch(() => { });
+			})).catch(() => { });
 		}
 	}
 
 	nextItem = () => {
-		this.onLoadCalled = false;
-
-		try { this.animation.stop(); } catch (error) { }
-		this.animation = undefined;
-
-		const currentItem = this.state.item;
+		console.log('calling next item1')
 		const nextItem = this.state.stories[this.state.index + 1];
 		if (nextItem) {
-			this.setState(() => {
-				return {
-					index: this.state.index + 1,
-					item: nextItem,
-					timerDownAnimation: new Animated.Value(1),
-					timerUpAnimation: new Animated.Value(0)
-				}
+			this.setState({
+				index: this.state.index + 1,
+				item: nextItem
 			});
 		} else if (session.isFacebookUser) {
 			this.setState({ done: true });
 		} else this.props.hideModal();
 	}
 
-	onBuffer = buffer => {
-		if (this.onLoadCalled && buffer.isBuffering)
-			this.stopTimerBar();
-		else if (this.onLoadCalled && this.timerBarStopped && !this.state.showComments && !this.state.showReportModal)
-			this.startTimerBar();
+	onLoad = () => {
+		console.log('onload called')
+		clearTimeout(this.timer);
+		this.timer = setTimeout(() => {
+			console.log('calling timeout')
+			this.nextItem();
+		}, 4000);
 	}
-
-	onLoad = data => {
-		this.setState({ onLoad: false });
-
-		this.onLoadCalled = true;
-		this.duration = data.duration ? parseInt(data.duration * 1000, 10) : 4000;
-
-		this.animation = Animated.parallel([
-			Animated.timing(this.state.timerDownAnimation, {
-				duration: this.duration,
-				toValue: 0
-			}),
-			Animated.timing(this.state.timerUpAnimation, {
-				duration: this.duration,
-				toValue: 1
-			})
-		]);
-
-		if (!this.player) this.animation.start(data => {
-			if (data.finished) {
-				this.animation = undefined;
-				this.nextItem();
-			}
-		});
-	}
-
 
 	previousItem = () => {
-		const currentItem = this.state.item;
+		console.log('previous')
+		clearTimeout(this.timer);		
 		const previousItem = this.state.stories[this.state.index - 1];
-
-		if (previousItem) {
-			try { this.animation.stop(); } catch (error) { }
-			this.animation = undefined;
-
-			this.setState(() => {
-				return {
-					index: this.state.index - 1,
-					item: previousItem,
-					timerDownAnimation: new Animated.Value(1),
-					timerUpAnimation: new Animated.Value(0)
-				}
-			});
-		} else {
-			this.animation.reset();
-
-			if (this.state.item.type === 1) this.player.seek(0);
-
-			this.animation.start(data => {
-				if (data.finished) {
-					this.animation = undefined;
-					this.nextItem();
-				}
-			});
-		}
+		if (previousItem)
+			this.setState({
+				index: this.state.index - 1,
+				item: previousItem
+			});	
+		else if (this.state.item.type === 1) this.player.seek(0);
+		else this.onLoad();
 	}
 
 	share = () => {
@@ -208,33 +161,6 @@ export default class PastModalComponent extends Component {
 			}, error => Alert.alert('Share failed with error: ' + error.message));
 	}
 
-	startTimerBar = () => {
-		const duration = parseInt(this.state.timerDownAnimation._value * this.duration);
-		this.animation = Animated.parallel([
-			Animated.timing(this.state.timerDownAnimation, {
-				duration: duration,
-				toValue: 0
-			}),
-			Animated.timing(this.state.timerUpAnimation, {
-				duration: duration,
-				toValue: 1
-			})
-		]).start(data => {
-			if (data.finished) {
-				this.animation = undefined;
-				this.nextItem();
-			}
-		});
-		this.timerBarStopped = false;
-	}
-
-	stopTimerBar = () => {
-		try { this.animation.stop(); } catch (error) { }
-		this.animation = undefined;
-		this.state.timerDownAnimation.stopAnimation();
-		this.state.timerUpAnimation.stopAnimation();
-		this.timerBarStopped = true;
-	}
 
 	toggleComments = () => {
 		if (this.state.showComments) {
@@ -242,13 +168,15 @@ export default class PastModalComponent extends Component {
 				showComments: false,
 				pause: false
 			});
-			this.startTimerBar();
+
+			if (this.state.item.type !== 1) this.timer = setTimeout(this.nextItem, 4000);
 		} else {
-			this.stopTimerBar();
 			this.setState({
 				showComments: true,
 				pause: true
 			});
+			
+			if (this.state.item.type !== 1) clearTimeout(this.timer);
 		}
 	}
 
@@ -258,9 +186,7 @@ export default class PastModalComponent extends Component {
 				showReportModal: false,
 				pause: false
 			});
-			this.startTimerBar();
 		} else {
-			this.stopTimerBar();
 			this.setState({
 				showReportModal: true,
 				pause: true
@@ -269,27 +195,6 @@ export default class PastModalComponent extends Component {
 	}
 
 	render() {
-		let bars = [];
-		for (let i = 0; i < this.state.stories.length; i++) {
-			bars.push(
-				<View
-					key={i}
-					style={styles.bar}>
-					{
-						i === this.state.index ?
-							<View style={styles.barView}>
-								<Animated.View style={{
-									backgroundColor: 'white',
-									borderRadius: 5,
-									flex: this.state.timerUpAnimation
-								}} />
-								<Animated.View style={{ flex: this.state.timerDownAnimation }} />
-							</View> : null
-					}
-				</View>
-			);
-		}
-
 		return (
 			<Modal
 				isOpen={true}
@@ -329,10 +234,7 @@ export default class PastModalComponent extends Component {
 									this.state.item.type === 1 ?
 										<Video
 											ignoreSilentSwitch='obey'
-											onBuffer={this.onBuffer}
-											onLoad={this.onLoad}
-											onLoadStart={() => this.setState({ onLoad: true })}
-											onProgress={this.onProgress}
+											onEnd={this.nextItem}
 											paused={this.state.pause}
 											playInBackground={false}
 											playWhenInactive={true}
@@ -343,17 +245,11 @@ export default class PastModalComponent extends Component {
 											style={styles.background} /> :
 										<Image
 											onLoad={this.onLoad}
-											onLoadStart={() => this.setState({ onLoad: true })}
 											source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
 											style={styles.background} />
 								}
 
 								<View style={styles.top}>
-									{ // Timer bars:
-										!this.state.done &&
-										<View style={{ flexDirection: 'row' }}>{bars}</View>
-									}
-
 									<View style={{
 										alignItems: 'center',
 										flexDirection: 'row',
@@ -420,21 +316,6 @@ export default class PastModalComponent extends Component {
 									underlayColor='transparent'>
 									<View />
 								</TouchableHighlight>
-
-								{
-									this.state.onLoad &&
-									<View style={{
-										alignItems: 'center',
-										bottom: 0,
-										left: 0,
-										justifyContent: 'center',
-										position: 'absolute',
-										right: 0,
-										top: 0
-									}}>
-										<ActivityIndicator color='white' />
-									</View>
-								}
 
 								{
 									this.state.showComments &&

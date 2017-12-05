@@ -51,15 +51,25 @@ export default class UpcomingModalComponent extends Component {
 
 	comment = () => {
 		if (this.state.comment.length > 0) {
-			http.post('/api/comments', JSON.stringify({
+			const newComment = {
 				comment: this.state.comment,
+				username: session.username,
+				createdAt: Date.now()
+			};
+			const _comments = this.state.comments.slice();
+			_comments.push(newComment);
+
+			this.setState({
+				comment: '',
+				comments: _comments,
+			});
+
+			http.post('/api/comments', JSON.stringify({
+				comment: newComment.comment,
 				username: this.props.event.username,
 				eventId: this.props.event.id,
 				title: this.props.event.title
-			})).then(() => {
-				this.setState({ comment: '' });
-				this.getDetails();
-			}).catch(() => { });
+			})).catch(() => { });
 		}
 	}
 
