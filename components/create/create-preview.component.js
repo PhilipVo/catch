@@ -24,12 +24,6 @@ export default class CreatePreviewComponent extends Component {
 		};
 	}
 
-	componentDidMount() {
-		http.get('/api/events/get-upcoming-associated-events')
-			.then(events => this.setState({ events: events }))
-			.catch(() => { });
-	}
-
 	render() {
 		const { params } = this.props.navigation.state;
 		return (
@@ -52,7 +46,6 @@ export default class CreatePreviewComponent extends Component {
 				{
 					this.state.showModal ?
 						<CreatePreviewModalComponent
-							events={this.state.events}
 							goBack={this.props.navigation.goBack}
 							hideModal={() => this.setState({ showModal: false })}
 							isVideo={params.isVideo}

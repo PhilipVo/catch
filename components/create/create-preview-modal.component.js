@@ -22,13 +22,15 @@ export default class CreatePreviewModalComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: this.props.events,
+			data: [],
 			saving: false
 		};
 	}
 
-	componentWillReceiveProps(nextProps) {
-		this.setState({ data: nextProps.events });
+	componentDidMount() {
+		http.get('/api/events/get-upcoming-associated-events')
+			.then(data => this.setState({ data: data }))
+			.catch(() => { });
 	}
 
 	complete = event => {
@@ -37,19 +39,22 @@ export default class CreatePreviewModalComponent extends Component {
 
 			event.isVideo = this.props.isVideo;
 
+			navigation.resetCreate();
+
 			new Promise((resolve, reject) => {
-				navigation.resetCreate();
+				MessageBarManager.showAlert({
+					alertType: 'custom',
+					message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
+					stylesheetExtra: { backgroundColor: '#f74434' },
+					viewTopInset: 20
+				});
+
 				if (!this.props.isVideo)
 					return RNFS.readFile(this.props.story, 'base64')
-						.then(data => {
-							MessageBarManager.showAlert({
-								alertType: 'custom',
-								message: `Now uploading your ${this.props.isVideo ? 'video' : 'picture'}...`,
-								stylesheetExtra: { backgroundColor: '#f74434' },
-								viewTopInset: 20
-							});
-							return vrate(data);
-						}).catch(error => { throw error });
+						.then(data => vrate(data))
+						.then(resolve)
+						.catch(error => { throw error });
+				return resolve();
 			}).then(() => http.post('/api/stories/', JSON.stringify(event)))
 				.then(storyId => {
 					// Upload story:
@@ -67,10 +72,9 @@ export default class CreatePreviewModalComponent extends Component {
 								stylesheetExtra: { backgroundColor: '#f74434' },
 								viewTopInset: 20
 							});
-
 						}).catch(() => {
 							http.delete(`/api/stories/${storyId}`)
-								.catch(() => { });
+								.catch((error) => { throw error });
 
 							MessageBarManager.showAlert({
 								alertType: 'custom',
@@ -136,7 +140,7 @@ export default class CreatePreviewModalComponent extends Component {
 					}
 
 					{
-						this.props.events.length > 0 ?
+						this.state.data.length > 0 ?
 							<FlatList
 								data={this.state.data}
 								keyExtractor={item => item.id}

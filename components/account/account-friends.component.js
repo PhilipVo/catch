@@ -51,7 +51,7 @@ export default class AccountFriendsComponent extends Component {
 				.then(data => {
 					observer.next(data);
 				}).catch(error => { });
-		}).subscribe(data => this.setState({ data: data });
+		}).subscribe(data => this.setState({ data: data }));
 	}
 
 	toggleContact = (item, index) => {
