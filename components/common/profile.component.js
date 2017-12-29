@@ -128,6 +128,7 @@ export default class ProfileComponent extends Component {
 							this.state.modal === 'friends' ?
 								<FriendsModalComponent
 									hideModal={this.hideModal}
+									navigate={this.props.navigation.navigate}
 									username={this.state.event} /> :
 								this.state.modal === 'past' ?
 									<PastModalComponent

@@ -63,7 +63,7 @@ export default class InvitedModalComponent extends Component {
 									renderItem={({ item }) => (
 										<Text
 											onPress={() => {
-												this.props.navigation.navigate('ProfileComponent',
+												this.props.navigate('ProfileComponent',
 													{ username: item.contact })
 											}}
 											style={{
