@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { ShareDialog } from 'react-native-fbsdk';
+import RNFetchBlob from 'react-native-fetch-blob'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Modal from 'react-native-modalbox';
 import Video from 'react-native-video';
@@ -31,6 +32,7 @@ export default class PastModalComponent extends Component {
 	constructor(props) {
 		super(props);
 
+		this.videos = {};
 		this.timer;
 
 		this.state = {
@@ -53,7 +55,20 @@ export default class PastModalComponent extends Component {
 			.then(data => {
 				if (data.stories.length > 0) {
 					data.stories.forEach(story => {
-						Image.prefetch(`${http.s3}/events/${this.props.event.id}/${story.id}`);
+						// Cache videos:
+						if (story.type === 1) {
+							RNFetchBlob.config({
+								appendExt : 'mp4',
+								fileCache: true,
+								session: 'videos'
+							 }).fetch('GET', `${http.s3}/events/${this.props.event.id}/${story.id}`)
+								.then(res => {
+									this.videos[`${story.id}`] = res.path();
+									console.log(this.videos)
+								}).catch(error => console.log(error));
+						// Prefetch images:
+						} else
+							Image.prefetch(`${http.s3}/events/${this.props.event.id}/${story.id}`);
 					});
 
 					this.setState({
@@ -82,6 +97,7 @@ export default class PastModalComponent extends Component {
 
 	componentWillUnmount() {
 		clearTimeout(this.timer);
+		RNFetchBlob.session('videos').dispose();
 	}
 
 	comment = () => {
@@ -223,9 +239,16 @@ export default class PastModalComponent extends Component {
 										hideModal={this.toggleShowReportModal} />
 								}
 							</View> :
-							<View style={{ backgroundColor: '#f74434', flex: 1 }}>
-
-								<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', position: 'absolute', top: 0, right: 0, left: 0, bottom: 0 }}>
+							<View style={{ backgroundColor: 'black', flex: 1 }}>
+								<View style={{ 
+									alignItems: 'center',
+									bottom: 0,
+									flex: 1,
+									justifyContent: 'center',
+									left: 0,
+									position: 'absolute',
+									right: 0,
+									top: 0 }}>
 									<ActivityIndicator color='white' />
 								</View>
 
@@ -240,7 +263,9 @@ export default class PastModalComponent extends Component {
 											ref={ref => this.player = ref}
 											repeat={false}
 											resizeMode='cover'
-											source={{ uri: `${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
+											source={{ uri: this.videos[`${this.state.item.id}`] ?
+												this.videos[`${this.state.item.id}`] :
+												`${http.s3}/events/${this.props.event.id}/${this.state.item.id}` }}
 											style={styles.background} /> :
 										<Image
 											onLoad={this.onLoad}
