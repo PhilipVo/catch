@@ -10,7 +10,6 @@ class NavigationService {
 
 	login = () => { }
 	logout = () => { }
-	register = () => { }
 	_navigate = () => { }
 	resetAccount = () => { }
 	resetCreate = () => { }

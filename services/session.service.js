@@ -4,7 +4,6 @@ import { LoginManager } from 'react-native-fbsdk';
 
 import http from './http.service';
 import navigation from './navigation.service';
-import notification from './notification.service';
 
 class SessionService {
 	constructor() {
@@ -30,7 +29,7 @@ class SessionService {
 			.then(catchToken => {
 				this.setSession(catchToken);
 				this.isFacebookUser = true;
-				navigation.register();
+				navigation.login();
 			}).catch(error => Promise.reject(error));
 	}
 
@@ -47,7 +46,7 @@ class SessionService {
 		return http.put('/api/users/clear-device-token')
 			.then(() => AsyncStorage.removeItem('catchToken'))
 			.then(() => {
-				if (this.isFacebookUser) LoginManager.logOut();
+				this.isFacebookUser && LoginManager.logOut();
 				this.isFacebookUser = undefined;
 				this.username = undefined;
 				navigation.logout();
@@ -59,7 +58,7 @@ class SessionService {
 			.then(catchToken => AsyncStorage.setItem('catchToken', catchToken))
 			.then(() => AsyncStorage.getItem('catchToken'))
 			.then(catchToken => this.setSession(catchToken))
-			.then(navigation.register)
+			.then(navigation.login)
 			.catch(error => Promise.reject(error));
 	}
 
@@ -70,9 +69,6 @@ class SessionService {
 				payload = JSON.parse(base64.decode(catchToken.split('.')[1].replace('-', '+').replace('_', '/')));
 				this.isFacebookUser = payload.isFacebookUser;
 				this.username = payload.username;
-
-				// Update deviceToken:
-				notification.updateDeviceToken();
 
 				return resolve();
 			} catch (error) {

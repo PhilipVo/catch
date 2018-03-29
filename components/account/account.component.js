@@ -16,7 +16,7 @@ import UpcomingListComponent from '../common/upcoming-list.component';
 import UpcomingModalComponent from '../common/upcoming-modal.component';
 
 import http from '../../services/http.service';
-import notification from '../../services/notification.service';
+
 
 export default class AccountComponent extends Component {
 	constructor(props) {

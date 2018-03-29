@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, AsyncStorage, Image, View } from 'react-native';
+import { Alert, AppRegistry, AsyncStorage, Image, View } from 'react-native';
 import { MessageBar, MessageBarManager } from 'react-native-message-bar';
 
 import navigation from './services/navigation.service';
@@ -21,34 +21,30 @@ export default class Catch extends Component {
 		// 0 - loading
 		// 1 - logged in
 		// 2 - logged out
-		// 3 - new user
+		// 3 - first time opening app
 		this.state = { mode: 0 };
 	}
 
 	componentDidMount() {
-		navigation.login = this.checkEULA;
+		navigation.login = () => this.setState({ mode: 1 });
 		navigation.logout = () => this.setState({ mode: 2 });
-		navigation.register = () => this.setState({ mode: 3 });
 
 		MessageBarManager.registerMessageBar(this.refs.alert);
 
-		AsyncStorage.getItem('catchToken')
-			.then(catchToken => {
-				if (catchToken) {
-					return session.setSession(catchToken)
-						.then(this.checkEULA)
-						.catch(error => { throw error });
+		AsyncStorage.getItem('isFirstTime')
+			.then(isFirstTime => {
+				if (isFirstTime !== "false") {
+					this.setState({ mode: 3 });
+				} else {
+					AsyncStorage.getItem('catchToken')
+						.then(catchToken => {
+							if (catchToken) {
+								return session.setSession(catchToken)
+									.catch(error => { throw error });
+							} else this.setState({ mode: 2 });
+						}).catch(error => { Alert.alert('error', error) });
 				}
-				else this.setState({ mode: 2 });
-			}).catch(() => { });
-	}
-
-	checkEULA = () => {
-		return AsyncStorage.getItem('catchEULA')
-			.then(catchEULA => {
-				if (catchEULA === 'signed') this.setState({ mode: 1 });
-				else this.setState({ mode: 3 });
-			});
+			}).catch(error => { Alert.alert('error', error) });
 	}
 
 	componentWillUpdate(nextProps, nextState) {
@@ -72,14 +68,15 @@ export default class Catch extends Component {
 					navigationOptions: { tabBarVisible: false }
 				}
 			);
-
 		} else if (nextState.mode === 2) {
 			const FacebookRegisterComponent = require('./components/facebook-register.component');
+			const EULAComponent = require('./components/eula.component');
 			const LoginComponent = require('./components/login.component');
 
 			this.Navigator = require('react-navigation').StackNavigator(
 				{
 					FacebookRegisterComponent: { screen: FacebookRegisterComponent },
+					EULAComponent: { screen: EULAComponent },
 					LoginComponent: { screen: LoginComponent }
 				},
 				{
@@ -89,18 +86,15 @@ export default class Catch extends Component {
 				}
 			);
 		} else if (nextState.mode === 3) {
-			const EULAComponent = require('./components/ftue/eula.component');
 			const FTUEComponent = require('./components/ftue/ftue.component');
 
 			this.Navigator = require('react-navigation').StackNavigator(
 				{
-					EULAComponent: { screen: EULAComponent },
-					FTUEComponent: { screen: FTUEComponent },
+					FTUEComponent: { screen: FTUEComponent }
 				},
 				{
 					cardStyle: { backgroundColor: 'white' },
-					headerMode: 'none',
-					initialRouteName: 'EULAComponent'
+					headerMode: 'none'
 				}
 			);
 		}

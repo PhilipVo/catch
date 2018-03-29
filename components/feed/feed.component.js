@@ -34,6 +34,7 @@ export default class FeedComponent extends Component {
 	}
 
 	componentDidMount() {
+		notification.configure();
 		this.getPublicEvents();
 	}
 

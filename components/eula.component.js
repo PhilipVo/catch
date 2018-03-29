@@ -8,12 +8,6 @@ import {
 } from 'react-native';
 
 module.exports = class EULAComponent extends Component {
-	agree = () => {
-		AsyncStorage.setItem('catchEULA', 'signed')
-			.then(() => this.props.navigation.navigate('FTUEComponent'))
-			.catch(() => { });
-	}
-
 	render() {
 		return (
 			<View style={{ backgroundColor: '#f74434', flex: 1, padding: 20, paddingTop: 40 }}>
@@ -114,12 +108,18 @@ You may be subject to additional terms and conditions that apply when you use or
 					</ScrollView>
 				</View>
 				<View style={{ alignItems: 'center', flex: 1, justifyContent: 'flex-end' }}>
-					<TouchableHighlight
-						onPress={this.agree}
-						style={{ borderColor: 'white', borderRadius: 5, borderWidth: 1, padding: 10 }}
+					<Text
+						onPress={() => this.props.navigation.goBack()}
+						style={{
+							borderColor: 'white',
+							borderRadius: 5,
+							borderWidth: 1,
+							color: 'white',
+							padding: 10
+						}}
 						underlayColor='transparent'>
-						<Text style={{ color: 'white' }}>I Agree</Text>
-					</TouchableHighlight>
+						I Agree
+					</Text>
 				</View>
 			</View>
 		);

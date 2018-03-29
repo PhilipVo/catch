@@ -4,7 +4,7 @@ class HttpService {
 	constructor() {
 		this.ip = 'https://anvyl.online';
 		// this.ip = 'http://192.168.1.118:8000';
-		this.s3 = 'https://s3-us-west-1.amazonaws.com/ronincatch';
+		this.s3 = 'https://d1pvkwv0zhy0p7.cloudfront.net';
 	}
 
 	handleResponse(response) {

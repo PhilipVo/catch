@@ -5,8 +5,7 @@ import http from './http.service';
 import navigation from './navigation.service';
 
 class NotificationService {
-	constructor() {
-		// Configure notifications:        
+	configure() {
 		PushNotification.configure({
 			onNotification: notification => {
 				navigation.resetAccount();
@@ -21,9 +20,7 @@ class NotificationService {
 				sound: true
 			}
 		});
-	}
 
-	updateDeviceToken() {
 		AsyncStorage.getItem('deviceToken')
 			.then(deviceToken => {
 				if (deviceToken)

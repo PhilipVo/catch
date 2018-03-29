@@ -55,7 +55,6 @@ module.exports = class FacebookRegisterComponent extends Component {
 						error: typeof error === 'string' ? error : 'Oops, something went wrong.'
 					});
 				});
-
 		}
 	}
 

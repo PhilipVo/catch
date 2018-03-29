@@ -238,6 +238,17 @@ module.exports = class LoginComponent extends Component {
 								</View>
 							</TouchableHighlight>
 
+							<View style={{ marginTop: 15 }}>
+								<Text style={[styles.bottomText, { fontSize: 12 }]}>
+									By signing up with Catch, you agree to the
+								</Text>
+								<Text
+									onPress={() => this.props.navigation.navigate('EULAComponent')}
+									style={[styles.redText, { fontSize: 12 }]}>
+									terms and conditions
+								</Text>
+							</View>
+
 						</View>
 					</KeyboardAvoidingView>
 				</Image>

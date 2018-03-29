@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import {
+	AsyncStorage,
 	Image,
 	StatusBar,
 	TouchableWithoutFeedback
 } from 'react-native';
 
 import navigation from '../../services/navigation.service';
+import session from '../../services/session.service';
 
 module.exports = class FTUEComponent extends Component {
 	constructor(props) {
@@ -15,7 +17,11 @@ module.exports = class FTUEComponent extends Component {
 
 	next = () => {
 		if (this.state.i < 5) this.setState({ i: this.state.i + 1 });
-		else navigation.login();
+		else {
+			AsyncStorage.setItem('isFirstTime', "false")
+				.then(session.logout)
+				.catch(navigation.logout);
+		};
 	}
 
 	render() {
